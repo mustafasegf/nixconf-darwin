@@ -21,15 +21,13 @@
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixos-flake.url = "github:srid/nixos-flake";
+    nixos-unified.url = "github:srid/nixos-unified";
   };
 
   outputs = inputs@{ self, ... }:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
-      imports = [
-        inputs.nixos-flake.flakeModule
-      ];
+      imports = [ inputs.nixos-unified.flakeModules.default ];
 
       flake =
         let
@@ -42,7 +40,9 @@
           # Configurations for Linux (NixOS) machines
           nixosConfigurations = {
             # TODO: Change hostname from "example1" to something else.
-            mustafa-pc = self.nixos-flake.lib.mkLinuxSystem {
+            mustafa-pc = self.nixos-unified.lib.mkLinuxSystem 
+              { home-manager = true; }
+              {
               nixpkgs.hostPlatform = "x86_64-linux";
               imports = [
                 self.nixosModules.common # See below for "nixosModules"!
@@ -58,7 +58,6 @@
                   system.stateVersion = "24.05";
                 })
                 # Your home-manager configuration
-                self.nixosModules.home-manager
                 {
                   home-manager.users.${myUserName} = {
                     imports = [
@@ -74,9 +73,11 @@
 
           # Configurations for macOS machines
           darwinConfigurations = {
-            # TODO: Change hostname from "example1" to something else.
-            Mustafa-Assagaf = self.nixos-flake.lib.mkMacosSystem {
+            Mustafa-Assagaf = self.nixos-unified.lib.mkMacosSystem 
+              { home-manager = true; }
+              {
               nixpkgs.hostPlatform = "aarch64-darwin";
+
               imports = [
                 ./pam-reattach.nix
                 self.nixosModules.common # See below for "nixosModules"!
@@ -104,6 +105,7 @@
                     mutableTaps = false;
                   };
                 }
+
                 self.nixosModules.darwin
                 # Your machine's configuration.nix goes here
                 ({ pkgs, ... }: {
@@ -112,16 +114,28 @@
                   system.stateVersion = 4;
                 })
                 # Your home-manager configuration
-                self.darwinModules_.home-manager
-                {
-                  home-manager.users.${macUserName} = {
-                    imports = [
-                      self.homeModules.common # See below for "homeModules"!
-                      self.homeModules.darwin
-                    ];
-                    home.stateVersion = "24.05";
-                  };
-                }
+                # self.darwinModules_.home-manager
+                # {
+                #   home-manager.users.${macUserName} = {
+                #     imports = [
+                #       self.homeModules.common # See below for "homeModules"!
+                #       self.homeModules.darwin
+                #     ];
+                #     home.stateVersion = "24.05";
+                #   };
+                # }
+                # Setup home-manager in nix-darwin config
+
+                  {
+                    home-manager.users.${macUserName} = {
+                      imports = [
+                        self.homeModules.common
+                        self.homeModules.darwin
+                      ];
+                      home.stateVersion = "24.05";
+                    };
+                  }
+
               ];
             };
           };
@@ -392,7 +406,7 @@
                 ##prisma
                 ##jsonls
                 sumneko-lua-language-server
-                nodePackages.diagnostic-languageserver
+                # nodePackages.diagnostic-languageserver
                 nodePackages.bash-language-server
 
                 # gvfs

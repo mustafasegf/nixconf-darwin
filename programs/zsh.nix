@@ -224,7 +224,8 @@
         "
       '';
 
-    initExtraFirst = ''
+    initExtraFirst = #bash
+        ''
       source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
       unset -v SSH_ASKPASS
 

@@ -53,9 +53,10 @@
         export ZSH_WAKATIME_BIN="$WAKATIME_HOME/.wakatime/wakatime-cli"
 
         # Path
-
         export PATH=$PATH:$CARGO_HOME/bin
         export PATH=$PATH:$RUSTUP_HOME:~/.rustup/toolchains/${RUSTC_VERSION}-x86_64-unknown-linux-gnu/bin/
+        export PATH=$PATH:`go env GOPATH`/bin:/opt/homebrew/bin:/Users/mustafa.assagaf/Library/Python/3.9/bin
+        export LIBRARY_PATH=$LIBRARY_PATH:${pkgs.libiconv}/lib
 
         # misc
         export CHTSH_QUERY_OPTIONS="style=rrt"
@@ -313,10 +314,29 @@
         smem -t -k -c pss -P "$@"
       }
 
-
       function frfr () {
-
+        original_dir="$(pwd)"
+        original_dir_name="$(basename "$original_dir")"
+        cd ..
+        if [ "$(basename "$original_dir")" != "$(basename "$(pwd)")" ]
+        then
+                rm -rf "$original_dir"
+                if command -v cowsay > /dev/null
+                then
+                        cowsay "RIP $original_dir_name"
+                else
+                        echo "RIP $original_dir_name"
+                fi
+        else
+                echo "Failed to delete: same directory."
+        fi
       }
+
+        # Kubernetes
+        # function to grep resource and get only the name
+        function kgrep () {
+          kubectl get "$1" | grep "$2" | awk '{print $1}'
+        }
     '';
     shellAliases = {
       # update = "sudo nixos-rebuild switch";
@@ -331,6 +351,14 @@
       ll = "ls -Al";
       lt = "ls --tree";
       lta = "ls -A --tree";
+
+      k = "kubectl";
+      kl = "kubectl logs";
+      klf = "kubectl logs -f";
+      kg = "kubectl get";
+      kd = "kubectl describe";
+      kpf = "kubectl port-forward";
+      kctx = "kubectx"
 
       g = "git";
       lg = "lazygit";

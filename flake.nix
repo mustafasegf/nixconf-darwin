@@ -235,11 +235,20 @@
                 jq
                 yq
 
+                libiconv
+
                 postman
                 speedtest-cli
                 xcodes
                 git-filter-repo
 
+                kubectl
+                kcat
+                grpcurl
+                teleport
+                unixtools.procps
+                pkgconf
+                kubectx
 
                 # awscli2
                 # dos2unix
@@ -248,7 +257,7 @@
                 # flameshot
                 # git-annex
                 # glab
-                # google-cloud-sdk
+                google-cloud-sdk
                 # handbrake
                 # httpie
                 # inxi
@@ -516,7 +525,7 @@
                 # rust-script
                 # djvu2pdf
                 # djvulibre
-                # yarn
+                yarn
                 # colorpicker
                 # cargo-tarpaulin
                 # mods

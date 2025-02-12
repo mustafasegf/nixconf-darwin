@@ -159,7 +159,7 @@
 
               fonts.packages = with pkgs; [
                 noto-fonts
-                noto-fonts-cjk
+                noto-fonts-cjk-sans
                 noto-fonts-emoji
                 liberation_ttf
                 fira-code
@@ -168,8 +168,8 @@
                 dina-font
                 proggyfonts
                 ibm-plex
-                nerdfonts
-              ];
+              ]  ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts)
+;
 
               environment.systemPackages = with pkgs; [
                 hello
@@ -185,7 +185,7 @@
                 go-tools
 
                 ## java
-                jdk22
+                jdk
                 # temurin-bin
                 jdt-language-server
                 maven
@@ -219,6 +219,8 @@
                 neofetch
 
                 lazygit
+                cowsay
+                gh-copilot
                 air
                 cloc
                 fd
@@ -725,6 +727,7 @@
                   init.defaultBranch = "master";
                   pull.rebase = false;
                   pull.ff = true;
+                  url."ssh://git@source.golabs.io/".insteadOf = "https://source.golabs.io/";
                 };
               };
 

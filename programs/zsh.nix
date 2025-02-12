@@ -358,7 +358,7 @@
       kg = "kubectl get";
       kd = "kubectl describe";
       kpf = "kubectl port-forward";
-      kctx = "kubectx"
+      kctx = "kubectx";
 
       g = "git";
       lg = "lazygit";

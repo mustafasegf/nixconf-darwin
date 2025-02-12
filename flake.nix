@@ -190,8 +190,8 @@
                 jdt-language-server
                 maven
                 gradle
-                jetbrains.idea-community-bin
-                jetbrains.goland
+                # jetbrains.idea-community-bin
+                # jetbrains.goland
 
                 iterm2
                 kitty

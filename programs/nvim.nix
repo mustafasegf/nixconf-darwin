@@ -77,11 +77,11 @@
       }
 
       #language spesific
-      {
-        plugin = (pluginGit "ray-x" "go.nvim" "master"
-          "z65o3cOoxWILDKjEUWNTK1X7riQjxAS7BGeo29049Ms=");
-        type = "lua";
-      }
+      # {
+      #   plugin = (pluginGit "ray-x" "go.nvim" "master"
+      #     "z65o3cOoxWILDKjEUWNTK1X7riQjxAS7BGeo29049Ms=");
+      #   type = "lua";
+      # }
       {
         plugin = (pluginGit "mechatroner" "rainbow_csv" "3dbbfd7d17536aebfb80f571255548495574c32b"
           "Zf9VdRu/OF9h4AffOSAdM/Ypnla2wUp/iho3CV2YsH0=");

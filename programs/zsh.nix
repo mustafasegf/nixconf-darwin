@@ -12,6 +12,7 @@
       # let RUSTC_VERSION = pkgs.lib.strings.removeSuffix "\n" pkgs.lib.readFile ./rust-toolchain;
       let
         RUSTC_VERSION = "nightly";
+        ARCH = "aarch64-apple-darwin";
         #bash
       in ''
         #XDG 
@@ -54,7 +55,7 @@
 
         # Path
         export PATH=$PATH:$CARGO_HOME/bin
-        export PATH=$PATH:$RUSTUP_HOME:~/.rustup/toolchains/${RUSTC_VERSION}-x86_64-unknown-linux-gnu/bin/
+        export PATH=$PATH:$RUSTUP_HOME:~/.rustup/toolchains/${RUSTC_VERSION}-${ARCH}/bin/
         export PATH=$PATH:`go env GOPATH`/bin:/opt/homebrew/bin:/Users/mustafa.assagaf/Library/Python/3.9/bin
         export LIBRARY_PATH=$LIBRARY_PATH:${pkgs.libiconv}/lib
 
@@ -232,7 +233,7 @@
 
       # tmux auto start config
       # change this
-      ZSH_TMUX_AUTOSTART=true
+      ZSH_TMUX_AUTOSTART=false
       ZSH_TMUX_AUTOSTART_ONCE=false
       ZSH_TMUX_AUTOCONNECT=true
       ZSH_TMUX_CONFIG=/Users/mustafa.assagaf/.config/tmux/tmux.conf
@@ -255,6 +256,11 @@
           mkdir -p -- "$1" &&
           cd -P -- "$1"
       }
+
+      # check if terminal is xterm-ghostty. then run tmux
+      if [ "$TERM" = "xterm-ghostty" ]; then
+          tmux
+      fi
 
       function cdg() { cd "$(git rev-parse --show-toplevel)"  }
 

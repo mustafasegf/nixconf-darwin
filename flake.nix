@@ -252,6 +252,8 @@
                 pkgconf
                 kubectx
 
+                mosh
+
                 # awscli2
                 # dos2unix
                 # ffmpeg-full
@@ -506,10 +508,10 @@
 
                 # smem
 
-                # protobuf
-                # grpc-tools
-                # protoc-gen-go
-                # protoc-gen-doc
+                protobuf
+                grpc-tools
+                protoc-gen-go
+                protoc-gen-doc
                 # protoc-gen-rust
 
                 # teams
@@ -644,7 +646,7 @@
                 raycast
               ];
               users.users.${macUserName}.home = "/users/${macUserName}";
-              nix.useDaemon = true;
+              # nix.useDaemon = true;
             };
           };
 

@@ -259,7 +259,7 @@
 
       # check if terminal is xterm-ghostty. then run tmux
       if [ "$TERM" = "xterm-ghostty" ]; then
-          tmux
+          tmux new -As0
       fi
 
       function cdg() { cd "$(git rev-parse --show-toplevel)"  }

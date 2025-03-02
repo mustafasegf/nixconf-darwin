@@ -82,6 +82,7 @@
                 ./pam-reattach.nix
                 self.nixosModules.common # See below for "nixosModules"!
                 inputs.nix-homebrew.darwinModules.nix-homebrew
+                inputs.nix-index-database.darwinModules.nix-index
                 {
                   nix-homebrew = {
                     # Install Homebrew under the default prefix
@@ -261,6 +262,7 @@
                 # flameshot
                 # git-annex
                 # glab
+                # gitbutler
                 google-cloud-sdk
                 # handbrake
                 # httpie
@@ -489,7 +491,7 @@
                 # ocamlPackages.ocaml-lsp
 
                 # dotnet-sdk
-                # wakatime-cli
+                wakatime-cli
                 # microsoft-edge
                 # prefetch-npm-deps
                 # go-swag
@@ -518,8 +520,8 @@
                 # vagrant
                 # tmate
                 # redis
-                # termshark
-                # wireshark
+                termshark
+                wireshark
                 # imagemagick
                 # poppler_utils
 
@@ -578,7 +580,7 @@
                 # onedrive
                 # zig
                 # swiProlog
-                # inetutils
+                inetutils
                 # wol
                 # subversionClient
                 # hexyl
@@ -638,6 +640,8 @@
             darwin = { pkgs, ... }: {
               security.pam.enableSudoTouchIdAuth = true;
               security.pam.enableSudoTouchIdReattach = true;
+
+              programs.nix-index-database.comma.enable = true;
 
               environment.systemPackages = with pkgs; [
                 pam-reattach

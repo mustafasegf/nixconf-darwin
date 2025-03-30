@@ -193,7 +193,7 @@
 
       #auto
       cmp-tabnine
-      copilot-vim
+      # copilot-vim
       {
         plugin = nvim-autopairs;
         type = "lua";

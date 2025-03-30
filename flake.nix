@@ -175,6 +175,9 @@
               environment.systemPackages = with pkgs; [
                 hello
                 
+                pcsx2-bin
+                prometheus-alertmanager
+                prometheus
                 ## go
                 go
                 gofumpt
@@ -236,7 +239,7 @@
                 man-pages
                 man-pages-posix
                 jq
-                yq
+                yq-go
 
                 libiconv
 
@@ -268,7 +271,7 @@
                 # httpie
                 # inxi
                 # nmap
-                # p7zip
+                p7zip
                 # scrcpy
                 # trashy
                 # (pkgs.rustPlatform.buildRustPackage rec {
@@ -499,8 +502,8 @@
                 # xdg-user-dirs
                 # html-tidy
                 # pmutils
-                # rar
-                # unrar
+                rar
+                unrar
 
                 # there's cve
                 # unigine-valley

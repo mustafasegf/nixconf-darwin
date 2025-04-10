@@ -641,7 +641,7 @@
             };
             # nix-darwin specific configuration
             darwin = { pkgs, ... }: {
-              security.pam.enableSudoTouchIdAuth = true;
+              # security.pam.enableSudoTouchIdAuth = true;
               security.pam.enableSudoTouchIdReattach = true;
 
               programs.nix-index-database.comma.enable = true;

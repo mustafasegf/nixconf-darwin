@@ -77,45 +77,45 @@
                 self.nixosModules.terminal
                 self.nixosModules.minipc
                 ({ pkgs, lib, config, ... }: {
-		  boot.initrd.availableKernelModules = [ "ehci_pci" "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
-		  boot.initrd.kernelModules = [ ];
-		  boot.kernelModules = [ "kvm-amd" ];
-		  boot.extraModulePackages = [ ];
+                  boot.initrd.availableKernelModules = [ "ehci_pci" "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
+                  boot.initrd.kernelModules = [ ];
+                  boot.kernelModules = [ "kvm-amd" ];
+                  boot.extraModulePackages = [ ];
 
-		  boot.loader.efi.canTouchEfiVariables = true;
-		  boot.loader.grub.efiSupport = true;
-		  boot.loader.grub.device = "nodev";
+                  boot.loader.efi.canTouchEfiVariables = true;
+                  boot.loader.grub.efiSupport = true;
+                  boot.loader.grub.device = "nodev";
 
-		  fileSystems."/" =
-		    { device = "/dev/disk/by-uuid/0ed1f3c0-c49c-4ff6-bdbe-267bc24a997e";
-		      fsType = "ext4";
-		    };
+                  fileSystems."/" =
+                    { device = "/dev/disk/by-uuid/0ed1f3c0-c49c-4ff6-bdbe-267bc24a997e";
+                      fsType = "ext4";
+                    };
 
-		  fileSystems."/home" =
-		    { device = "/dev/disk/by-uuid/c85c9b61-643c-4c2e-addc-bbb937d64e16";
-		      fsType = "ext4";
-		    };
+                  fileSystems."/home" =
+                    { device = "/dev/disk/by-uuid/c85c9b61-643c-4c2e-addc-bbb937d64e16";
+                      fsType = "ext4";
+                    };
 
-		  fileSystems."/boot" =
-		    { device = "/dev/disk/by-uuid/2A6D-642D";
-		      fsType = "vfat";
-		      options = [ "fmask=0077" "dmask=0077" ];
-		    };
+                  fileSystems."/boot" =
+                    { device = "/dev/disk/by-uuid/2A6D-642D";
+                      fsType = "vfat";
+                      options = [ "fmask=0077" "dmask=0077" ];
+                    };
 
-		  swapDevices = [ ];
+                  swapDevices = [ ];
 
-		  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-		  # (the default) this is the recommended approach. When using systemd-networkd it's
-		  # still possible to use this option, but it's recommended to use it in conjunction
-		  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-		  networking.useDHCP = lib.mkDefault true;
-                  networking.hostName = "minipc";
+                  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+                  # (the default) this is the recommended approach. When using systemd-networkd it's
+                  # still possible to use this option, but it's recommended to use it in conjunction
+                  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+                  networking.useDHCP = lib.mkDefault true;
+                              networking.hostName = "minipc";
 
-		  # networking.interfaces.enp1s0f0.useDHCP = lib.mkDefault true;
-		  # networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
+                  # networking.interfaces.enp1s0f0.useDHCP = lib.mkDefault true;
+                  # networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
 
-		  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-		  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+                  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+                  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
                   system.stateVersion = "24.05";
                 })
                 # Your home-manager configuration
@@ -270,13 +270,32 @@
               services.k3s.enable = true;
               services.k3s.role = "server";
               services.k3s.extraFlags = toString [];
+
+              services.cloudflared = {
+                enable = true;
+                tunnels = {
+                  "minipc" = {
+                    credentialsFile = "/home/mustafa/.cloudflared/5d097ed3-3a0b-4540-a6c5-0d893c3fd004.json";
+                    default = "http_status:404";
+                    ingress = {
+                      "mus.sh" = "http://localhost:80";
+                    };
+                  };
+                };
+              };
             };
 
             minipc = { pkgs, ... }: {
               users.users.${myUserName} = {
                 isNormalUser = true;
+                shell = pkgs.zsh;
                 extraGroups = [ "wheel" ];
+
+                openssh.authorizedKeys.keys = [
+                  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNEKM6YnhuLcLfy5FkCt+rX1M10vMS00zynI6tsta1s mustafa.segf@gmail.com"
+                ];
               };
+
               services.openssh.enable = true;
               services.netdata.enable = true;
             };

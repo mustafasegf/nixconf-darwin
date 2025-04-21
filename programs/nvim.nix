@@ -70,11 +70,11 @@
         type = "lua";
       }
 
-      {
-        plugin = (pluginGit "nanotee" "sqls.nvim" "main"
-          "sha256-o5uD6shPkweuE+k/goBX42W3I2oojXVijfJC7L50sGU=");
-        type = "lua";
-      }
+      # {
+      #   plugin = (pluginGit "nanotee" "sqls.nvim" "main"
+      #     "sha256-o5uD6shPkweuE+k/goBX42W3I2oojXVijfJC7L50sGU=");
+      #   type = "lua";
+      # }
 
       #language spesific
       # {

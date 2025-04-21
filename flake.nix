@@ -39,7 +39,6 @@
         {
           # Configurations for Linux (NixOS) machines
           nixosConfigurations = {
-            # TODO: Change hostname from "example1" to something else.
             mustafa-pc = self.nixos-unified.lib.mkLinuxSystem 
               { home-manager = true; }
               {
@@ -63,6 +62,67 @@
                     imports = [
                       self.homeModules.common # See below for "homeModules"!
                       self.homeModules.linux
+                    ];
+                    home.stateVersion = "24.05";
+                  };
+                }
+              ];
+            };
+
+            minipc = self.nixos-unified.lib.mkLinuxSystem 
+              { home-manager = true; }
+              {
+              nixpkgs.hostPlatform = "x86_64-linux";
+              imports = [
+                self.nixosModules.terminal
+                self.nixosModules.minipc
+                ({ pkgs, lib, config, ... }: {
+		  boot.initrd.availableKernelModules = [ "ehci_pci" "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
+		  boot.initrd.kernelModules = [ ];
+		  boot.kernelModules = [ "kvm-amd" ];
+		  boot.extraModulePackages = [ ];
+
+		  boot.loader.efi.canTouchEfiVariables = true;
+		  boot.loader.grub.efiSupport = true;
+		  boot.loader.grub.device = "nodev";
+
+		  fileSystems."/" =
+		    { device = "/dev/disk/by-uuid/0ed1f3c0-c49c-4ff6-bdbe-267bc24a997e";
+		      fsType = "ext4";
+		    };
+
+		  fileSystems."/home" =
+		    { device = "/dev/disk/by-uuid/c85c9b61-643c-4c2e-addc-bbb937d64e16";
+		      fsType = "ext4";
+		    };
+
+		  fileSystems."/boot" =
+		    { device = "/dev/disk/by-uuid/2A6D-642D";
+		      fsType = "vfat";
+		      options = [ "fmask=0077" "dmask=0077" ];
+		    };
+
+		  swapDevices = [ ];
+
+		  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+		  # (the default) this is the recommended approach. When using systemd-networkd it's
+		  # still possible to use this option, but it's recommended to use it in conjunction
+		  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+		  networking.useDHCP = lib.mkDefault true;
+                  networking.hostName = "minipc";
+
+		  # networking.interfaces.enp1s0f0.useDHCP = lib.mkDefault true;
+		  # networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
+
+		  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+		  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+                  system.stateVersion = "24.05";
+                })
+                # Your home-manager configuration
+                {
+                  home-manager.users.${myUserName} = {
+                    imports = [
+                      self.homeModules.common
                     ];
                     home.stateVersion = "24.05";
                   };
@@ -155,6 +215,58 @@
             };
 
 
+            terminal = { pkgs, ... }: {
+              environment.systemPackages = with pkgs; [
+                hello
+		atuin
+                wget
+                fzf
+                fzf-zsh
+                zip
+                unzip
+                htop
+                gnused
+                lazygit
+                cowsay
+		cloc
+		gdu
+                ripgrep
+                hyfetch
+                fastfetch
+                uwufetch
+                man
+                man-pages
+                man-pages-posix
+                jq
+                yq-go
+                kubectl
+                kcat
+                grpcurl
+                teleport
+                unixtools.procps
+                pkgconf
+                kubectx
+
+                mosh
+	      ];
+
+              programs.zsh.enable = true;
+              nixpkgs.config.allowUnfree = true;
+              nixpkgs.config.allowUnsupportedSystem = true;
+              nixpkgs.config.allowBroken = true; 
+
+              services.tailscale.enable = true;
+	    };
+
+            minipc = { pkgs, ... }: {
+              users.users.${myUserName} = {
+                isNormalUser = true;
+                extraGroups = [ "wheel" ];
+              };
+              services.openssh.enable = true;
+              services.netdata.enable = true;
+            };
+
             # Common nixos/nix-darwin configuration shared between Linux and macOS.
             common = { pkgs, ... }: {
 
@@ -169,8 +281,7 @@
                 dina-font
                 proggyfonts
                 ibm-plex
-              ]  ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts)
-;
+              ]  ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
 
               environment.systemPackages = with pkgs; [
                 hello
@@ -631,7 +742,6 @@
               nixpkgs.config.allowBroken = true; 
 
               services.tailscale.enable = true;
-
             };
 
             # NixOS specific configuration

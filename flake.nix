@@ -254,7 +254,7 @@
 
                 rar
                 unrar
-	      ];
+              ];
 
               programs.zsh.enable = true;
               nixpkgs.config.allowUnfree = true;
@@ -262,7 +262,15 @@
               nixpkgs.config.allowBroken = true; 
 
               services.tailscale.enable = true;
-	    };
+
+              # k3 config
+              networking.firewall.allowedTCPPorts = [
+                6443
+              ];
+              services.k3s.enable = true;
+              services.k3s.role = "server";
+              services.k3s.extraFlags = toString [];
+            };
 
             minipc = { pkgs, ... }: {
               users.users.${myUserName} = {

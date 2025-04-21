@@ -87,37 +87,37 @@ local on_attach = function(client, bufnr)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>fo", ":lua vim.lsp.buf.format( {timeout_ms = 5000} )<CR>", opts)
 end
 
-local null_ls = require("null-ls")
-local formatting = null_ls.builtins.formatting
+-- local null_ls = require("null-ls")
+-- local formatting = null_ls.builtins.formatting
 
-require("null-ls").setup({
-	sources = {
-		formatting.stylua,
-		formatting.prettier,
-		-- formatting.gofumpt,
-		formatting.gofmt,
-		formatting.goimports,
-		formatting.jq,
-		formatting.black.with({
-			args = {
-				"--stdin-filename",
-				"$FILENAME",
-				"--quiet",
-				"-",
-				"--line-length",
-				"110",
-				"--skip-string-normalization",
-			},
-		}),
-		formatting.terrafmt,
-		formatting.clang_format,
-		formatting.shfmt,
-		formatting.fourmolu,
-		formatting.nixfmt,
-		formatting.cmake_format,
-		-- formatting.statix,
-	},
-})
+-- require("null-ls").setup({
+-- 	sources = {
+-- 		formatting.stylua,
+-- 		formatting.prettier,
+-- 		-- formatting.gofumpt,
+-- 		formatting.gofmt,
+-- 		formatting.goimports,
+-- 		formatting.jq,
+-- 		formatting.black.with({
+-- 			args = {
+-- 				"--stdin-filename",
+-- 				"$FILENAME",
+-- 				"--quiet",
+-- 				"-",
+-- 				"--line-length",
+-- 				"110",
+-- 				"--skip-string-normalization",
+-- 			},
+-- 		}),
+-- 		formatting.terrafmt,
+-- 		formatting.clang_format,
+-- 		formatting.shfmt,
+-- 		formatting.fourmolu,
+-- 		formatting.nixfmt,
+-- 		formatting.cmake_format,
+-- 		-- formatting.statix,
+-- 	},
+-- })
 
 -- vim.api.nvim_exec([[ autocmd BufWritePost,FileWritePost *.go execute 'PrettyTag' | checktime ]], false)
 

@@ -258,8 +258,8 @@
       }
 
       # check if terminal is xterm-ghostty. then run tmux
-      if [ "$TERM" = "xterm-ghostty" ]; then
-          tmux new -As0
+      if [ "$TERM" = "xterm-ghostty" ] || [[ "$TERM" == "xterm-256color" ]]; then
+        tmux new -As0
       fi
 
       function cdg() { cd "$(git rev-parse --show-toplevel)"  }
@@ -451,7 +451,7 @@
           name = "plugins/aws";
           tags = [ "from:oh-my-zsh" ];
         }
-        { name = "sobolevn/wakatime-zsh-plugin"; }
+        # { name = "sobolevn/wakatime-zsh-plugin"; }
         { name = "ellie/atuin"; }
       ];
     };

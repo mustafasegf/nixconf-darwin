@@ -217,8 +217,9 @@
 
             terminal = { pkgs, ... }: {
               environment.systemPackages = with pkgs; [
+                go
                 hello
-		atuin
+                atuin
                 wget
                 fzf
                 fzf-zsh
@@ -228,8 +229,9 @@
                 gnused
                 lazygit
                 cowsay
-		cloc
-		gdu
+                cloc
+                fd
+                gdu
                 ripgrep
                 hyfetch
                 fastfetch
@@ -248,6 +250,10 @@
                 kubectx
 
                 mosh
+                p7zip
+
+                rar
+                unrar
 	      ];
 
               programs.zsh.enable = true;

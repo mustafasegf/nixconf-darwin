@@ -248,6 +248,7 @@
                 unixtools.procps
                 pkgconf
                 kubectx
+                cloudflared
 
                 mosh
                 p7zip

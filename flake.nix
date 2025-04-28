@@ -263,13 +263,27 @@
 
               services.tailscale.enable = true;
 
+              services.zerotierone = {
+                enable = true;
+                joinNetworks = [
+                  "35c192ce9b045898" # home network
+                  "8850338390eddd9b" # minecraft
+                ];
+              };
+
               # k3 config
               networking.firewall.allowedTCPPorts = [
                 6443
               ];
-              services.k3s.enable = true;
-              services.k3s.role = "server";
-              services.k3s.extraFlags = toString [];
+
+              services.k3s = {
+                enable = true;
+                extraFlags = toString [];
+                role = "server";
+                manifests = {
+                  deployment.source = ./config/deployment/craftycontrol.yaml;
+                };
+              };
 
               services.cloudflared = {
                 enable = true;
@@ -279,6 +293,7 @@
                     default = "http_status:404";
                     ingress = {
                       "mus.sh" = "http://localhost:80";
+                      "mc.mus.sh" = "http://localhost:8443";
                     };
                   };
                 };

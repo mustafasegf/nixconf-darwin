@@ -226,7 +226,7 @@
         "
       '';
 
-    initExtraFirst = #bash
+    initContent = #bash
         ''
       source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
       unset -v SSH_ASKPASS
@@ -351,11 +351,11 @@
       grep = "rg";
       c = "clear";
 
-      ls = "lsd";
-      la = "ls -A";
+      # ls = "lsd";
+      # la = "ls -A";
       l = "ls -Alh";
-      ll = "ls -Al";
-      lt = "ls --tree";
+      # ll = "ls -Al";
+      # lt = "ls --tree";
       lta = "ls -A --tree";
 
       k = "kubectl";

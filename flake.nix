@@ -255,6 +255,7 @@
 
                 rar
                 unrar
+                kubernetes-helm
               ];
 
               programs.zsh.enable = true;
@@ -283,6 +284,17 @@
                 role = "server";
                 manifests = {
                   deployment.source = ./config/deployment/craftycontrol.yaml;
+                };
+                autoDeployCharts = {
+                  arc = {
+                    package = ./config/deployment/chart/gha-runner-scale-set-controller-0.11.0.tgz;
+                    # this don't works since oci don't supported yet
+                    # repo = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller";
+                    # name = "gha-runner-scale-set-controller";
+                    # version = "0.11.0";
+                    targetNamespace = "arc";
+                    createNamespace = true;
+                  };
                 };
               };
 

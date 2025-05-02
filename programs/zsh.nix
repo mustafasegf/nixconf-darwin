@@ -56,7 +56,7 @@
         # Path
         export PATH=$PATH:$CARGO_HOME/bin
         export PATH=$PATH:$RUSTUP_HOME:~/.rustup/toolchains/${RUSTC_VERSION}-${ARCH}/bin/
-        export PATH=$PATH:`go env GOPATH`/bin:/opt/homebrew/bin:/Users/mustafa.assagaf/Library/Python/3.9/bin
+        export PATH=$PATH:`go env GOPATH`/bin:/opt/homebrew/bin:~/Library/Python/3.9/bin
         export LIBRARY_PATH=$LIBRARY_PATH:${pkgs.libiconv}/lib
 
         # misc
@@ -236,7 +236,7 @@
       ZSH_TMUX_AUTOSTART=false
       ZSH_TMUX_AUTOSTART_ONCE=false
       ZSH_TMUX_AUTOCONNECT=true
-      ZSH_TMUX_CONFIG=/Users/mustafa.assagaf/.config/tmux/tmux.conf
+      ZSH_TMUX_CONFIG=~/.config/tmux/tmux.conf
 
       # vi mode config
       VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true

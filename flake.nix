@@ -126,6 +126,13 @@
                     ];
                     home.stateVersion = "24.05";
                   };
+
+                  home-manager.users."budak" = {
+                    imports = [
+                      self.homeModules.common
+                    ];
+                    home.stateVersion = "24.05";
+                  };
                 }
               ];
             };
@@ -216,6 +223,14 @@
 
 
             terminal = { pkgs, ... }: {
+              environment.variables = {
+                SUDO_EDITOR = "nvim";
+                EDITOR = "nvim";
+                VISUAL = "nvim";
+                PAGER = "less";
+                MANPAGER = "nvim +Man!";
+              };
+
               environment.systemPackages = with pkgs; [
                 go
                 hello
@@ -256,6 +271,7 @@
                 rar
                 unrar
                 kubernetes-helm
+                hollywood
               ];
 
               programs.zsh.enable = true;
@@ -276,6 +292,8 @@
               # k3 config
               networking.firewall.allowedTCPPorts = [
                 6443
+                8443
+                25565
               ];
 
               services.k3s = {
@@ -283,7 +301,7 @@
                 extraFlags = toString [];
                 role = "server";
                 manifests = {
-                  deployment.source = ./config/deployment/craftycontrol.yaml;
+                  # deployment.source = ./config/deployment/craftycontrol.yaml;
                 };
                 autoDeployCharts = {
                   arc = {
@@ -292,8 +310,25 @@
                     # repo = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller";
                     # name = "gha-runner-scale-set-controller";
                     # version = "0.11.0";
-                    targetNamespace = "arc";
+                    targetNamespace = "arc-systems";
                     createNamespace = true;
+                    # values = {
+                    #   fullnameOverride = "arc-controller";
+                    # };
+                  };
+
+                  arc-runner = {
+                    package = ./config/deployment/chart/gha-runner-scale-set-0.11.0.tgz;
+                    targetNamespace = "arc-runners";
+                    createNamespace = true;
+                    values = {
+                      githubConfigUrl = "http://github.com/mustafasegf";
+                      githubConfigSecret = "pre-defined-secret";
+                      controllerServiceAccount.namespace="arc-system";
+                      controllerServiceAccount.name="actions-runner-controller-gha-rs-controller";
+                      fullnameOverride = "arc-runner";
+                      runnerScaleSetName = "arc-runner";
+                    };
                   };
                 };
               };
@@ -317,7 +352,18 @@
               users.users.${myUserName} = {
                 isNormalUser = true;
                 shell = pkgs.zsh;
-                extraGroups = [ "wheel" ];
+                extraGroups = [ "wheel" "docker" ];
+
+                openssh.authorizedKeys.keys = [
+                  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNEKM6YnhuLcLfy5FkCt+rX1M10vMS00zynI6tsta1s mustafa.segf@gmail.com"
+                ];
+              };
+
+
+              users.users."budak" = {
+                isNormalUser = true;
+                shell = pkgs.zsh;
+                extraGroups = [ "wheel" "docker" ];
 
                 openssh.authorizedKeys.keys = [
                   "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNEKM6YnhuLcLfy5FkCt+rX1M10vMS00zynI6tsta1s mustafa.segf@gmail.com"
@@ -326,6 +372,22 @@
 
               services.openssh.enable = true;
               services.netdata.enable = true;
+              virtualisation.docker.enable = true;
+
+              environment.systemPackages = with pkgs; [
+                # jdk17
+                graalvm-ce
+                caddy
+                # python3
+                (python312.withPackages(ps: [
+                  ps.pip
+                ]))
+              ];
+
+              # nixpkgs.config.permittedInsecurePackages = [
+              #   "python-2.7.18.8"
+              # ];
+
             };
 
             # Common nixos/nix-darwin configuration shared between Linux and macOS.

@@ -68,6 +68,10 @@ kind: Deployment
 metadata:
   name: crafty-deployment
   namespace: minecraft
+  annotations:
+    traefik.http.routers.crafty.rule: "Host(`mc.mus.sh`)"
+    traefik.http.services.crafty.loadbalancer.server.port: "8443"
+    traefik.http.services.crafty.loadbalancer.server.scheme: "https"
 spec:
   replicas: 1
   selector:
@@ -152,6 +156,8 @@ spec:
     # depending on how Crafty uses it and whether you need external access.
     # If you need specific ports from this range, you can add them here individually.
   type: ClusterIP # Use LoadBalancer or NodePort if you need external access
+  externalIPs:
+    - 10.241.240.61
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -159,11 +165,13 @@ metadata:
   name: crafty-ingress
   namespace: minecraft
   annotations:
-    # K3s typically uses Traefik as the default ingress controller.
-    # These annotations are for Traefik.
-    ingress.kubernetes.io/ssl-redirect: "true" # Optional: Redirect HTTP to HTTPS
-    ingress.kubernetes.io/frontend-entrypoint: "websecure" # Or "web" if you're not using HTTPS
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure # Or "web"
+    ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/frontend-entrypoint: "web"
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    # traefik.enable: "true"
+    # traefik.http.routers.crafty.rule: "Host(`mc.mus.sh`)"
+    # traefik.http.services.crafty.loadbalancer.server.port: "8443"
+    # traefik.http.services.crafty.loadbalancer.server.scheme: "https"
 spec:
   rules:
   - host: mc.mus.sh
@@ -180,3 +188,13 @@ spec:
   # - hosts:
   #   - mc.mus.sh
   #   secretName: mc-mus-sh-tls # Create a Kubernetes Secret containing your TLS certificate and key
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    globalArguments:
+    - "--serversTransport.insecureSkipVerify=true"

@@ -210,7 +210,6 @@
 
           # All nixos/nix-darwin configurations are kept here.
           nixosModules = /* lua */ {
-
             nix.settings = {
               keep-outputs = true;
               keep-derivations = true;
@@ -489,6 +488,7 @@
                 unixtools.procps
                 pkgconf
                 kubectx
+                kubernetes-helm
 
                 mosh
 

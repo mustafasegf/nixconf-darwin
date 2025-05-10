@@ -391,6 +391,13 @@
 
             # Common nixos/nix-darwin configuration shared between Linux and macOS.
             common = { pkgs, ... }: {
+              environment.variables = {
+                SUDO_EDITOR = "nvim";
+                EDITOR = "nvim";
+                VISUAL = "nvim";
+                PAGER = "less";
+                MANPAGER = "nvim +Man!";
+              };
 
               fonts.packages = with pkgs; [
                 noto-fonts
@@ -408,6 +415,7 @@
               environment.systemPackages = with pkgs; [
                 hello
                 
+                mtr
                 pcsx2-bin
                 prometheus-alertmanager
                 prometheus
@@ -484,7 +492,7 @@
                 kubectl
                 kcat
                 grpcurl
-                teleport
+                teleport_16
                 unixtools.procps
                 pkgconf
                 kubectx

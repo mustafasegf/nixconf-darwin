@@ -338,11 +338,19 @@
         fi
       }
 
-        # Kubernetes
-        # function to grep resource and get only the name
-        function kgrep () {
-          kubectl get "$1" | grep "$2" | awk '{print $1}'
-        }
+      # Kubernetes
+      # function to grep resource and get only the name
+      function kgrep () {
+        kubectl get "$1" | grep "$2" | awk '{print $1}'
+      }
+
+      kpfz() {
+        query=$1
+        shift
+        pod=$(kubectl get pod --no-headers -o custom-columns=":metadata.name" | fzf --filter="$query" --select-1 --exit-0)
+        [ -n "$pod" ] && kubectl port-forward "$pod" "$@"
+      }
+
     '';
     shellAliases = {
       # update = "sudo nixos-rebuild switch";
@@ -362,9 +370,12 @@
       kl = "kubectl logs";
       klf = "kubectl logs -f";
       kg = "kubectl get";
+      kgp = "kubectl get pod";
       kd = "kubectl describe";
+      kdp = "kubectl describe pod";
       kpf = "kubectl port-forward";
       kctx = "kubectx";
+      kns = "kubens";
 
       g = "git";
       lg = "lazygit";

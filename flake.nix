@@ -6,6 +6,7 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    ucodenix.url = "github:e-tho/ucodenix";
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     homebrew-core = {
@@ -76,9 +77,11 @@
               imports = [
                 self.nixosModules.terminal
                 self.nixosModules.minipc
+                inputs.ucodenix.nixosModules.default
                 ({ pkgs, lib, config, ... }: {
                   boot.initrd.availableKernelModules = [ "ehci_pci" "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
                   boot.initrd.kernelModules = [ ];
+                  boot.kernelParams = ["processor.max_cstate=1"];
                   boot.kernelModules = [ "kvm-amd" ];
                   boot.extraModulePackages = [ ];
 
@@ -116,6 +119,7 @@
 
                   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
                   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+                  hardware.cpu.x86.msr.enable = true;
                   system.stateVersion = "24.05";
                 })
                 # Your home-manager configuration
@@ -271,6 +275,7 @@
                 unrar
                 kubernetes-helm
                 hollywood
+                zenstates
               ];
 
               programs.zsh.enable = true;
@@ -280,6 +285,8 @@
 
               services.tailscale.enable = true;
 
+              services.ucodenix.enable = true;
+
               services.zerotierone = {
                 enable = true;
                 joinNetworks = [
@@ -288,11 +295,24 @@
                 ];
               };
 
+              systemd.services.ryzen-disable-c6 = {
+                # enable = true;
+                description = "Ryzen Disable C6";
+                wantedBy = [ "basic.target" "suspend.target" "hibernate.target" ];
+                after = [ "sysinit.target" "local-fs.target" "suspend.target" "hibernate.target" ];
+                serviceConfig = {
+                  Type = "oneshot";
+                  ExecStart = [ "${pkgs.zenstates}/bin/zenstates --c6-disable" ];
+                };
+                # defaultDependencies = false;
+              };
+
               # k3 config
               networking.firewall.allowedTCPPorts = [
                 6443
                 8443
                 25565
+                8123
               ];
 
               services.k3s = {
@@ -300,7 +320,7 @@
                 extraFlags = toString [];
                 role = "server";
                 manifests = {
-                  # deployment.source = ./config/deployment/craftycontrol.yaml;
+                  deployment.source = ./config/deployment/craftycontrol.yaml;
                 };
                 autoDeployCharts = {
                   arc = {
@@ -381,6 +401,28 @@
                 (python312.withPackages(ps: [
                   ps.pip
                 ]))
+                (pkgs.rustPlatform.buildRustPackage rec {
+                  pname = "trashy";
+                  version = "c95b22";
+
+                  src = fetchFromGitHub {
+                    owner = "oberblastmeister";
+                    repo = "trashy";
+                    rev = "c95b22c0522f616b8700821540a1e58edcf709eb";
+                    hash = "sha256-O4r/bfK33hJ6w7+p+8uqEdREGUhcaEg+Zjh/T7Bm6sY=";
+                  };
+
+                  cargoHash = "sha256-qrqhIT7FKcRmz9AWAvdbPi1uzVpkGXBJefr3y06n9F0=";
+
+                  nativeBuildInputs = [ installShellFiles ];
+
+                  preFixup = ''
+                    installShellCompletion --cmd trash \
+                      --bash <($out/bin/trash completions bash) \
+                      --fish <($out/bin/trash completions fish) \
+                      --zsh <($out/bin/trash completions zsh) \
+                  '';
+                })
               ];
 
               # nixpkgs.config.permittedInsecurePackages = [

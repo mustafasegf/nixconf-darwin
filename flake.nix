@@ -390,7 +390,7 @@
             };
 
             # Common nixos/nix-darwin configuration shared between Linux and macOS.
-            common = { pkgs, ... }: {
+            common = { pkgs, system, ... }: {
               environment.variables = {
                 SUDO_EDITOR = "nvim";
                 EDITOR = "nvim";
@@ -506,7 +506,7 @@
                 # ffmpegthumbnailer
                 # flameshot
                 # git-annex
-                # glab
+                glab
                 # gitbutler
                 google-cloud-sdk
                 # handbrake

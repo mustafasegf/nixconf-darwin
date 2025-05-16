@@ -376,6 +376,7 @@
       kpf = "kubectl port-forward";
       kctx = "kubectx";
       kns = "kubens";
+      gl = "GITLAB_HOST=source.golabs.io glab";
 
       g = "git";
       lg = "lazygit";

@@ -457,6 +457,8 @@
               environment.systemPackages = with pkgs; [
                 hello
                 
+                moreutils
+                android-tools
                 mtr
                 pcsx2-bin
                 prometheus-alertmanager
@@ -556,7 +558,7 @@
                 # inxi
                 # nmap
                 p7zip
-                # scrcpy
+                scrcpy
                 # trashy
                 # (pkgs.rustPlatform.buildRustPackage rec {
                 #   pname = "trashy";
@@ -672,7 +674,7 @@
                 # nodePackages.sass
                 # nodePackages.vercel
                 
-                # slack
+                slack
                 # zoom-us
                 # tdesktop
                 discord
@@ -843,7 +845,7 @@
                 # ascii-image-converter
                 # atlas
                 # postgresql
-                # dive
+                dive
                 # w3m
                 # cargo-watch
                 # yazi

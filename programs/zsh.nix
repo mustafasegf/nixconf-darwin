@@ -269,6 +269,7 @@
       function gc (){git commit -am "$@"}
       function ga (){git add "$@"}
       function gs (){git switch "$@"}
+      function gsc (){git switch -c "$@"}
       function gm (){git merge "$@"}
       function gcb (){git checkout -b "$@"}
       function gca (){git commit --amend --no-edit -m "$@"}
@@ -282,14 +283,13 @@
       function gpu (){git push upstream "$@"}
       function gplu (){git pull upstream  "$@"}
 
+      function gsm (){gs "$(basename `git symbolic-ref refs/remotes/origin/HEAD`)"}
 
-      function gsm (){gs "master"}
+      function gpom (){gpo "$(basename `git symbolic-ref refs/remotes/origin/HEAD`)"}
+      function gpum (){gpu "$(basename `git symbolic-ref refs/remotes/origin/HEAD`)"}
 
-      function gpom (){gpo "master"}
-      function gpum (){gpu "master"}
-
-      function gplom (){gplo "master"}
-      function gplum (){gplu "master"}
+      function gplom (){gplo "$(basename `git symbolic-ref refs/remotes/origin/HEAD`)"}
+      function gplum (){gplu "$(basename `git symbolic-ref refs/remotes/origin/HEAD`)"}
 
       function gplob (){gplo "$(git symbolic-ref --short HEAD)"}
       function gplub (){gplu "$(git symbolic-ref --short HEAD)"}

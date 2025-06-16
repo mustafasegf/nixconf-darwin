@@ -456,7 +456,10 @@
 
               environment.systemPackages = with pkgs; [
                 hello
-                
+
+                kustomize
+                uv
+                pdftk
                 moreutils
                 android-tools
                 mtr
@@ -472,6 +475,7 @@
                 gotestsum
                 golangci-lint
                 go-tools
+                bun
 
                 ## java
                 jdk

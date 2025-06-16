@@ -145,7 +145,7 @@ capabilities.textDocument.foldingRange = {
 -- 	"autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer({ sources = {{ name = 'vim-dadbod-completion' }} })"
 -- )
 
-require("lsp-inlayhints").setup()
+-- require("lsp-inlayhints").setup()
 vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = "LspAttach_inlayhints",

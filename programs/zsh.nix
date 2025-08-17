@@ -57,6 +57,7 @@
         export PATH=$PATH:$CARGO_HOME/bin
         export PATH=$PATH:$RUSTUP_HOME:~/.rustup/toolchains/${RUSTC_VERSION}-${ARCH}/bin/
         export PATH=$PATH:`go env GOPATH`/bin:/opt/homebrew/bin:~/Library/Python/3.9/bin
+        export PATH=$PATH:~/.cache/.bun/bin
         export LIBRARY_PATH=$LIBRARY_PATH:${pkgs.libiconv}/lib
 
         # misc

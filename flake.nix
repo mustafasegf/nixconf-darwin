@@ -457,6 +457,24 @@
               environment.systemPackages = with pkgs; [
                 hello
 
+                # ((pkgs.vscode.override { isInsiders = true; }).overrideAttrs (oldAttrs: rec {
+                #   src = (builtins.fetchTarball {
+                #     url = "https://code.visualstudio.com/sha/download?build=insider&os=linux-x64";
+                #     sha256 = "1c52rrw24gdn5aq9159psjcqd5ajwq66grl4nbwwcxhn3clddjln";
+                #   });
+                #   version = "latest";
+                #
+                #   buildInputs = oldAttrs.buildInputs ++ [ pkgs.krb5 ];
+                # }))
+
+                # vllm # broken
+                krew
+                ossutil
+                # claude-code
+                confluent-platform
+                ast-grep
+                k9s
+                code-cursor
                 kustomize
                 uv
                 pdftk

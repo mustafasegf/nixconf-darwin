@@ -468,20 +468,23 @@
                 # }))
 
                 # vllm # broken
+                terragrunt
+                opentofu
+                wireguard-tools
                 krew
                 ossutil
                 # claude-code
                 confluent-platform
                 ast-grep
                 k9s
-                code-cursor
+                # code-cursor
                 kustomize
                 uv
                 pdftk
                 moreutils
                 android-tools
                 mtr
-                pcsx2-bin
+                # pcsx2-bin
                 prometheus-alertmanager
                 prometheus
                 ## go
@@ -957,7 +960,8 @@
                 pam-reattach
                 hexfiend
                 keycastr
-                raycast
+                # raycast
+                cyberduck
               ];
               users.users.${macUserName}.home = "/users/${macUserName}";
               # nix.useDaemon = true;

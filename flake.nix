@@ -21,6 +21,9 @@
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
+    nix-ld.url = "github:Mic92/nix-ld";
+    nix-ld.inputs.nixpkgs.follows = "nixpkgs";
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixos-unified.url = "github:srid/nixos-unified";
   };
@@ -78,6 +81,7 @@
                 self.nixosModules.terminal
                 self.nixosModules.minipc
                 inputs.ucodenix.nixosModules.default
+                inputs.nix-ld.nixosModules.nix-ld
                 ({ pkgs, lib, config, ... }: {
                   boot.initrd.availableKernelModules = [ "ehci_pci" "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
                   boot.initrd.kernelModules = [ ];
@@ -391,12 +395,30 @@
 
               services.openssh.enable = true;
               services.netdata.enable = true;
+
               virtualisation.docker.enable = true;
+
+              programs.nix-ld.dev.enable = true;
+              programs.nix-ld.libraries = with pkgs; [
+                # toolchain + basics
+                stdenv.cc.cc
+                glibc
+                zlib
+                openssl
+                curl
+                nss
+                nspr
+                expat
+                icu
+                fuse3
+              ];
 
               environment.systemPackages = with pkgs; [
                 # jdk17
                 graalvm-ce
                 caddy
+                bun
+                nodePackages.nodejs
                 # python3
                 (python312.withPackages(ps: [
                   ps.pip

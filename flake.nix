@@ -155,7 +155,7 @@
 
               imports = [
                 ./pam-reattach.nix
-                self.nixosModules.common # See below for "nixosModules"!
+                self.darwinModules.common # Use darwinModules instead of nixosModules
                 inputs.nix-homebrew.darwinModules.nix-homebrew
                 inputs.nix-index-database.darwinModules.nix-index
                 {
@@ -182,7 +182,7 @@
                   };
                 }
 
-                self.nixosModules.darwin
+                self.darwinModules.darwin
                 # Your machine's configuration.nix goes here
                 ({ pkgs, ... }: {
                   # Used for backwards compatibility, please read the changelog before changing.
@@ -987,6 +987,214 @@
               ];
               users.users.${macUserName}.home = "/users/${macUserName}";
               # nix.useDaemon = true;
+            };
+          };
+
+          # Darwin-specific modules (for macOS configurations)
+          darwinModules = {
+            # Common darwin configuration shared for macOS
+            common = { pkgs, lib, ... }: {
+              environment.variables = {
+                SUDO_EDITOR = "nvim";
+                EDITOR = "nvim";
+                VISUAL = "nvim";
+                PAGER = "less";
+                MANPAGER = "nvim +Man!";
+              };
+
+              fonts.packages = with pkgs; [
+                noto-fonts
+                noto-fonts-cjk-sans
+                noto-fonts-emoji
+                liberation_ttf
+                fira-code
+                fira-code-symbols
+                mplus-outline-fonts.githubRelease
+                dina-font
+                proggyfonts
+                ibm-plex
+              ]  ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+
+              environment.systemPackages = with pkgs; [
+                hello
+                terragrunt
+                opentofu
+                wireguard-tools
+                krew
+                ossutil
+                confluent-platform
+                ast-grep
+                k9s
+                kustomize
+                uv
+                pdftk
+                moreutils
+                android-tools
+                mtr
+                prometheus-alertmanager
+                prometheus
+                ## go
+                go
+                gofumpt
+                gopls
+                gotools
+                delve
+                gotestsum
+                golangci-lint
+                go-tools
+                bun
+
+                ## java
+                jdk
+                jdt-language-server
+                maven
+                gradle
+
+                iterm2
+                kitty
+                wget
+                fzf
+                fzf-zsh
+
+                ## nix
+                comma
+                direnv
+                nix-direnv
+                nix-index
+                devenv
+
+                zip
+                unzip
+                htop
+                gnused
+
+                lf
+                atuin
+                neofetch
+
+                lazygit
+                cowsay
+                gh-copilot
+                air
+                cloc
+                fd
+                gdu
+                ripgrep
+
+                hyfetch
+                fastfetch
+                uwufetch
+
+                man
+                man-pages
+                man-pages-posix
+                jq
+                yq-go
+
+                libiconv
+
+                postman
+                speedtest-cli
+                xcodes
+                git-filter-repo
+
+                kubectl
+                kcat
+                grpcurl
+                teleport_16
+                unixtools.procps
+                pkgconf
+                kubectx
+                kubernetes-helm
+
+                mosh
+
+                glab
+                google-cloud-sdk
+                p7zip
+                scrcpy
+                poetry
+                rustup
+                nodejs
+                nodePackages.npm
+                nodePackages.pnpm
+                
+                slack
+                discord
+
+                black
+                stylua
+                shfmt
+
+                pyright
+                nodePackages.typescript-language-server
+                tflint
+                nodePackages.vscode-langservers-extracted
+                nodePackages_latest."@tailwindcss/language-server"
+                taplo
+                nodePackages.graphql-language-service-cli
+                sqls
+                nodePackages.svelte-language-server
+                nodePackages."@astrojs/language-server"
+                emmet-ls
+                sumneko-lua-language-server
+                nodePackages.bash-language-server
+
+                tailscale
+                dbeaver-bin
+                rclone
+
+                gcc
+                gdb
+                k6
+                semgrep
+                tig
+
+                scc
+
+                hexedit
+                nasm
+                bear
+                zerotierone
+                tree
+                cookiecutter
+
+                protobuf
+                grpc-tools
+                protoc-gen-go
+                protoc-gen-doc
+
+                termshark
+                wireshark
+                yarn
+
+                dive
+
+                inetutils
+                rar
+                unrar
+              ];
+              programs.zsh.enable = true;
+              nixpkgs.config.allowUnfree = true;
+              nixpkgs.config.allowUnsupportedSystem = true;
+              nixpkgs.config.allowBroken = true; 
+
+              services.tailscale.enable = true;
+            };
+
+            # nix-darwin specific configuration
+            darwin = { pkgs, ... }: {
+              security.pam.enableSudoTouchIdReattach = true;
+
+              programs.nix-index-database.comma.enable = true;
+
+              environment.systemPackages = with pkgs; [
+                pam-reattach
+                hexfiend
+                keycastr
+                cyberduck
+              ];
+              users.users.${macUserName}.home = "/users/${macUserName}";
             };
           };
 

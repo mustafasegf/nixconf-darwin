@@ -12,53 +12,54 @@
 -- })
 
 local source_mapping = {
-	luasnip = "[Snip]",
-	-- cmp_tabnine = "[TN]",
+  luasnip = "[Snip]",
+  -- cmp_tabnine = "[TN]",
   ["vim-dadbod-completion"] = "[DB]",
-	nvim_lsp = "[LSP]",
-	otter = "[Otter]",
-	buffer = "[Buff]",
-	path = "[Path]",
+  nvim_lsp = "[LSP]",
+  otter = "[Otter]",
+  buffer = "[Buff]",
+  path = "[Path]",
 }
 
 local lspkind = require("lspkind")
 local cmp = require("cmp")
+local lsp = require("lspconfig")
 
 cmp.setup({
-	snippet = {
-		expand = function(args)
-			require("luasnip").lsp_expand(args.body)
-		end,
-	},
-	mapping = cmp.mapping.preset.insert({
-		["<C-b>"] = cmp.mapping.scroll_docs(-4),
-		["<C-f>"] = cmp.mapping.scroll_docs(4),
-		["<C-Space>"] = cmp.mapping.complete(),
-		["<C-e>"] = cmp.mapping.abort(),
-		["<CR>"] = cmp.mapping.confirm({ select = false }),
-	}),
-	sources = cmp.config.sources({
-		{ name = "otter" },
-		{ name = "vim-dadbod-completion" },
-		{ name = "luasnip" },
-		-- { name = "cmp_tabnine" },
-		{ name = "nvim_lsp" },
-		{ name = "buffer" },
-	}),
-	formatting = {
-		format = function(entry, vim_item)
-			vim_item.kind = lspkind.presets.default[vim_item.kind]
-			local menu = source_mapping[entry.source.name]
-			-- if entry.source.name == "cmp_tabnine" then
-			-- 	if entry.completion_item.data ~= nil and entry.completion_item.data.detail ~= nil then
-			-- 		menu = entry.completion_item.data.detail .. " " .. menu
-			-- 	end
-			-- 	vim_item.kind = ""
-			-- end
-			vim_item.menu = menu
-			return vim_item
-		end,
-	},
+  snippet = {
+    expand = function(args)
+      require("luasnip").lsp_expand(args.body)
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<C-e>"] = cmp.mapping.abort(),
+    ["<CR>"] = cmp.mapping.confirm({ select = false }),
+  }),
+  sources = cmp.config.sources({
+    { name = "otter" },
+    { name = "vim-dadbod-completion" },
+    { name = "luasnip" },
+    -- { name = "cmp_tabnine" },
+    { name = "nvim_lsp" },
+    { name = "buffer" },
+  }),
+  formatting = {
+    format = function(entry, vim_item)
+      vim_item.kind = lspkind.presets.default[vim_item.kind]
+      local menu = source_mapping[entry.source.name]
+      -- if entry.source.name == "cmp_tabnine" then
+      -- 	if entry.completion_item.data ~= nil and entry.completion_item.data.detail ~= nil then
+      -- 		menu = entry.completion_item.data.detail .. " " .. menu
+      -- 	end
+      -- 	vim_item.kind = ""
+      -- end
+      vim_item.menu = menu
+      return vim_item
+    end,
+  },
 })
 
 local opts = { noremap = true, silent = true }
@@ -68,67 +69,67 @@ vim.api.nvim_set_keymap("n", "]d", ":lua vim.diagnostic.goto_next()<CR>", opts)
 vim.api.nvim_set_keymap("n", "<space>q", ":lua vim.diagnostic.setloclist()<CR>", opts)
 
 local on_attach = function(client, bufnr)
-	vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", ":lua vim.lsp.buf.declaration()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", ":lua vim.lsp.buf.definition()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "gvd", ":vsplit <CR><C-w>l:lua vim.lsp.buf.definition()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "gsd", ":split <CR><C-w>l:lua vim.lsp.buf.definition()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "K", ":lua vim.lsp.buf.hover()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", ":lua vim.lsp.buf.implementation()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-q>", ":lua vim.lsp.buf.signature_help()<CR>", opts)
-	--[[ vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', ':lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "gD", ":lua vim.lsp.buf.declaration()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "gd", ":lua vim.lsp.buf.definition()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "gvd", ":vsplit <CR><C-w>l:lua vim.lsp.buf.definition()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "gsd", ":split <CR><C-w>l:lua vim.lsp.buf.definition()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "K", ":lua vim.lsp.buf.hover()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", ":lua vim.lsp.buf.implementation()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-q>", ":lua vim.lsp.buf.signature_help()<CR>", opts)
+  --[[ vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', ':lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
               vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', ':lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
               vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', ':lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts) ]]
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>D", ":lua vim.lsp.buf.type_definition()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>rn", ":lua vim.lsp.buf.rename()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>ca", ":lua vim.lsp.buf.code_action()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", ":lua vim.lsp.buf.references()<CR>", opts)
-	vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>fo", ":lua vim.lsp.buf.format( {timeout_ms = 5000} )<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>D", ":lua vim.lsp.buf.type_definition()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>rn", ":lua vim.lsp.buf.rename()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>ca", ":lua vim.lsp.buf.code_action()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "gr", ":lua vim.lsp.buf.references()<CR>", opts)
+  vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>fo", ":lua vim.lsp.buf.format( {timeout_ms = 5000} )<CR>", opts)
 end
 
 local null_ls = require("null-ls")
 local formatting = null_ls.builtins.formatting
 
 null_ls.setup({
-	sources = {
-		formatting.stylua,
-		formatting.prettier,
-		-- formatting.gofumpt,
-		formatting.gofmt,
-		formatting.goimports,
-		formatting.black.with({
-			args = {
-				"--stdin-filename",
-				"$FILENAME",
-				"--quiet",
-				"-",
-				"--line-length",
-				"110",
-				"--skip-string-normalization",
-			},
-		}),
-		formatting.clang_format,
-		formatting.shfmt,
-		formatting.nixfmt,
-		formatting.cmake_format,
-		-- formatting.statix,
-	},
+  on_attach = on_attach,
+  sources = {
+    formatting.stylua,
+    formatting.prettier,
+    -- formatting.gofumpt,
+    formatting.gofmt,
+    formatting.goimports,
+    formatting.black.with({
+      args = {
+        "--stdin-filename",
+        "$FILENAME",
+        "--quiet",
+        "-",
+        "--line-length",
+        "110",
+        "--skip-string-normalization",
+      },
+    }),
+    formatting.clang_format,
+    formatting.shfmt,
+    formatting.nixfmt,
+    formatting.cmake_format,
+    -- formatting.statix,
+  },
 })
 
 -- vim.api.nvim_exec([[ autocmd BufWritePost,FileWritePost *.go execute 'PrettyTag' | checktime ]], false)
 
-vim.lsp.config('diagnosticls', {
-	cmd = { 'diagnostic-languageserver', '--stdio' },
-	root_markers = { '.git/' },
-	capabilities = capabilities,
+lsp.diagnosticls.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
 })
 
 -- Setup lspconfig.
 local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 capabilities.textDocument.foldingRange = {
-	dynamicRegistration = false,
-	lineFoldingOnly = true,
+  dynamicRegistration = false,
+  lineFoldingOnly = true,
 }
 -- local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
 -- for _, ls in ipairs(language_servers) do
@@ -146,61 +147,53 @@ capabilities.textDocument.foldingRange = {
 -- require("lsp-inlayhints").setup()
 vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
 vim.api.nvim_create_autocmd("LspAttach", {
-	group = "LspAttach_inlayhints",
-	callback = function(args)
-		if not (args.data and args.data.client_id) then
-			return
-		end
+  group = "LspAttach_inlayhints",
+  callback = function(args)
+    if not (args.data and args.data.client_id) then
+      return
+    end
 
-		local bufnr = args.buf
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
+    local bufnr = args.buf
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-		vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>h", ":lua require('lsp-inlayhints').toggle()<CR>", opts)
-		require("lsp-inlayhints").on_attach(client, bufnr)
-	end,
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>h", ":lua require('lsp-inlayhints').toggle()<CR>", opts)
+    require("lsp-inlayhints").on_attach(client, bufnr)
+  end,
 })
 
 local servers = {
-	{ name = "clangd", cmd = { "clangd" } },
-	{ name = "hls", cmd = { "haskell-language-server-wrapper", "--lsp" } },
-	{ name = "gopls", cmd = { "gopls" } },
-	{ name = "pyright", cmd = { "pyright-langserver", "--stdio" } },
-	{ name = "tflint", cmd = { "tflint", "--langserver" } },
-	{ name = "yamlls", cmd = { "yaml-language-server", "--stdio" } },
-	{ name = "vimls", cmd = { "vim-language-server", "--stdio" } },
-	{ name = "texlab", cmd = { "texlab" } },
-	{ name = "html", cmd = { "vscode-html-language-server", "--stdio" } },
-	{ name = "emmet_ls", cmd = { "emmet-ls", "--stdio" } },
-	{ name = "tailwindcss", cmd = { "tailwindcss-language-server", "--stdio" } },
-	{ name = "taplo", cmd = { "taplo", "lsp", "stdio" } },
-	{ name = "graphql", cmd = { "graphql-lsp", "server", "-m", "stream" } },
-	{ name = "dockerls", cmd = { "docker-langserver", "--stdio" } },
-	{ name = "bashls", cmd = { "bash-language-server", "start" } },
-	{ name = "svelte", cmd = { "svelteserver", "--stdio" } },
-	{ name = "astro", cmd = { "astro-ls", "--stdio" } },
-	{ name = "prismals", cmd = { "prisma-language-server", "--stdio" } },
-	{ name = "ocamllsp", cmd = { "ocamllsp" } },
-	{ name = "nixd", cmd = { "nixd" } },
-	{ name = "wgsl_analyzer", cmd = { "wgsl_analyzer" } },
-	{ name = "quick_lint_js", cmd = { "quick-lint-js", "--lsp-server" } },
-	{ name = "intelephense", cmd = { "intelephense", "--stdio" } },
-	{ name = "cmake", cmd = { "cmake-language-server" } },
+  "clangd",
+  "hls",
+  "gopls",
+  "pyright",
+  "tflint",
+  "yamlls",
+  "vimls",
+  "texlab",
+  "html",
+  "emmet_ls",
+  "tailwindcss",
+  "taplo",
+  "graphql",
+  "dockerls",
+  "bashls",
+  "svelte",
+  "astro",
+  "prismals",
+  "ocamllsp",
+  "nixd",
+  "wgsl_analyzer",
+  "quick_lint_js",
+  "intelephense",
+  "cmake",
+  "lua_ls",
 }
 
 for _, server in ipairs(servers) do
-	vim.lsp.config(server.name, {
-		cmd = server.cmd,
-		root_markers = { '.git/' },
-		capabilities = capabilities,
-	})
-	vim.api.nvim_create_autocmd('LspAttach', {
-		callback = function(args)
-			local client = vim.lsp.get_client_by_id(args.data.client_id)
-			if client.name == server.name then
-				on_attach(client, args.buf)
-			end
-		end,
-	})
+  lsp[server].setup({
+    capabilities = capabilities,
+    on_attach = on_attach,
+  })
 end
 
 -- Update this path
@@ -211,11 +204,11 @@ local this_os = vim.loop.os_uname().sysname
 
 -- The path in windows is different
 if this_os:find("Windows") then
-	codelldb_path = extension_path .. "adapter\\codelldb.exe"
-	liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
+  codelldb_path = extension_path .. "adapter\\codelldb.exe"
+  liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
 else
-	-- The liblldb extension is .so for linux and .dylib for macOS
-	liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
+  -- The liblldb extension is .so for linux and .dylib for macOS
+  liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
 end
 
 -- require("rust-tools").setup({
@@ -233,65 +226,47 @@ end
 -- 	},
 -- })
 
-vim.lsp.config('ts_ls', {
-	cmd = { 'typescript-language-server', '--stdio' },
-	root_markers = { 'package.json', 'tsconfig.json', 'jsconfig.json', '.git/' },
-	capabilities = capabilities,
-	settings = {
-		typescript = {
-			inlayHints = {
-				includeInlayParameterNameHints = "all",
-				includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-				includeInlayFunctionParameterTypeHints = true,
-				includeInlayVariableTypeHints = true,
-				includeInlayPropertyDeclarationTypeHints = true,
-				includeInlayFunctionLikeReturnTypeHints = true,
-				includeInlayEnumMemberValueHints = true,
-			},
-		},
-		javascript = {
-			inlayHints = {
-				includeInlayParameterNameHints = "all",
-				includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-				includeInlayFunctionParameterTypeHints = true,
-				includeInlayVariableTypeHints = true,
-				includeInlayPropertyDeclarationTypeHints = true,
-				includeInlayFunctionLikeReturnTypeHints = true,
-				includeInlayEnumMemberValueHints = true,
-			},
-		},
-	},
+lsp.ts_ls.setup({
+  capabilities = capabilities,
+  on_attach = function(c, b)
+    on_attach(c, b)
+  end,
+  settings = {
+    typescript = {
+      inlayHints = {
+        includeInlayParameterNameHints = "all",
+        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeInlayPropertyDeclarationTypeHints = true,
+        includeInlayFunctionLikeReturnTypeHints = true,
+        includeInlayEnumMemberValueHints = true,
+      },
+    },
+    javascript = {
+      inlayHints = {
+        includeInlayParameterNameHints = "all",
+        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeInlayPropertyDeclarationTypeHints = true,
+        includeInlayFunctionLikeReturnTypeHints = true,
+        includeInlayEnumMemberValueHints = true,
+      },
+    },
+  },
 })
 
-vim.api.nvim_create_autocmd('LspAttach', {
-	callback = function(args)
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
-		if client.name == 'ts_ls' then
-			on_attach(client, args.buf)
-		end
-	end,
-})
-
-vim.lsp.config('jsonls', {
-	cmd = { 'vscode-json-language-server', '--stdio' },
-	root_markers = { '.git/' },
-	capabilities = capabilities,
-	commands = {
-		Format = {
-			function()
-				vim.lsp.buf.range_formatting({}, { 0, 0 }, { vim.fn.line("$"), 0 })
-			end,
-		},
-	},
-})
-
-vim.api.nvim_create_autocmd('LspAttach', {
-	callback = function(args)
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
-		if client.name == 'jsonls' then
-			on_attach(client, args.buf)
-		end
-	end,
+lsp.jsonls.setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  commands = {
+    Format = {
+      function()
+        vim.lsp.buf.range_formatting({}, { 0, 0 }, { vim.fn.line("$"), 0 })
+      end,
+    },
+  },
 })
 
 -- local jdtls = require('jdtls')

@@ -26,6 +26,33 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixos-unified.url = "github:srid/nixos-unified";
+
+    # Vim plugins from flake inputs
+    # prefix "vimPlugins_"
+    vimPlugins_lsp-inlayhints = {
+      url = "github:lvimuser/lsp-inlayhints.nvim";
+      flake = false;
+    };
+    vimPlugins_rainbow-csv = {
+      url = "github:mechatroner/rainbow_csv/3dbbfd7d17536aebfb80f571255548495574c32b";
+      flake = false;
+    };
+    vimPlugins_blamer = {
+      url = "github:APZelos/blamer.nvim";
+      flake = false;
+    };
+    vimPlugins_vim-maximizer = {
+      url = "github:szw/vim-maximizer";
+      flake = false;
+    };
+    vimPlugins_opencode = {
+      url = "github:nickjvandyke/opencode.nvim";
+      flake = false;
+    };
+    vimPlugins_twoslash-queries = {
+      url = "github:marilari88/twoslash-queries.nvim/b92622c7b71eceefabd02eef24236041069904b1";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, ... }:
@@ -1269,15 +1296,18 @@
               programs.zsh.enable = true;
 
               imports = [
-                (import ./programs/btop.nix)
-                (import ./programs/kitty.nix)
-                # (import ./programs/mimeapps.nix)
-                (import ./programs/nvim.nix)
-                # (import ./programs/rofi.nix)
-                (import ./programs/tmux.nix)
-                (import ./programs/zsh.nix)
-                # (import ./programs/vscode.nix)
+                ./programs/btop.nix
+                ./programs/kitty.nix
+                # ./programs/mimeapps.nix
+                ./programs/nvim.nix
+                # ./programs/rofi.nix
+                ./programs/tmux.nix
+                ./programs/zsh.nix
+                # ./programs/vscode.nix
               ];
+
+              # Make inputs available to all modules
+              _module.args = { inherit inputs; };
 
               programs.direnv = {
                 enable = true;

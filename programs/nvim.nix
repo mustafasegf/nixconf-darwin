@@ -1,4 +1,4 @@
-{ config, pkgs, libs, ... }: {
+{ config, pkgs, libs, inputs, ... }: {
 
   programs.neovim = {
     enable = true;
@@ -6,18 +6,8 @@
     vimAlias = true;
 
     plugins = let
-      pluginGit = owner: repo: rev: sha256:
-        pkgs.vimUtils.buildVimPlugin {
-
-          pname = repo;
-          version = rev;
-          src = pkgs.fetchFromGitHub {
-            owner = owner;
-            repo = repo;
-            rev = rev;
-            sha256 = sha256;
-          };
-        };
+      # Build all vim plugins from flake inputs with "vimPlugins_" prefix
+      customPlugins = import ../lib/mkFlake2VimPlugin.nix inputs pkgs;
 
       keymapConfig = pkgs.vimUtils.buildVimPlugin {
         name = "keymap-config";
@@ -65,8 +55,7 @@
       nvim-jdtls
 
       {
-        plugin = (pluginGit "lvimuser" "lsp-inlayhints.nvim" "master"
-          "0fx0swsagjdng9m9x73wkfqnk464qk63q9wi32rhywllbm7gsflf");
+        plugin = customPlugins.lsp-inlayhints;
         type = "lua";
       }
 
@@ -83,8 +72,7 @@
       #   type = "lua";
       # }
       {
-        plugin = (pluginGit "mechatroner" "rainbow_csv" "3dbbfd7d17536aebfb80f571255548495574c32b"
-          "Zf9VdRu/OF9h4AffOSAdM/Ypnla2wUp/iho3CV2YsH0=");
+        plugin = customPlugins.rainbow-csv;
       }
       # {
       #   plugin = (pluginGit "kiyoon" "jupynium.nvim" "master"
@@ -157,8 +145,7 @@
       octo-nvim
       vim-fugitive
       {
-        plugin = (pluginGit "APZelos" "blamer.nvim" "master"
-          "etLCmzOMi7xjYc43ZBqjPnj2gqrrSbmtcKdw6eZT8rM=");
+        plugin = customPlugins.blamer;
         type = "lua";
       }
       {
@@ -261,8 +248,7 @@
       telescope-dap-nvim
       nvim-dap-go
       {
-        plugin = (pluginGit "szw" "vim-maximizer" "master"
-          "+VPcMn4NuxLRpY1nXz7APaXlRQVZD3Y7SprB/hvNKww=");
+        plugin = customPlugins.vim-maximizer;
       }
 
       #misc
@@ -293,8 +279,7 @@
         config = builtins.readFile ../config/nvim/local.lua;
       }
       {
-        plugin = (pluginGit "nickjvandyke" "opencode.nvim" "main"
-          "wVZYTjvr9eN5RXiDnqq+t4rtozjqiMv15tRnKaQy9YU=");
+        plugin = customPlugins.opencode;
         type = "lua";
         config = builtins.readFile ../config/nvim/opencode.lua;
       }
@@ -305,8 +290,7 @@
         config = builtins.readFile ../config/nvim/noice.lua;
       }
       {
-        plugin = (pluginGit "marilari88" "twoslash-queries.nvim" "b92622c7b71eceefabd02eef24236041069904b1"
-          "YGFRbceYFswAbiOrMCx8ynEkQ45MkSOm0LHccYXyuXM=");
+        plugin = customPlugins.twoslash-queries;
         type = "lua";
       }
 

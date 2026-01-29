@@ -4,9 +4,9 @@
     enable = true;
     autocd = true;
 
-    autosuggestion.enable = true;
-    enableCompletion = true;
-    syntaxHighlighting.enable = true;
+    autosuggestion.enable = false;  # Loaded deferred via zinit
+    enableCompletion = false;  # Handled by zinit with zicompinit for faster loading
+    syntaxHighlighting.enable = false;  # Loaded deferred via zinit
     defaultKeymap = "viins";
     envExtra =
       # let RUSTC_VERSION = pkgs.lib.strings.removeSuffix "\n" pkgs.lib.readFile ./rust-toolchain;
@@ -56,7 +56,7 @@
         # Path
         export PATH=$PATH:$CARGO_HOME/bin
         export PATH=$PATH:$RUSTUP_HOME:~/.rustup/toolchains/${RUSTC_VERSION}-${ARCH}/bin/
-        export PATH=$PATH:`go env GOPATH`/bin:/opt/homebrew/bin:~/Library/Python/3.9/bin
+        export PATH=$PATH:$GOPATH/bin:/opt/homebrew/bin:~/Library/Python/3.9/bin
         export PATH=$PATH:~/.cache/.bun/bin
         export LIBRARY_PATH=$LIBRARY_PATH:${pkgs.libiconv}/lib
 
@@ -352,6 +352,65 @@
         [ -n "$pod" ] && kubectl port-forward "$pod" "$@"
       }
 
+      # Initialize zinit for fast plugin loading with turbo mode
+      ZINIT_HOME="''${XDG_DATA_HOME:-''${HOME}/.local/share}/zinit/zinit.git"
+      if [[ ! -d "$ZINIT_HOME" ]]; then
+        mkdir -p "$(dirname $ZINIT_HOME)"
+        git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+      fi
+      source "''${ZINIT_HOME}/zinit.zsh"
+
+      # Essential plugins - load immediately
+      zinit light-mode for \
+        OMZL::history.zsh \
+        OMZL::key-bindings.zsh
+
+      # Vi-mode - load immediately
+      zinit ice depth=1
+      zinit light jeffreytse/zsh-vi-mode
+
+      # Deferred plugins - load after prompt (turbo mode)
+      zinit wait lucid for \
+        OMZP::tmux \
+        OMZP::sudo \
+        OMZP::copyfile \
+        OMZP::copypath \
+        OMZP::dirhistory \
+        OMZP::history \
+        OMZP::colored-man-pages
+
+      # Docker completions - deferred
+      zinit wait lucid for \
+        OMZP::docker \
+        OMZP::docker-compose
+
+      # Cloud tools - heavily deferred (these are slow)
+      zinit wait"2" lucid for \
+        OMZP::gcloud
+
+      # AWS - deferred, skip slow homebrew check
+      zinit wait"2" lucid for \
+        atload"unset -f _awscli-homebrew-installed 2>/dev/null" \
+        OMZP::aws
+
+      # History substring search - deferred
+      zinit wait lucid for \
+        zsh-users/zsh-history-substring-search
+
+      # z for directory jumping - deferred
+      zinit wait lucid for \
+        agkozak/zsh-z
+
+      # Atuin - deferred
+      zinit wait lucid for \
+        ellie/atuin
+
+      # Syntax highlighting, autosuggestions, and completions - load last, deferred
+      # zicompinit replaces compinit with a faster cached version
+      zinit wait lucid for \
+        atinit"zicompinit; zicdreplay" \
+        zsh-users/zsh-syntax-highlighting \
+        zsh-users/zsh-autosuggestions
     '';
     shellAliases = {
       # update = "sudo nixos-rebuild switch";
@@ -395,78 +454,5 @@
 
     history = { size = 10000; };
 
-    zplug = {
-      enable = true;
-      plugins = [
-        {
-          name = "dracula/zsh";
-          tags = [ "as:theme" ];
-        }
-        { name = "agkozak/zsh-z"; }
-        {
-          name = "lib/history";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "lib/key-bindings";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/tmux";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/vi-mode";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/docker";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/docker-compose";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/sudo";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/copyfile";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/copypath";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/dirhistory";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/history";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        # { name = "plugins/fzf"; tags = [ from:oh-my-zsh ]; }
-        {
-          name = "plugins/history-substring-search";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/colored-man-pages";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/gcloud";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        {
-          name = "plugins/aws";
-          tags = [ "from:oh-my-zsh" ];
-        }
-        # { name = "sobolevn/wakatime-zsh-plugin"; }
-        { name = "ellie/atuin"; }
-      ];
-    };
   };
 }

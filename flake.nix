@@ -189,31 +189,72 @@
                   # $ darwin-rebuild changelog
                   system.stateVersion = 4;
                 })
-                # Your home-manager configuration
-                # self.darwinModules_.home-manager
-                # {
-                #   home-manager.users.${macUserName} = {
-                #     imports = [
-                #       self.homeModules.common # See below for "homeModules"!
-                #       self.homeModules.darwin
-                #     ];
-                #     home.stateVersion = "24.05";
-                #   };
-                # }
-                # Setup home-manager in nix-darwin config
-
-                  {
-                    home-manager.users.${macUserName} = {
-                      imports = [
-                        self.homeModules.common
-                        self.homeModules.darwin
-                      ];
-                      home.stateVersion = "24.05";
-                    };
-                  }
-
+                {
+                  home-manager.users.${macUserName} = {
+                    imports = [
+                      self.homeModules.common
+                      self.homeModules.darwin
+                    ];
+                    home.stateVersion = "24.05";
+                  };
+                }
               ];
             };
+
+            mustafa-mac = self.nixos-unified.lib.mkMacosSystem 
+              { home-manager = true; }
+              {
+              nixpkgs.hostPlatform = "aarch64-darwin";
+
+              imports = [
+                self.darwinModules.common # Use darwinModules instead of nixosModules
+                inputs.nix-homebrew.darwinModules.nix-homebrew
+                inputs.nix-index-database.darwinModules.nix-index
+                {
+                  nix-homebrew = {
+                    # Install Homebrew under the default prefix
+                    enable = true;
+
+                    # Apple Silicon Only: Also install Homebrew under the default Intel prefix for Rosetta 2
+                    enableRosetta = true;
+
+                    # User owning the Homebrew prefix
+                    user = myUserName;
+
+                    # Optional: Declarative tap management
+                    taps = {
+                      "homebrew/homebrew-core" = inputs.homebrew-core;
+                      "homebrew/homebrew-cask" = inputs.homebrew-cask;
+                    };
+
+                    # Optional: Enable fully-declarative tap management
+                    #
+                    # With mutableTaps disabled, taps can no longer be added imperatively with `brew tap`.
+                    mutableTaps = false;
+                  };
+                }
+
+                self.darwinModules.darwin-personal
+                # Your machine's configuration.nix goes here
+                ({ pkgs, ... }: {
+                  # Used for backwards compatibility, please read the changelog before changing.
+                  # $ darwin-rebuild changelog
+                  system.stateVersion = 4;
+                })
+
+                # Setup home-manager in nix-darwin config
+                {
+                  home-manager.users."mustafa" = {
+                    imports = [
+                      self.homeModules.common
+                      self.homeModules.darwin
+                    ];
+                    home.stateVersion = "24.05";
+                  };
+                }
+              ];
+            };
+
           };
 
           # All nixos/nix-darwin configurations are kept here.
@@ -466,7 +507,7 @@
               fonts.packages = with pkgs; [
                 noto-fonts
                 noto-fonts-cjk-sans
-                noto-fonts-emoji
+                noto-fonts-color-emoji
                 liberation_ttf
                 fira-code
                 fira-code-symbols
@@ -974,7 +1015,7 @@
             # nix-darwin specific configuration
             darwin = { pkgs, ... }: {
               # security.pam.enableSudoTouchIdAuth = true;
-              security.pam.enableSudoTouchIdReattach = true;
+	            security.pam.services.sudo_local.touchIdAuth = true;
 
               programs.nix-index-database.comma.enable = true;
 
@@ -1005,7 +1046,7 @@
               fonts.packages = with pkgs; [
                 noto-fonts
                 noto-fonts-cjk-sans
-                noto-fonts-emoji
+                noto-fonts-color-emoji
                 liberation_ttf
                 fira-code
                 fira-code-symbols
@@ -1101,7 +1142,7 @@
                 kubectl
                 kcat
                 grpcurl
-                teleport_16
+                teleport
                 unixtools.procps
                 pkgconf
                 kubectx
@@ -1113,7 +1154,7 @@
                 google-cloud-sdk
                 p7zip
                 scrcpy
-                poetry
+                # poetry
                 rustup
                 nodejs
                 nodePackages.npm
@@ -1137,7 +1178,7 @@
                 nodePackages.svelte-language-server
                 nodePackages."@astrojs/language-server"
                 emmet-ls
-                sumneko-lua-language-server
+                lua-language-server
                 nodePackages.bash-language-server
 
                 tailscale
@@ -1184,7 +1225,7 @@
 
             # nix-darwin specific configuration
             darwin = { pkgs, ... }: {
-              security.pam.enableSudoTouchIdReattach = true;
+	            security.pam.services.sudo_local.touchIdAuth = true;
 
               programs.nix-index-database.comma.enable = true;
 
@@ -1195,6 +1236,24 @@
                 cyberduck
               ];
               users.users.${macUserName}.home = "/users/${macUserName}";
+            };
+
+
+            darwin-personal = { pkgs, ... }: {
+	            security.pam.services.sudo_local.touchIdAuth = true;
+	            security.pam.services.sudo_local.reattach = true;
+
+              programs.nix-index-database.comma.enable = true;
+	            nix.enable = false;
+
+              environment.systemPackages = with pkgs; [
+                go
+                pam-reattach
+                hexfiend
+                keycastr
+                cyberduck
+              ];
+              users.users."${myUserName}".home = "/Users/mustafa";
             };
           };
 
@@ -1268,7 +1327,7 @@
               programs.git = {
                 enable = true;
                 userName = "Mustafa Zaki Assagaf";
-                userEmail = "mustafa.assagaf@gopay.co.id";
+                userEmail = "mustafa.segf@gmail.com";
                 extraConfig = {
                   core.editor = "nvim";
                   #credential."https://github.com" = {
@@ -1340,7 +1399,10 @@
             # home-manager config specifi to Darwin
             darwin = {pkgs,...}: {
               targets.darwin.search = "Bing";
-              home.packages = with pkgs; [ xcode-install ];
+              home.packages = with pkgs; [ 
+                xcode-install
+                ffmpeg-full
+              ];
             };
           };
         };

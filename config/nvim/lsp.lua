@@ -1,19 +1,19 @@
 -- lsp
 -- Setup nvim-cmp.
 
-local tabnine = require("cmp_tabnine.config")
+-- local tabnine = require("cmp_tabnine.config")
 
-tabnine:setup({
-	max_lines = 1000,
-	max_num_results = 5,
-	sort = true,
-	run_on_every_keystroke = true,
-	snippet_placeholder = "..",
-})
+-- tabnine:setup({
+-- 	max_lines = 1000,
+-- 	max_num_results = 5,
+-- 	sort = true,
+-- 	run_on_every_keystroke = true,
+-- 	snippet_placeholder = "..",
+-- })
 
 local source_mapping = {
 	luasnip = "[Snip]",
-	cmp_tabnine = "[TN]",
+	-- cmp_tabnine = "[TN]",
   ["vim-dadbod-completion"] = "[DB]",
 	nvim_lsp = "[LSP]",
 	otter = "[Otter]",
@@ -42,7 +42,7 @@ cmp.setup({
 		{ name = "otter" },
 		{ name = "vim-dadbod-completion" },
 		{ name = "luasnip" },
-		{ name = "cmp_tabnine" },
+		-- { name = "cmp_tabnine" },
 		{ name = "nvim_lsp" },
 		{ name = "buffer" },
 	}),
@@ -50,12 +50,12 @@ cmp.setup({
 		format = function(entry, vim_item)
 			vim_item.kind = lspkind.presets.default[vim_item.kind]
 			local menu = source_mapping[entry.source.name]
-			if entry.source.name == "cmp_tabnine" then
-				if entry.completion_item.data ~= nil and entry.completion_item.data.detail ~= nil then
-					menu = entry.completion_item.data.detail .. " " .. menu
-				end
-				vim_item.kind = ""
-			end
+			-- if entry.source.name == "cmp_tabnine" then
+			-- 	if entry.completion_item.data ~= nil and entry.completion_item.data.detail ~= nil then
+			-- 		menu = entry.completion_item.data.detail .. " " .. menu
+			-- 	end
+			-- 	vim_item.kind = ""
+			-- end
 			vim_item.menu = menu
 			return vim_item
 		end,
@@ -214,20 +214,20 @@ else
 	liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
 end
 
-require("rust-tools").setup({
-	server = {
-		on_attach = on_attach,
-		capabilities = capabilities,
-	},
-	tools = {
-		inlay_hints = {
-			auto = false,
-		},
-	},
-	dap = {
-		adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
-	},
-})
+-- require("rust-tools").setup({
+-- 	server = {
+-- 		on_attach = on_attach,
+-- 		capabilities = capabilities,
+-- 	},
+-- 	tools = {
+-- 		inlay_hints = {
+-- 			auto = false,
+-- 		},
+-- 	},
+-- 	dap = {
+-- 		adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
+-- 	},
+-- })
 
 lsp.tsserver.setup({
 	capabilities = capabilities,

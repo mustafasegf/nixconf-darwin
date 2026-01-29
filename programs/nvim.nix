@@ -93,7 +93,7 @@
       #   config = builtins.readFile ../config/nvim/jupyter.lua;
       # }
       dressing-nvim
-      rust-tools-nvim
+      # rust-tools-nvim
       nvim-notify
       vim-android
       neoconf-nvim
@@ -192,7 +192,7 @@
       }
 
       #auto
-      cmp-tabnine
+      # cmp-tabnine
       # copilot-vim
       {
         plugin = nvim-autopairs;
@@ -293,7 +293,7 @@
         type = "lua";
       }
 
-      playground
+      # playground
       {
         plugin = (nvim-treesitter.withPlugins (_:
           nvim-treesitter.allGrammars ++ [

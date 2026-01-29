@@ -4,7 +4,7 @@
 vim.filetype.add({ extension = { wgsl = "wgsl" } })
 vim.filetype.add({ extension = { astro = "astro" } })
 
-require("nvim-treesitter.configs").setup({
+require("nvim-treesitter").setup({
 	autotag = {
 		enable = true,
 	},

@@ -60,7 +60,7 @@
       nvim-cmp
       luasnip
       lspkind-nvim
-      null-ls-nvim
+      none-ls-nvim
       markdown-preview-nvim
       nvim-jdtls
 
@@ -147,6 +147,11 @@
           require("colorizer").setup()
         '';
       }
+      {
+        plugin = neoscroll-nvim;
+        type = "lua";
+        config = builtins.readFile ../config/nvim/neoscroll.lua;
+      }
 
       #git
       octo-nvim
@@ -185,11 +190,6 @@
       }))
 
       otter-nvim
-      {
-        plugin = rest-nvim;
-        type = "lua";
-        config = builtins.readFile ../config/nvim/rest.lua;
-      }
 
       #auto
       # cmp-tabnine
@@ -210,11 +210,22 @@
       nvim-ts-autotag
       vim-move
       vim-visual-multi
-      vim-surround
+      {
+        plugin = nvim-surround;
+        type = "lua";
+        config = ''
+          require("nvim-surround").setup()
+        '';
+      }
       {
         plugin = telescope-nvim;
         type = "lua";
         config = builtins.readFile ../config/nvim/telescope.lua;
+      }
+      {
+        plugin = todo-comments-nvim;
+        type = "lua";
+        config = builtins.readFile ../config/nvim/todo-comments.lua;
       }
       {
         plugin = auto-save-nvim;
@@ -271,21 +282,27 @@
         type = "lua";
         config = builtins.readFile ../config/nvim/harpoon.lua;
       }
-      vim-sneak
+      {
+        plugin = flash-nvim;
+        type = "lua";
+        config = builtins.readFile ../config/nvim/flash.lua;
+      }
       {
         plugin = nvim-config-local;
         type = "lua";
         config = builtins.readFile ../config/nvim/local.lua;
       }
+      {
+        plugin = (pluginGit "nickjvandyke" "opencode.nvim" "main"
+          "wVZYTjvr9eN5RXiDnqq+t4rtozjqiMv15tRnKaQy9YU=");
+        type = "lua";
+        config = builtins.readFile ../config/nvim/opencode.lua;
+      }
 
       {
-        plugin = (pluginGit "VonHeikemen" "fine-cmdline.nvim" "dd676584145d62b30d7e8dbdd011796a8f0a065f"
-          "w9wwjClkOWk3wCgEiZIFLZRJ/gAfX38x2LnVRaelKD8=");
+        plugin = noice-nvim;
         type = "lua";
-        config = ''
-          vim.api.nvim_set_keymap('n', ':', '<cmd>FineCmdline<CR>', {noremap = true})
-          -- vim.api.nvim_set_keymap('v', ':', '<cmd>FineCmdline<CR>', {noremap = true})
-        '';
+        config = builtins.readFile ../config/nvim/noice.lua;
       }
       {
         plugin = (pluginGit "marilari88" "twoslash-queries.nvim" "b92622c7b71eceefabd02eef24236041069904b1"

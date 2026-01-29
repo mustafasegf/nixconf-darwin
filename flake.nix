@@ -1252,6 +1252,7 @@
                 hexfiend
                 keycastr
                 cyberduck
+                pear-desktop
               ];
               users.users."${myUserName}".home = "/Users/mustafa";
             };

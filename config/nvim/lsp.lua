@@ -23,7 +23,6 @@ local source_mapping = {
 
 local lspkind = require("lspkind")
 local cmp = require("cmp")
-local lsp = require("lspconfig")
 
 cmp.setup({
 	snippet = {
@@ -87,42 +86,41 @@ local on_attach = function(client, bufnr)
 	vim.api.nvim_buf_set_keymap(bufnr, "n", "<space>fo", ":lua vim.lsp.buf.format( {timeout_ms = 5000} )<CR>", opts)
 end
 
--- local null_ls = require("null-ls")
--- local formatting = null_ls.builtins.formatting
+local null_ls = require("null-ls")
+local formatting = null_ls.builtins.formatting
 
--- require("null-ls").setup({
--- 	sources = {
--- 		formatting.stylua,
--- 		formatting.prettier,
--- 		-- formatting.gofumpt,
--- 		formatting.gofmt,
--- 		formatting.goimports,
--- 		formatting.jq,
--- 		formatting.black.with({
--- 			args = {
--- 				"--stdin-filename",
--- 				"$FILENAME",
--- 				"--quiet",
--- 				"-",
--- 				"--line-length",
--- 				"110",
--- 				"--skip-string-normalization",
--- 			},
--- 		}),
--- 		formatting.terrafmt,
--- 		formatting.clang_format,
--- 		formatting.shfmt,
--- 		formatting.fourmolu,
--- 		formatting.nixfmt,
--- 		formatting.cmake_format,
--- 		-- formatting.statix,
--- 	},
--- })
+null_ls.setup({
+	sources = {
+		formatting.stylua,
+		formatting.prettier,
+		-- formatting.gofumpt,
+		formatting.gofmt,
+		formatting.goimports,
+		formatting.black.with({
+			args = {
+				"--stdin-filename",
+				"$FILENAME",
+				"--quiet",
+				"-",
+				"--line-length",
+				"110",
+				"--skip-string-normalization",
+			},
+		}),
+		formatting.clang_format,
+		formatting.shfmt,
+		formatting.nixfmt,
+		formatting.cmake_format,
+		-- formatting.statix,
+	},
+})
 
 -- vim.api.nvim_exec([[ autocmd BufWritePost,FileWritePost *.go execute 'PrettyTag' | checktime ]], false)
 
-lsp.diagnosticls.setup({
-	on_attach = on_attach,
+vim.lsp.config('diagnosticls', {
+	cmd = { 'diagnostic-languageserver', '--stdio' },
+	root_markers = { '.git/' },
+	capabilities = capabilities,
 })
 
 -- Setup lspconfig.
@@ -163,39 +161,45 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 local servers = {
-	"clangd",
-	"hls",
-	"gopls",
-	"pyright",
-	"tflint",
-	"yamlls",
-	"vimls",
-	"texlab",
-	"html",
-	"emmet_ls",
-	"tailwindcss",
-	"taplo",
-	"graphql",
-	"dockerls",
-	"bashls",
-	-- "sqlls",
-	-- "jdtls",
-	"svelte",
-	"astro",
-	"prismals",
-	"ocamllsp",
-	"nixd",
-	-- "grammarly",
-	"wgsl_analyzer",
-	"quick_lint_js",
-	"intelephense",
-  "cmake",
+	{ name = "clangd", cmd = { "clangd" } },
+	{ name = "hls", cmd = { "haskell-language-server-wrapper", "--lsp" } },
+	{ name = "gopls", cmd = { "gopls" } },
+	{ name = "pyright", cmd = { "pyright-langserver", "--stdio" } },
+	{ name = "tflint", cmd = { "tflint", "--langserver" } },
+	{ name = "yamlls", cmd = { "yaml-language-server", "--stdio" } },
+	{ name = "vimls", cmd = { "vim-language-server", "--stdio" } },
+	{ name = "texlab", cmd = { "texlab" } },
+	{ name = "html", cmd = { "vscode-html-language-server", "--stdio" } },
+	{ name = "emmet_ls", cmd = { "emmet-ls", "--stdio" } },
+	{ name = "tailwindcss", cmd = { "tailwindcss-language-server", "--stdio" } },
+	{ name = "taplo", cmd = { "taplo", "lsp", "stdio" } },
+	{ name = "graphql", cmd = { "graphql-lsp", "server", "-m", "stream" } },
+	{ name = "dockerls", cmd = { "docker-langserver", "--stdio" } },
+	{ name = "bashls", cmd = { "bash-language-server", "start" } },
+	{ name = "svelte", cmd = { "svelteserver", "--stdio" } },
+	{ name = "astro", cmd = { "astro-ls", "--stdio" } },
+	{ name = "prismals", cmd = { "prisma-language-server", "--stdio" } },
+	{ name = "ocamllsp", cmd = { "ocamllsp" } },
+	{ name = "nixd", cmd = { "nixd" } },
+	{ name = "wgsl_analyzer", cmd = { "wgsl_analyzer" } },
+	{ name = "quick_lint_js", cmd = { "quick-lint-js", "--lsp-server" } },
+	{ name = "intelephense", cmd = { "intelephense", "--stdio" } },
+	{ name = "cmake", cmd = { "cmake-language-server" } },
 }
 
 for _, server in ipairs(servers) do
-	lsp[server].setup({
+	vim.lsp.config(server.name, {
+		cmd = server.cmd,
+		root_markers = { '.git/' },
 		capabilities = capabilities,
-		on_attach = on_attach,
+	})
+	vim.api.nvim_create_autocmd('LspAttach', {
+		callback = function(args)
+			local client = vim.lsp.get_client_by_id(args.data.client_id)
+			if client.name == server.name then
+				on_attach(client, args.buf)
+			end
+		end,
 	})
 end
 
@@ -229,11 +233,10 @@ end
 -- 	},
 -- })
 
-lsp.tsserver.setup({
+vim.lsp.config('ts_ls', {
+	cmd = { 'typescript-language-server', '--stdio' },
+	root_markers = { 'package.json', 'tsconfig.json', 'jsconfig.json', '.git/' },
 	capabilities = capabilities,
-	on_attach = function(c, b)
-		on_attach(c, b)
-	end,
 	settings = {
 		typescript = {
 			inlayHints = {
@@ -260,9 +263,19 @@ lsp.tsserver.setup({
 	},
 })
 
-lsp.jsonls.setup({
+vim.api.nvim_create_autocmd('LspAttach', {
+	callback = function(args)
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		if client.name == 'ts_ls' then
+			on_attach(client, args.buf)
+		end
+	end,
+})
+
+vim.lsp.config('jsonls', {
+	cmd = { 'vscode-json-language-server', '--stdio' },
+	root_markers = { '.git/' },
 	capabilities = capabilities,
-	on_attach = on_attach,
 	commands = {
 		Format = {
 			function()
@@ -270,6 +283,15 @@ lsp.jsonls.setup({
 			end,
 		},
 	},
+})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+	callback = function(args)
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		if client.name == 'jsonls' then
+			on_attach(client, args.buf)
+		end
+	end,
 })
 
 -- local jdtls = require('jdtls')

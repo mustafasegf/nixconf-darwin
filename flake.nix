@@ -80,6 +80,8 @@
               nixpkgs.hostPlatform = "x86_64-linux";
               imports = [
                 ./modules/common
+                ./modules/common/desktop.nix
+                ./modules/common/gui.nix
                 ./modules/nixos/common.nix
                 ./machines/mustafa-pc.nix
                 inputs.ucodenix.nixosModules.default
@@ -137,6 +139,8 @@
               _module.args = { inherit inputs; };
               imports = [
                 ./modules/common
+                ./modules/common/desktop.nix
+                ./modules/common/gui.nix
                 ./modules/darwin/common.nix
                 inputs.nix-homebrew.darwinModules.nix-homebrew
                 inputs.nix-index-database.darwinModules.nix-index
@@ -162,6 +166,8 @@
               _module.args = { inherit inputs; };
               imports = [
                 ./modules/common
+                ./modules/common/desktop.nix
+                ./modules/common/gui.nix
                 ./modules/darwin/common.nix
                 inputs.nix-homebrew.darwinModules.nix-homebrew
                 inputs.nix-index-database.darwinModules.nix-index

@@ -1,0 +1,134 @@
+{ pkgs, ... }:
+
+{
+  # Desktop/development packages - for machines used for interactive development
+  # Not needed on headless servers
+  environment.systemPackages = with pkgs; [
+    ## Development toolchains
+    go
+    gofumpt
+    gopls
+    gotools
+    delve
+    gotestsum
+    golangci-lint
+    go-tools
+
+    jdk
+    jdt-language-server
+    maven
+    gradle
+
+    bun
+    rustup
+    nodejs
+    nodePackages.npm
+    nodePackages.pnpm
+
+    ## Cloud and Infrastructure
+    terragrunt
+    opentofu
+    kubectl
+    k9s
+    kustomize
+    kcat
+    grpcurl
+    teleport
+    kubectx
+    kubernetes-helm
+    google-cloud-sdk
+
+    ## Development utilities
+    libiconv
+    speedtest-cli
+    xcodes
+    git-filter-repo
+    gh-copilot
+    air
+    cloc
+    gdu
+    neofetch
+    hyfetch
+    fastfetch
+    uwufetch
+
+    ## Networking and security
+    wireguard-tools
+    android-tools
+    mtr
+    scrcpy
+
+    ## Code formatters
+    black
+    stylua
+    shfmt
+
+    ## Language servers
+    pyright
+    nodePackages.typescript-language-server
+    tflint
+    nodePackages.vscode-langservers-extracted
+    nodePackages_latest."@tailwindcss/language-server"
+    taplo
+    nodePackages.graphql-language-service-cli
+    sqls
+    nodePackages.svelte-language-server
+    nodePackages."@astrojs/language-server"
+    emmet-ls
+    lua-language-server
+    nodePackages.bash-language-server
+    nixd
+    nixfmt-rfc-style
+
+    ## Debugging and profiling
+    gcc
+    gdb
+    k6
+    semgrep
+    tig
+
+    ## Analysis tools
+    scc
+    hexedit
+    nasm
+    bear
+    tree
+    cookiecutter
+    termshark
+
+    ## DevOps tools
+    krew
+    ossutil
+    confluent-platform
+    ast-grep
+    uv
+    pdftk
+    moreutils
+    prometheus-alertmanager
+    prometheus
+
+    ## Protobuf
+    protobuf
+    grpc-tools
+    protoc-gen-go
+    protoc-gen-doc
+
+    ## Package managers
+    yarn
+    dive
+    inetutils
+    rar
+    unrar
+    gifsicle
+
+    ## File management
+    lf
+    rclone
+    zerotierone
+    pkgconf
+    unixtools.procps
+    glab
+    devenv
+    tailscale
+  ];
+}

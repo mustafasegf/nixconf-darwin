@@ -339,16 +339,11 @@
                 pkgconf
                 kubectx
                 cloudflared
+                spotify
 
                 mosh
                 p7zip
-
-                rar
-                unrar
-                kubernetes-helm
-                hollywood
-                zenstates
-              ];
+];
 
               programs.zsh.enable = true;
               nixpkgs.config.allowUnfree = true;
@@ -996,7 +991,8 @@
                 
                 # toilet
                 # bacon
-                # nixd
+                nixd
+                gifsicle
                 # evcxr
 
                 # ghostscript
@@ -1193,6 +1189,7 @@
                 black
                 stylua
                 shfmt
+                nixfmt-rfc-style
 
                 pyright
                 nodePackages.typescript-language-server
@@ -1207,6 +1204,7 @@
                 emmet-ls
                 lua-language-server
                 nodePackages.bash-language-server
+                nixd
 
                 tailscale
                 dbeaver-bin
@@ -1256,6 +1254,13 @@
 
               programs.nix-index-database.comma.enable = true;
 
+              # Disable Spotlight
+              system.defaults.finder.AppleShowAllExtensions = true;
+              system.defaults.finder.FXEnableExtensionChangeWarning = false;
+              
+              # Disable Spotlight keyboard shortcut (Cmd+Space)
+              system.keyboard.enableKeyMapping = true;
+
               environment.systemPackages = with pkgs; [
                 pam-reattach
                 hexfiend
@@ -1263,6 +1268,18 @@
                 cyberduck
               ];
               users.users.${macUserName}.home = "/users/${macUserName}";
+              
+              # Run commands after activation to disable Spotlight
+              system.activationScripts.postActivation.text = ''
+                # Disable Spotlight indexing
+                sudo mdutil -a -i off 2>/dev/null || true
+                
+                # Disable Spotlight keyboard shortcut
+                defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "<dict><key>enabled</key><false/></dict>"
+                
+                # Restart affected services
+                /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+              '';
             };
 
 

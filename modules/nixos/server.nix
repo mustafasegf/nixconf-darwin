@@ -25,7 +25,7 @@
 
   # Additional server packages
   environment.systemPackages = with pkgs; [
-    graalvm-ce
+    graalvmPackages.graalvm-ce
     caddy
     bun
     nodePackages.nodejs

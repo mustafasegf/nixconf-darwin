@@ -14,6 +14,6 @@
     hexfiend
     keycastr
     cyberduck
-    nixfmt-rfc-style
+    nixfmt
   ];
 }

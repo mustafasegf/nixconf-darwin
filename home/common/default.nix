@@ -63,9 +63,11 @@
 
   programs.git = {
     enable = true;
-    userName = "Mustafa Zaki Assagaf";
-    userEmail = "mustafa.segf@gmail.com";
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Mustafa Zaki Assagaf";
+        email = "mustafa.segf@gmail.com";
+      };
       core.editor = "nvim";
       init.defaultBranch = "master";
       pull.rebase = false;

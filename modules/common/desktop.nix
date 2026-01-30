@@ -78,7 +78,7 @@
     lua-language-server
     nodePackages.bash-language-server
     nixd
-    nixfmt-rfc-style
+    nixfmt
 
     ## Debugging and profiling
     gcc

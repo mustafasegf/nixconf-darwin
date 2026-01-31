@@ -241,6 +241,7 @@
         "nix-ld": "nix-ld",
         "nixos-unified": "nixos-unified",
         "nixpkgs": "nixpkgs",
+        "sops-nix": "sops-nix",
         "ucodenix": "ucodenix",
         "vimPlugins_blamer": "vimPlugins_blamer",
         "vimPlugins_lsp-inlayhints": "vimPlugins_lsp-inlayhints",
@@ -248,6 +249,26 @@
         "vimPlugins_rainbow-csv": "vimPlugins_rainbow-csv",
         "vimPlugins_twoslash-queries": "vimPlugins_twoslash-queries",
         "vimPlugins_vim-maximizer": "vimPlugins_vim-maximizer"
+      }
+    },
+    "sops-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1769469829,
+        "narHash": "sha256-wFcr32ZqspCxk4+FvIxIL0AZktRs6DuF8oOsLt59YBU=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "c5eebd4eb2e3372fe12a8d70a248a6ee9dd02eff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "type": "github"
       }
     },
     "ucodenix": {

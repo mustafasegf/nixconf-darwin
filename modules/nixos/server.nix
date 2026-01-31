@@ -1,8 +1,16 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   # Server profile for NixOS systems
   # Includes k3s, Docker, cloudflared, and other server-specific services
+
+  # Sops secrets configuration
+  sops.defaultSopsFile = ./../../secrets/github-runner.yaml;
+  sops.age.keyFile = "/etc/ssh/ssh_host_ed25519_key";
+  sops.secrets.github-runner-secret = {
+    format = "binary";
+    path = "/run/secrets-rendered/github-runner.yaml";
+  };
 
   # Virtualization
   virtualisation.docker.enable = true;
@@ -67,10 +75,13 @@
   # k3s Kubernetes
   services.k3s = {
     enable = true;
-    extraFlags = toString [ ];
+    extraFlags = toString [
+      "--write-kubeconfig-mode=0644"
+    ];
     role = "server";
     manifests = {
       deployment.source = ./../../config/deployment/craftycontrol.yaml;
+      github-secret.source = config.sops.secrets.github-runner-secret.path;
     };
     autoDeployCharts = {
       arc = {
@@ -84,7 +95,7 @@
         targetNamespace = "arc-runners";
         createNamespace = true;
         values = {
-          githubConfigUrl = "http://github.com/mustafasegf";
+          githubConfigUrl = "https://github.com/mustafasegf";
           githubConfigSecret = "pre-defined-secret";
           controllerServiceAccount.namespace = "arc-system";
           controllerServiceAccount.name = "actions-runner-controller-gha-rs-controller";

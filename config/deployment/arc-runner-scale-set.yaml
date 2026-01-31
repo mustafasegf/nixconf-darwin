@@ -1,0 +1,23 @@
+apiVersion: actions.github.com/v1alpha1
+kind: AutoscalingRunnerSet
+metadata:
+  name: arc-runner
+  namespace: arc-runners
+spec:
+  githubConfigUrl: https://github.com/mustafasegf/personal-website
+  githubConfigSecret: pre-defined-secret
+  minRunners: 1
+  maxRunners: 5
+  runnerScaleSetName: arc-runner
+  template:
+    metadata:
+      labels:
+        app: github-runner
+    spec:
+      containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:latest
+        command: ["/home/runner/run.sh"]
+        env:
+        - name: RUNNER_LABELS
+          value: "arc-runner-set,self-hosted,linux,x64"

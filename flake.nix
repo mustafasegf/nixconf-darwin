@@ -24,6 +24,8 @@
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Flake framework
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -109,6 +111,7 @@
                 ./machines/minipc.nix
                 inputs.ucodenix.nixosModules.default
                 inputs.nix-ld.nixosModules.nix-ld
+                inputs.sops-nix.nixosModules.sops
 
                 # Home-manager configuration
                 {

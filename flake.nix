@@ -90,11 +90,6 @@
                 system = "x86_64-linux";
 
                 # Multiple nixpkgs instances for different versions
-                pkgs = import inputs.nixpkgs {
-                  inherit system;
-                  config.allowUnfree = true;
-                };
-
                 upkgs = import inputs.nixpkgs-unstable {
                   inherit system;
                   config.allowUnfree = true;
@@ -118,11 +113,10 @@
               self.nixos-unified.lib.mkLinuxSystem { home-manager = true; } {
                 nixpkgs.hostPlatform = system;
 
-                # Make all package sets available
+                # Make additional package sets available (pkgs is provided by nixpkgs)
                 _module.args = {
                   inherit
                     inputs
-                    pkgs
                     upkgs
                     ppkgs
                     staging-pkgs
@@ -143,7 +137,6 @@
                     home-manager.extraSpecialArgs = {
                       inherit
                         inputs
-                        pkgs
                         upkgs
                         ppkgs
                         staging-pkgs

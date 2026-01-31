@@ -43,7 +43,7 @@
     speedtest-cli
     xcodes
     git-filter-repo
-    gh-copilot
+    github-copilot-cli
     air
     cloc
     gdu

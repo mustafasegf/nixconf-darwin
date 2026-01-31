@@ -77,6 +77,7 @@
     emmet-ls
     lua-language-server
     nodePackages.bash-language-server
+    nodePackages.diagnostic-languageserver
     nixd
     nixfmt
 

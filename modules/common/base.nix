@@ -8,7 +8,6 @@
     hello
     wget
     fzf
-    fzf-zsh
     zip
     unzip
     htop

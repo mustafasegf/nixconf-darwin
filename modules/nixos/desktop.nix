@@ -134,7 +134,7 @@
   programs.command-not-found.enable = false;
 
   # nix-ld for running unpatched binaries
-  programs.nix-ld.dev.enable = true;
+  programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     # Toolchain + basics
     stdenv.cc.cc

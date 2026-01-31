@@ -245,7 +245,6 @@
       enable = true;
       # Use ppkgs (previous stable) for Qtile - more stable than bleeding edge
       package = ppkgs.qtile;
-      extraSessionCommands = "gnome-keyring-daemon --start -d --components=pkcs11,secrets,ssh";
       backend = "x11";
     };
   };

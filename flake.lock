@@ -229,6 +229,54 @@
         "type": "github"
       }
     },
+    "nixpkgs-master": {
+      "locked": {
+        "lastModified": 1769876243,
+        "narHash": "sha256-kMDy5Bb/ZaYnojpScbCFeybqESlYbtnZ/zHFDOWocKc=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "9d9be189cfa073f87d435d18f129ee5e8e4467d3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-prev": {
+      "locked": {
+        "lastModified": 1720535198,
+        "narHash": "sha256-zwVvxrdIzralnSbcpghA92tWu2DV2lwv89xZc8MTrbg=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "205fd4226592cc83fd4c0885a3e4c9c400efabb5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "release-23.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-unstable": {
+      "locked": {
+        "lastModified": 1769461804,
+        "narHash": "sha256-msG8SU5WsBUfVVa/9RPLaymvi5bI8edTavbIq3vRlhI=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "bfc1b8a4574108ceef22f02bafcf6611380c100d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -241,13 +289,34 @@
         "nix-ld": "nix-ld",
         "nixos-unified": "nixos-unified",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-master": "nixpkgs-master",
+        "nixpkgs-prev": "nixpkgs-prev",
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "staging-next": "staging-next",
         "ucodenix": "ucodenix",
         "vimPlugins_blamer": "vimPlugins_blamer",
         "vimPlugins_lsp-inlayhints": "vimPlugins_lsp-inlayhints",
+        "vimPlugins_mdx": "vimPlugins_mdx",
         "vimPlugins_opencode": "vimPlugins_opencode",
         "vimPlugins_rainbow-csv": "vimPlugins_rainbow-csv",
         "vimPlugins_twoslash-queries": "vimPlugins_twoslash-queries",
         "vimPlugins_vim-maximizer": "vimPlugins_vim-maximizer"
+      }
+    },
+    "staging-next": {
+      "locked": {
+        "lastModified": 1769861271,
+        "narHash": "sha256-MN+92iMaQnsNid5t/NImWK7Hu4/LuUOMVuTZOpPHDY8=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "157dd319c2269fa99ca508b497ddc8b9cf5b59e9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "staging-next",
+        "repo": "nixpkgs",
+        "type": "github"
       }
     },
     "ucodenix": {
@@ -297,6 +366,22 @@
       "original": {
         "owner": "lvimuser",
         "repo": "lsp-inlayhints.nvim",
+        "type": "github"
+      }
+    },
+    "vimPlugins_mdx": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1764953110,
+        "narHash": "sha256-QaPYSTH59j8tUa5rTY8I9VdQWLkhy8SWhNigEXHFn1c=",
+        "owner": "davidmh",
+        "repo": "mdx.nvim",
+        "rev": "30222997ed4c0c7cc7447c4fce360fce87101bbf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "davidmh",
+        "repo": "mdx.nvim",
         "type": "github"
       }
     },

@@ -1,8 +1,8 @@
 -- treesitter
 
-
 vim.filetype.add({ extension = { wgsl = "wgsl" } })
 vim.filetype.add({ extension = { astro = "astro" } })
+vim.filetype.add({ extension = { mdx = "mdx" } })
 
 require("nvim-treesitter").setup({
 	autotag = {

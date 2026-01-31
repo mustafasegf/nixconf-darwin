@@ -2,6 +2,11 @@
   inputs = {
     # Core inputs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-prev.url = "github:nixos/nixpkgs/release-23.11";
+    staging-next.url = "github:nixos/nixpkgs/staging-next";
+    nixpkgs-master.url = "github:nixos/nixpkgs/master";
+
     nix-darwin.url = "github:lnl7/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
@@ -54,6 +59,10 @@
       url = "github:marilari88/twoslash-queries.nvim/b92622c7b71eceefabd02eef24236041069904b1";
       flake = false;
     };
+    vimPlugins_mdx = {
+      url = "github:davidmh/mdx.nvim";
+      flake = false;
+    };
   };
 
   outputs =
@@ -76,29 +85,81 @@
           # NixOS Configurations
           nixosConfigurations = {
             # Desktop Linux machine
-            mustafa-pc = self.nixos-unified.lib.mkLinuxSystem { home-manager = true; } {
-              nixpkgs.hostPlatform = "x86_64-linux";
-              imports = [
-                ./modules/common
-                ./modules/common/desktop.nix
-                ./modules/common/gui.nix
-                ./modules/nixos/common.nix
-                ./machines/mustafa-pc.nix
-                inputs.ucodenix.nixosModules.default
+            mustafa-pc =
+              let
+                system = "x86_64-linux";
 
-                # Home-manager configuration
-                {
-                  home-manager.extraSpecialArgs = { inherit inputs; };
-                  home-manager.users.${myUserName} = {
-                    imports = [
-                      ./home/common
-                      ./home/linux
-                    ];
-                    home.stateVersion = "24.05";
-                  };
-                }
-              ];
-            };
+                # Multiple nixpkgs instances for different versions
+                pkgs = import inputs.nixpkgs {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
+
+                upkgs = import inputs.nixpkgs-unstable {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
+
+                ppkgs = import inputs.nixpkgs-prev {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
+
+                staging-pkgs = import inputs.staging-next {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
+
+                mpkgs = import inputs.nixpkgs-master {
+                  inherit system;
+                  config.allowUnfree = true;
+                };
+              in
+              self.nixos-unified.lib.mkLinuxSystem { home-manager = true; } {
+                nixpkgs.hostPlatform = system;
+
+                # Make all package sets available
+                _module.args = {
+                  inherit
+                    inputs
+                    pkgs
+                    upkgs
+                    ppkgs
+                    staging-pkgs
+                    mpkgs
+                    ;
+                };
+
+                imports = [
+                  ./modules/common
+                  ./modules/common/desktop.nix
+                  ./modules/common/gui.nix
+                  ./modules/nixos/common.nix
+                  ./machines/mustafa-pc.nix
+                  inputs.ucodenix.nixosModules.default
+
+                  # Home-manager configuration
+                  {
+                    home-manager.extraSpecialArgs = {
+                      inherit
+                        inputs
+                        pkgs
+                        upkgs
+                        ppkgs
+                        staging-pkgs
+                        mpkgs
+                        ;
+                    };
+                    home-manager.users.${myUserName} = {
+                      imports = [
+                        ./home/common
+                        ./home/linux
+                      ];
+                      home.stateVersion = "24.05";
+                    };
+                  }
+                ];
+              };
 
             # Server Linux machine
             minipc = self.nixos-unified.lib.mkLinuxSystem { home-manager = true; } {

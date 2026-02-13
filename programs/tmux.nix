@@ -37,6 +37,8 @@
         extraConfig = ''
           set -g @yank_highlight 'true'
           set -g @yank_highlight_cursor 'true'
+          # Use OSC 52 for clipboard - works over SSH
+          set -g @yank_selection_mouse 'clipboard'
         '';
       }
       {
@@ -52,6 +54,13 @@
 
     extraConfig =
     ''
+      # OSC 52 clipboard support - allows clipboard to work over SSH
+      # This enables tmux to pass through OSC 52 escape sequences to the terminal
+      set -g set-clipboard on
+      set -ag terminal-features ',xterm-256color:clipboard'
+      set -ag terminal-features ',xterm-kitty:clipboard'
+      set -ag terminal-features ',xterm-ghostty:clipboard'
+
       # split panes using | and -, make sure they open in the same path
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"

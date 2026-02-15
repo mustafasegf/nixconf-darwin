@@ -115,4 +115,10 @@
   };
 
   home.packages = with pkgs; [ ];
+
+  # Global environment variables
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
 }

@@ -17,8 +17,9 @@
     ];
     role = "server";
     manifests = {
-      deployment.source = ./../../config/deployment/craftycontrol.yaml;
-      # Don't include the GitHub secret here - it will be applied by a separate service
+      # craftycontrol.source = ./../../config/deployment/craftycontrol.yaml; # Disabled
+      leetbot.source = ./../../config/deployment/leetbot.yaml;
+      # GitHub and leetbot secrets are applied by systemd services
     };
     autoDeployCharts = {
       arc = {
@@ -115,14 +116,30 @@
       RemainAfterExit = true;
       ExecStart = pkgs.writeShellScript "apply-github-secret" ''
         set -euo pipefail
-        # Decrypt the secret file using sops with the age key
-        # Try user key first, fall back to host key
-        if [ -f /home/mustafa/.config/sops/age/keys.txt ]; then
-          export SOPS_AGE_KEY_FILE=/home/mustafa/.config/sops/age/keys.txt
-        else
-          export SOPS_AGE_KEY_FILE=/etc/ssh/ssh_host_ed25519_key
-        fi
+        # Decrypt the secret file using sops with the user's age key
+        export SOPS_AGE_KEY_FILE=/home/mustafa/.config/sops/age/keys.txt
         ${pkgs.sops}/bin/sops -d ${./../../secrets/github-runner.yaml} | ${pkgs.kubectl}/bin/kubectl apply -f -
+      '';
+      Restart = "on-failure";
+      RestartSec = "30s";
+    };
+  };
+
+  # Systemd service to decrypt and apply the leetbot secrets to k3s
+  systemd.services.k3s-apply-leetbot-secret = {
+    description = "Decrypt and Apply Leetbot Secrets to k3s";
+    after = [ "k3s.service" ];
+    wants = [ "k3s.service" ];
+    wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.sops pkgs.kubectl ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "apply-leetbot-secret" ''
+        set -euo pipefail
+        # Decrypt the secret file using sops with the user's age key
+        export SOPS_AGE_KEY_FILE=/home/mustafa/.config/sops/age/keys.txt
+        ${pkgs.sops}/bin/sops -d ${./../../secrets/leetbot.yaml} | ${pkgs.kubectl}/bin/kubectl apply -f -
       '';
       Restart = "on-failure";
       RestartSec = "30s";

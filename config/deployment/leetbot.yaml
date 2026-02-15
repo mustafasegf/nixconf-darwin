@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leetbot
+  namespace: default
+  labels:
+    app: leetbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: leetbot
+  template:
+    metadata:
+      labels:
+        app: leetbot
+    spec:
+      containers:
+      - name: leetbot
+        image: ghcr.io/kambi-ng/leetbot:latest
+        imagePullPolicy: Always
+        envFrom:
+        - secretRef:
+            name: leetbot-secrets
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      imagePullSecrets:
+      - name: ghcr-secret

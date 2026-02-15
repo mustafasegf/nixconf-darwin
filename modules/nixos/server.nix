@@ -5,11 +5,42 @@
   # Includes k3s, Docker, cloudflared, and other server-specific services
 
   # Sops secrets configuration
-  sops.defaultSopsFile = ./../../secrets/github-runner.yaml;
-  sops.age.keyFile = "/etc/ssh/ssh_host_ed25519_key";
-  sops.secrets.github-runner-secret = {
-    format = "binary";
-    path = "/run/secrets-rendered/github-runner.yaml";
+  # Note: The GitHub runner secret is NOT managed by sops-nix because it's a full YAML file
+  # that needs to be decrypted at runtime, not at build time.
+  # It will be decrypted by the k3s-apply-github-secret service.
+
+  # k3s Kubernetes
+  services.k3s = {
+    enable = true;
+    extraFlags = toString [
+      "--write-kubeconfig-mode=0644"
+    ];
+    role = "server";
+    manifests = {
+      deployment.source = ./../../config/deployment/craftycontrol.yaml;
+      # Don't include the GitHub secret here - it will be applied by a separate service
+    };
+    autoDeployCharts = {
+      arc = {
+        package = ./../../config/deployment/chart/gha-runner-scale-set-controller-0.11.0.tgz;
+        targetNamespace = "arc-systems";
+        createNamespace = true;
+      };
+
+      arc-runner = {
+        package = ./../../config/deployment/chart/gha-runner-scale-set-0.11.0.tgz;
+        targetNamespace = "arc-runners";
+        createNamespace = true;
+        values = {
+          githubConfigUrl = "https://github.com/mustafasegf";
+          githubConfigSecret = "pre-defined-secret";
+          controllerServiceAccount.namespace = "arc-system";
+          controllerServiceAccount.name = "actions-runner-controller-gha-rs-controller";
+          fullnameOverride = "arc-runner";
+          runnerScaleSetName = "arc-runner";
+        };
+      };
+    };
   };
 
   # Virtualization
@@ -72,37 +103,29 @@
     8123 # Web service
   ];
 
-  # k3s Kubernetes
-  services.k3s = {
-    enable = true;
-    extraFlags = toString [
-      "--write-kubeconfig-mode=0644"
-    ];
-    role = "server";
-    manifests = {
-      deployment.source = ./../../config/deployment/craftycontrol.yaml;
-      github-secret.source = config.sops.secrets.github-runner-secret.path;
-    };
-    autoDeployCharts = {
-      arc = {
-        package = ./../../config/deployment/chart/gha-runner-scale-set-controller-0.11.0.tgz;
-        targetNamespace = "arc-systems";
-        createNamespace = true;
-      };
-
-      arc-runner = {
-        package = ./../../config/deployment/chart/gha-runner-scale-set-0.11.0.tgz;
-        targetNamespace = "arc-runners";
-        createNamespace = true;
-        values = {
-          githubConfigUrl = "https://github.com/mustafasegf";
-          githubConfigSecret = "pre-defined-secret";
-          controllerServiceAccount.namespace = "arc-system";
-          controllerServiceAccount.name = "actions-runner-controller-gha-rs-controller";
-          fullnameOverride = "arc-runner";
-          runnerScaleSetName = "arc-runner";
-        };
-      };
+  # Systemd service to decrypt and apply the GitHub runner secret to k3s
+  systemd.services.k3s-apply-github-secret = {
+    description = "Decrypt and Apply GitHub Runner Secret to k3s";
+    after = [ "k3s.service" ];
+    wants = [ "k3s.service" ];
+    wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.sops pkgs.kubectl ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "apply-github-secret" ''
+        set -euo pipefail
+        # Decrypt the secret file using sops with the age key
+        # Try user key first, fall back to host key
+        if [ -f /home/mustafa/.config/sops/age/keys.txt ]; then
+          export SOPS_AGE_KEY_FILE=/home/mustafa/.config/sops/age/keys.txt
+        else
+          export SOPS_AGE_KEY_FILE=/etc/ssh/ssh_host_ed25519_key
+        fi
+        ${pkgs.sops}/bin/sops -d ${./../../secrets/github-runner.yaml} | ${pkgs.kubectl}/bin/kubectl apply -f -
+      '';
+      Restart = "on-failure";
+      RestartSec = "30s";
     };
   };
 

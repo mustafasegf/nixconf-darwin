@@ -297,6 +297,7 @@
         "ucodenix": "ucodenix",
         "vimPlugins_blamer": "vimPlugins_blamer",
         "vimPlugins_lsp-inlayhints": "vimPlugins_lsp-inlayhints",
+        "vimPlugins_lz-n": "vimPlugins_lz-n",
         "vimPlugins_mdx": "vimPlugins_mdx",
         "vimPlugins_opencode": "vimPlugins_opencode",
         "vimPlugins_rainbow-csv": "vimPlugins_rainbow-csv",
@@ -387,6 +388,22 @@
       "original": {
         "owner": "lvimuser",
         "repo": "lsp-inlayhints.nvim",
+        "type": "github"
+      }
+    },
+    "vimPlugins_lz-n": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1770521028,
+        "narHash": "sha256-lU11QmcqgtwLncR+oTk6qyaKdsamXNRc4Z3GZYZ50ZQ=",
+        "owner": "nvim-neorocks",
+        "repo": "lz.n",
+        "rev": "5825c810ac97e141fb8869e3dabef06653ac6ecd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nvim-neorocks",
+        "repo": "lz.n",
         "type": "github"
       }
     },

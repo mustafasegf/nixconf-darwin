@@ -475,6 +475,7 @@ in
 
       g = "git";
       lg = "lazygit";
+      oc = "opencode";
       wget = ''wget --hsts-file="$XDG_DATA_HOME/wget-hsts"'';
       xbindkeys = ''xbindkeys -f "$XDG_CONFIG_HOME"/xbindkeys/config'';
 

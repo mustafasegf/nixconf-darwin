@@ -4,6 +4,7 @@
   # Common home-manager configuration shared across all systems
 
   imports = [
+    ../../modules/common/sops.nix
     ../../programs/btop.nix
     ../../programs/kitty.nix
     ../../programs/nvim.nix

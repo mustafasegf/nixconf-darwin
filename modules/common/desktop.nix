@@ -37,7 +37,7 @@
 
         bun
         rustup
-        nodejs
+        nodePackages.nodejs
         nodePackages.npm
         nodePackages.pnpm
 

@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 with lib;
 
@@ -42,7 +47,10 @@ in
       };
 
       backend = mkOption {
-        type = types.enum [ "x11" "wayland" ];
+        type = types.enum [
+          "x11"
+          "wayland"
+        ];
         default = "x11";
         description = ''
           Backend to use in qtile: 
@@ -53,16 +61,17 @@ in
   };
 
   config = mkIf cfg.enable {
-    services.xserver.windowManager.session = [{
-      name = "qtile";
-      start = ''
-        ${cfg.extraSessionCommands}
-        ${qtile}/bin/qtile start -b ${cfg.backend} \
-        ${optionalString (cfg.configFile != null)
-        "--config \"${cfg.configFile}\""} &
-        waitPID=$!
-      '';
-    }];
+    services.xserver.windowManager.session = [
+      {
+        name = "qtile";
+        start = ''
+          ${cfg.extraSessionCommands}
+          ${qtile}/bin/qtile start -b ${cfg.backend} \
+          ${optionalString (cfg.configFile != null) "--config \"${cfg.configFile}\""} &
+          waitPID=$!
+        '';
+      }
+    ];
 
     environment.systemPackages = [ qtile ];
   };

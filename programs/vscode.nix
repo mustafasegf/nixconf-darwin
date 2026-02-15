@@ -1,75 +1,80 @@
-{ config
-, pkgs
-, libs
-, ...
-}: {
+{
+  config,
+  pkgs,
+  libs,
+  ...
+}:
+{
 
   programs.vscode = {
     enable = true;
-    extensions = with pkgs.vscode-extensions; [
-      arrterian.nix-env-selector
-      golang.go
-      rust-lang.rust-analyzer
-      bradlc.vscode-tailwindcss
-      davidanson.vscode-markdownlint
-      dracula-theme.theme-dracula
-      # eg2.vscode-npm-script
-      esbenp.prettier-vscode
-      formulahendry.auto-close-tag
-      formulahendry.auto-rename-tag
-      formulahendry.code-runner
-      prisma.prisma
-      github.copilot
-      github.copilot-chat
-      graphql.vscode-graphql
-      irongeek.vscode-env
-      mechatroner.rainbow-csv
-      mhutchie.git-graph
-      ms-python.python
-      ms-python.vscode-pylance
-      ms-toolsai.jupyter
-      ms-toolsai.jupyter-keymap
-      ms-toolsai.jupyter-renderers
-      ms-toolsai.vscode-jupyter-cell-tags
-      ms-toolsai.vscode-jupyter-slideshow
-      ms-vscode-remote.remote-ssh
-      ms-vscode.cmake-tools
-      ms-vscode.cpptools
-      ms-vscode.makefile-tools
-      ms-vsliveshare.vsliveshare
-      oderwat.indent-rainbow
-      twxs.cmake
-      vadimcn.vscode-lldb
-      vscjava.vscode-java-dependency
-      redhat.java
-      ocamllabs.ocaml-platform
-      (WakaTime.vscode-wakatime.overrideAttrs (old: {
-        postPatch = ''
-          mkdir wakatime-cli
-          ln -s ${pkgs.wakatime}/bin/wakatime ./wakatime-cli/wakatime-cli
-        '';
-      }))
+    extensions =
+      with pkgs.vscode-extensions;
+      [
+        arrterian.nix-env-selector
+        golang.go
+        rust-lang.rust-analyzer
+        bradlc.vscode-tailwindcss
+        davidanson.vscode-markdownlint
+        dracula-theme.theme-dracula
+        # eg2.vscode-npm-script
+        esbenp.prettier-vscode
+        formulahendry.auto-close-tag
+        formulahendry.auto-rename-tag
+        formulahendry.code-runner
+        prisma.prisma
+        github.copilot
+        github.copilot-chat
+        graphql.vscode-graphql
+        irongeek.vscode-env
+        mechatroner.rainbow-csv
+        mhutchie.git-graph
+        ms-python.python
+        ms-python.vscode-pylance
+        ms-toolsai.jupyter
+        ms-toolsai.jupyter-keymap
+        ms-toolsai.jupyter-renderers
+        ms-toolsai.vscode-jupyter-cell-tags
+        ms-toolsai.vscode-jupyter-slideshow
+        ms-vscode-remote.remote-ssh
+        ms-vscode.cmake-tools
+        ms-vscode.cpptools
+        ms-vscode.makefile-tools
+        ms-vsliveshare.vsliveshare
+        oderwat.indent-rainbow
+        twxs.cmake
+        vadimcn.vscode-lldb
+        vscjava.vscode-java-dependency
+        redhat.java
+        ocamllabs.ocaml-platform
+        (WakaTime.vscode-wakatime.overrideAttrs (old: {
+          postPatch = ''
+            mkdir wakatime-cli
+            ln -s ${pkgs.wakatime}/bin/wakatime ./wakatime-cli/wakatime-cli
+          '';
+        }))
 
-    ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-      {
-        publisher = "aaron-bond";
-        name = "better-comments";
-        version = "3.0.2";
-        sha256 = "sha256-hQmA8PWjf2Nd60v5EAuqqD8LIEu7slrNs8luc3ePgZc=";
-      }
-      {
-        publisher = "jeff-hykin";
-        name = "better-cpp-syntax";
-        version = "1.17.2";
-        sha256 = "sha256-p3SKu9FbtuP6in2dSsr5a0aB5W+YNQ0kMgMJoDYrhcU=";
-      }
-      # {
-      #   publisher = "GitHub";
-      #   name = "copilot-chat";
-      #   version = "0.11.2023111001";
-      #   sha256 = "sha256-sBDvqqyq0R0ZyS81G61fI9Vd860RIjhNzCqY0bdz1mg=";
-      # }
-    ];
+      ]
+      ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+        {
+          publisher = "aaron-bond";
+          name = "better-comments";
+          version = "3.0.2";
+          sha256 = "sha256-hQmA8PWjf2Nd60v5EAuqqD8LIEu7slrNs8luc3ePgZc=";
+        }
+        {
+          publisher = "jeff-hykin";
+          name = "better-cpp-syntax";
+          version = "1.17.2";
+          sha256 = "sha256-p3SKu9FbtuP6in2dSsr5a0aB5W+YNQ0kMgMJoDYrhcU=";
+        }
+        # {
+        #   publisher = "GitHub";
+        #   name = "copilot-chat";
+        #   version = "0.11.2023111001";
+        #   sha256 = "sha256-sBDvqqyq0R0ZyS81G61fI9Vd860RIjhNzCqY0bdz1mg=";
+        # }
+      ];
 
     userSettings = {
       "code-runner.saveFileBeforeRun" = true;
@@ -148,11 +153,11 @@
       "editor.minimap.enabled" = true;
       "indentRainbow.indentSetter" = { };
       "indentRainbow.colors" = [
-        "rgba(199, 206, 234, 0.2)" #Purple
-        "rgba(135, 209, 237, 0.2)" #blue
-        "rgba(181, 234, 215, 0.2)" #green
-        "rgba(226, 240, 203, 0.2)" #yellow
-        "rgba(255, 154, 162, 0.2)" #red
+        "rgba(199, 206, 234, 0.2)" # Purple
+        "rgba(135, 209, 237, 0.2)" # blue
+        "rgba(181, 234, 215, 0.2)" # green
+        "rgba(226, 240, 203, 0.2)" # yellow
+        "rgba(255, 154, 162, 0.2)" # red
       ];
       "bracketPairColorizer.timeOut" = 0;
       "bracketPairColorizer.activeScopeCSS" = [
@@ -161,19 +166,34 @@
         "borderColor = {color}; opacity: 0.5"
       ];
       "bracketPairColorizer.consecutivePairColors" = [
-        [ "<" "</" ]
-        [ "<" "/>" ]
-        [ "{" "}" ]
-        [ "(" ")" ]
-        [ "[" "]" ]
         [
-          "#CC33FF" #purple
-          "#61c3e8" #blue
-          "#33FF66" #green
-          "#FFCC33" #yellow
-          "#ff3366" #red
+          "<"
+          "</"
         ]
-        "#ddd" #grey
+        [
+          "<"
+          "/>"
+        ]
+        [
+          "{"
+          "}"
+        ]
+        [
+          "("
+          ")"
+        ]
+        [
+          "["
+          "]"
+        ]
+        [
+          "#CC33FF" # purple
+          "#61c3e8" # blue
+          "#33FF66" # green
+          "#FFCC33" # yellow
+          "#ff3366" # red
+        ]
+        "#ddd" # grey
       ];
       "bracketPairColorizer.highlightActiveScope" = true;
       "editor.detectIndentation" = false;
@@ -245,7 +265,8 @@
       };
       "terminal.integrated.defaultProfile.linux" = "tmux";
       "explorer.confirmDelete" = false;
-      "java.jdt.ls.vmargs" = "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx1G -Xms100m -javaagent:\"/home/mustafa/.vscode/extensions/gabrielbb.vscode-lombok-1.0.1/server/lombok.jar\"";
+      "java.jdt.ls.vmargs" =
+        "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx1G -Xms100m -javaagent:\"/home/mustafa/.vscode/extensions/gabrielbb.vscode-lombok-1.0.1/server/lombok.jar\"";
       "explorer.confirmDragAndDrop" = false;
       "bracketPairColorizer.depreciation-notice" = false;
       "[javascriptreact]" = {

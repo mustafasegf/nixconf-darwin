@@ -110,7 +110,10 @@
     after = [ "k3s.service" ];
     wants = [ "k3s.service" ];
     wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.sops pkgs.kubectl ];
+    path = [
+      pkgs.sops
+      pkgs.kubectl
+    ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
@@ -131,7 +134,10 @@
     after = [ "k3s.service" ];
     wants = [ "k3s.service" ];
     wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.sops pkgs.kubectl ];
+    path = [
+      pkgs.sops
+      pkgs.kubectl
+    ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;

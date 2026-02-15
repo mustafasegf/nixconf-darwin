@@ -1,135 +1,154 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
-  # Desktop/development packages - for machines used for interactive development
-  # Not needed on headless servers
-  environment.systemPackages = with pkgs; [
-    ## Development toolchains
-    go
-    gofumpt
-    gopls
-    gotools
-    delve
-    gotestsum
-    golangci-lint
-    go-tools
+  options = {
+    custom.enableXcode = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable Xcode and related development tools";
+    };
+  };
 
-    jdk
-    jdt-language-server
-    maven
-    gradle
+  config = {
+    # Desktop/development packages - for machines used for interactive development
+    # Not needed on headless servers
+    environment.systemPackages =
+      with pkgs;
+      [
+        ## Development toolchains
+        go
+        gofumpt
+        gopls
+        gotools
+        delve
+        gotestsum
+        golangci-lint
+        go-tools
 
-    bun
-    rustup
-    nodejs
-    nodePackages.npm
-    nodePackages.pnpm
+        jdk
+        jdt-language-server
+        maven
+        gradle
 
-    ## Cloud and Infrastructure
-    terragrunt
-    opentofu
-    kubectl
-    k9s
-    kustomize
-    kcat
-    grpcurl
-    teleport
-    kubectx
-    kubernetes-helm
-    google-cloud-sdk
+        bun
+        rustup
+        nodejs
+        nodePackages.npm
+        nodePackages.pnpm
 
-    ## Development utilities
-    libiconv
-    speedtest-cli
-    xcodes
-    git-filter-repo
-    github-copilot-cli
-    air
-    cloc
-    gdu
-    neofetch
-    hyfetch
-    fastfetch
-    uwufetch
+        ## Cloud and Infrastructure
+        terragrunt
+        opentofu
+        kubectl
+        k9s
+        kustomize
+        kcat
+        grpcurl
+        teleport
+        kubectx
+        kubernetes-helm
+        google-cloud-sdk
 
-    ## Networking and security
-    wireguard-tools
-    android-tools
-    mtr
-    scrcpy
+        ## Development utilities
+        libiconv
+        speedtest-cli
+        git-filter-repo
+        github-copilot-cli
+        air
+        cloc
+        gdu
+        neofetch
+        hyfetch
+        fastfetch
+        uwufetch
 
-    ## Code formatters
-    black
-    stylua
-    shfmt
+        ## Networking and security
+        wireguard-tools
+        android-tools
+        mtr
+        scrcpy
 
-    ## Language servers
-    pyright
-    nodePackages.typescript-language-server
-    tflint
-    nodePackages.vscode-langservers-extracted
-    nodePackages_latest."@tailwindcss/language-server"
-    taplo
-    nodePackages.graphql-language-service-cli
-    sqls
-    nodePackages.svelte-language-server
-    nodePackages."@astrojs/language-server"
-    emmet-ls
-    lua-language-server
-    nodePackages.bash-language-server
-    nodePackages.diagnostic-languageserver
-    nixd
-    nixfmt
+        ## Code formatters
+        black
+        stylua
+        shfmt
 
-    ## Debugging and profiling
-    gcc
-    gdb
-    k6
-    semgrep
-    tig
+        ## Language servers
+        pyright
+        nodePackages.typescript-language-server
+        tflint
+        nodePackages.vscode-langservers-extracted
+        nodePackages_latest."@tailwindcss/language-server"
+        taplo
+        nodePackages.graphql-language-service-cli
+        sqls
+        nodePackages.svelte-language-server
+        nodePackages."@astrojs/language-server"
+        emmet-ls
+        lua-language-server
+        nodePackages.bash-language-server
+        nodePackages.diagnostic-languageserver
+        nixd
+        nixfmt
 
-    ## Analysis tools
-    scc
-    hexedit
-    nasm
-    bear
-    tree
-    cookiecutter
-    termshark
+        ## Debugging and profiling
+        gcc
+        # gdb  # Disabled - build fails on modern macOS with clang
+        k6
+        semgrep
+        tig
 
-    ## DevOps tools
-    krew
-    ossutil
-    confluent-platform
-    ast-grep
-    uv
-    pdftk
-    moreutils
-    prometheus-alertmanager
-    prometheus
+        ## Analysis tools
+        scc
+        hexedit
+        nasm
+        bear
+        tree
+        cookiecutter
+        termshark
 
-    ## Protobuf
-    protobuf
-    grpc-tools
-    protoc-gen-go
-    protoc-gen-doc
+        ## DevOps tools
+        krew
+        ossutil
+        confluent-platform
+        ast-grep
+        uv
+        pdftk
+        moreutils
+        prometheus-alertmanager
+        prometheus
 
-    ## Package managers
-    yarn
-    dive
-    inetutils
-    rar
-    unrar
-    gifsicle
+        ## Protobuf
+        protobuf
+        grpc-tools
+        protoc-gen-go
+        protoc-gen-doc
 
-    ## File management
-    lf
-    rclone
-    zerotierone
-    pkgconf
-    unixtools.procps
-    glab
-    devenv
-    tailscale
-  ];
+        ## Package managers
+        yarn
+        dive
+        inetutils
+        rar
+        unrar
+        gifsicle
+
+        ## File management
+        lf
+        rclone
+        zerotierone
+        pkgconf
+        unixtools.procps
+        glab
+        devenv
+        tailscale
+      ]
+      ++ lib.optionals config.custom.enableXcode [
+        xcodes
+      ];
+  };
 }

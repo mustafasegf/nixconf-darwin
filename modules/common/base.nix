@@ -36,5 +36,8 @@
     direnv
     nix-direnv
     nix-index
+
+    ## Development tools
+    wakatime-cli
   ];
 }

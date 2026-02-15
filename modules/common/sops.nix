@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # Sops configuration for all machines
@@ -6,13 +11,16 @@
   # This allows the same SSH key to decrypt secrets across all machines
 
   # Install ssh-to-age tool
-  home.packages = [ pkgs.ssh-to-age pkgs.sops ];
+  home.packages = [
+    pkgs.ssh-to-age
+    pkgs.sops
+  ];
 
   # Create activation script to generate age key from SSH key
-  home.activation.setupSopsKey = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.setupSopsKey = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     # Create sops age directory
     $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/sops/age
-    
+
     # Find SSH key
     SSH_KEY=""
     if [ -f ${config.home.homeDirectory}/.ssh/id_ed25519 ]; then
@@ -22,7 +30,7 @@
     elif [ -f ${config.home.homeDirectory}/.ssh/id ]; then
       SSH_KEY="${config.home.homeDirectory}/.ssh/id"
     fi
-    
+
     # Convert SSH key to age format if key exists
     if [ -n "$SSH_KEY" ] && [ -f "$SSH_KEY" ]; then
       $DRY_RUN_CMD ${pkgs.ssh-to-age}/bin/ssh-to-age -private-key -i "$SSH_KEY" \

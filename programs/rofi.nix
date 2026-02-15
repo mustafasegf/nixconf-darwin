@@ -1,8 +1,10 @@
-{ config
-, pkgs
-, libs
-, ...
-}: {
+{
+  config,
+  pkgs,
+  libs,
+  ...
+}:
+{
   programs.rofi = {
     enable = false;
 

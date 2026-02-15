@@ -1,8 +1,10 @@
-{ config
-, pkgs
-, libs
-, ...
-}: {
+{
+  config,
+  pkgs,
+  libs,
+  ...
+}:
+{
 
   programs.tmux = {
     enable = true;
@@ -52,8 +54,7 @@
 
     shell = "${pkgs.zsh}/bin/zsh";
 
-    extraConfig =
-    ''
+    extraConfig = ''
       # OSC 52 clipboard support - allows clipboard to work over SSH
       # This enables tmux to pass through OSC 52 escape sequences to the terminal
       set -g set-clipboard on

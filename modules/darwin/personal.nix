@@ -4,6 +4,9 @@
   # Personal Mac profile (for personal machines)
   # Used by machines like mustafa-mac
 
+  # Disable Xcode tools for personal machines
+  custom.enableXcode = false;
+
   # PAM reattach for tmux/sudo integration
   security.pam.services.sudo_local.reattach = true;
 

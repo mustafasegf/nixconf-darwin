@@ -30,26 +30,39 @@
       in
       with pkgs.vimPlugins;
       [
+        # ============================================
+        # CORE PLUGINS - Load immediately at startup
+        # ============================================
+
+        # lz.n - lazy loading plugin (must load first to setup lazy loading)
+        {
+          plugin = customPlugins.lz-n;
+          type = "lua";
+          config = builtins.readFile ../config/nvim/lazy.lua;
+        }
+
+        # Base config
         {
           plugin = config;
           type = "lua";
           config = builtins.readFile ../config/nvim/config.lua;
         }
-        # theme
+
+        # Theme - needs to load early for colors
         {
           plugin = dracula-vim;
           type = "lua";
           config = builtins.readFile ../config/nvim/color.lua;
         }
 
-        #keymap
+        # Keymap - essential keybindings (non-plugin-specific)
         {
           plugin = keymapConfig;
           type = "lua";
           config = builtins.readFile ../config/nvim/keymap.lua;
         }
 
-        #lsp
+        # LSP & Completion - core functionality, load eagerly
         {
           plugin = nvim-lspconfig;
           type = "lua";
@@ -61,119 +74,87 @@
         luasnip
         lspkind-nvim
         none-ls-nvim
-        markdown-preview-nvim
         nvim-jdtls
+        neoconf-nvim
 
         {
           plugin = customPlugins.lsp-inlayhints;
           type = "lua";
         }
 
-        # {
-        #   plugin = (pluginGit "nanotee" "sqls.nvim" "main"
-        #     "sha256-o5uD6shPkweuE+k/goBX42W3I2oojXVijfJC7L50sGU=");
-        #   type = "lua";
-        # }
-
-        #language spesific
-        # {
-        #   plugin = (pluginGit "ray-x" "go.nvim" "master"
-        #     "z65o3cOoxWILDKjEUWNTK1X7riQjxAS7BGeo29049Ms=");
-        #   type = "lua";
-        # }
+        # Treesitter - essential for syntax highlighting, load eagerly
         {
-          plugin = customPlugins.rainbow-csv;
-        }
-        {
-          plugin = customPlugins.mdx;
+          plugin = (
+            nvim-treesitter.withPlugins (
+              _:
+              nvim-treesitter.allGrammars
+              ++ [
+                nvim-treesitter-parsers.wgsl
+                nvim-treesitter-parsers.astro
+              ]
+            )
+          );
           type = "lua";
-          config = builtins.readFile ../config/nvim/mdx.lua;
-        }
-        # {
-        #   plugin = (pluginGit "kiyoon" "jupynium.nvim" "master"
-        #     "HJrg+Jun4CxXKBgKEQGnF/EjyrXjJMwLexCCrnXA0+Y=");
-        #   type = "lua";
-        #   config = builtins.readFile ../config/nvim/jupyter.lua;
-        # }
-        dressing-nvim
-        # rust-tools-nvim
-        nvim-notify
-        vim-android
-        neoconf-nvim
-
-        #file tree
-        {
-          plugin = nvim-tree-lua;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/filetree.lua;
-        }
-        nvim-web-devicons
-
-        # buffer
-        {
-          plugin = bufferline-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/bufferline.lua;
-        }
-        {
-
-          plugin = toggleterm-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/toggleterm.lua;
+          config = builtins.readFile ../config/nvim/treesitter.lua;
         }
 
-        #cosmetic
-        {
-          plugin = indent-blankline-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/indentline.lua;
-        }
-        rainbow-delimiters-nvim
-        promise-async
-        {
-          plugin = nvim-ufo;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/fold.lua;
-        }
-
+        # Statusline & Bufferline - visible UI elements, load eagerly
         {
           plugin = lualine-nvim;
           type = "lua";
           config = builtins.readFile ../config/nvim/lualine.lua;
         }
         {
-          plugin = nvim-colorizer-lua;
+          plugin = bufferline-nvim;
           type = "lua";
-          config = ''
-
-            -- nvim-colorizer
-            require("colorizer").setup()
-          '';
+          config = builtins.readFile ../config/nvim/bufferline.lua;
         }
+
+        # Autopairs - needed for typing immediately
         {
-          plugin = neoscroll-nvim;
+          plugin = nvim-autopairs;
           type = "lua";
-          config = builtins.readFile ../config/nvim/neoscroll.lua;
+          config = builtins.readFile ../config/nvim/autopairs.lua;
         }
 
-        #git
+        # Autosave - needs to work from start
+        {
+          plugin = auto-save-nvim;
+          type = "lua";
+          config = builtins.readFile ../config/nvim/autosave.lua;
+        }
+
+        # ============================================
+        # LAZY LOADED PLUGINS - Installed here, loaded by lz.n
+        # No config here - lz.n handles setup in lazy.lua
+        # ============================================
+
+        # File tree
+        nvim-tree-lua
+        nvim-web-devicons
+
+        # Telescope
+        telescope-nvim
+
+        # Git
+        gitsigns-nvim
         octo-nvim
         vim-fugitive
-        {
-          plugin = customPlugins.blamer;
-          type = "lua";
-        }
-        {
-          plugin = gitsigns-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/gitsigns.lua;
-        }
-        trouble-nvim
+        customPlugins.blamer
 
-        #addon app
+        # Debugger
+        nvim-dap
+        nvim-dap-ui
+        nvim-dap-virtual-text
+        telescope-dap-nvim
+        nvim-dap-go
+
+        # Terminal
+        toggleterm-nvim
+
+        # Database
         vim-dadbod
         vim-dadbod-ui
-        # vim-dadbod-completion
         (vim-dadbod-completion.overrideAttrs (old: {
           patchPhase = ''
             substituteInPlace autoload/vim_dadbod_completion.vim \
@@ -191,108 +172,84 @@
           '';
         }))
 
+        # Markdown
+        markdown-preview-nvim
+
+        # Trouble
+        trouble-nvim
+
+        # Search/Replace
+        nvim-spectre
+
+        # Refactoring
+        refactoring-nvim
+
+        # Todo comments
+        todo-comments-nvim
+
+        # Motion
+        flash-nvim
+        harpoon
+
+        # UI enhancements
+        noice-nvim
+        nvim-notify
+        dressing-nvim
+        nui-nvim
+
+        # Smooth scrolling
+        neoscroll-nvim
+
+        # Folding
+        promise-async
+        nvim-ufo
+
+        # Colorizer
+        nvim-colorizer-lua
+
+        # Indentation
+        indent-blankline-nvim
+        rainbow-delimiters-nvim
+
+        # Comment
+        comment-nvim
+        nvim-ts-context-commentstring
+
+        # Surround
+        nvim-surround
+
+        # Maximizer
+        customPlugins.vim-maximizer
+
+        # Registers
+        registers-nvim
+
+        # Session
+        auto-session
+
+        # Local config
+        nvim-config-local
+
+        # ============================================
+        # OTHER PLUGINS - Language specific or misc
+        # ============================================
+
+        # Language specific
+        {
+          plugin = customPlugins.rainbow-csv;
+        }
+        {
+          plugin = customPlugins.mdx;
+          type = "lua";
+          config = builtins.readFile ../config/nvim/mdx.lua;
+        }
+
+        vim-android
         otter-nvim
-
-        #auto
-        # cmp-tabnine
-        # copilot-vim
-        {
-          plugin = nvim-autopairs;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/autopairs.lua;
-        }
-
-        #quality of life
-        {
-          plugin = comment-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/comment.lua;
-        }
-        { plugin = nvim-ts-context-commentstring; }
         nvim-ts-autotag
         vim-move
         vim-visual-multi
-        {
-          plugin = nvim-surround;
-          type = "lua";
-          config = ''
-            require("nvim-surround").setup()
-          '';
-        }
-        {
-          plugin = telescope-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/telescope.lua;
-        }
-        {
-          plugin = todo-comments-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/todo-comments.lua;
-        }
-        {
-          plugin = auto-save-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/autosave.lua;
-        }
-        {
-          plugin = refactoring-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/refactoring.lua;
-        }
-        {
-          plugin = nvim-spectre;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/spectre.lua;
-        }
 
-        #session
-        {
-          plugin = auto-session;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/session.lua;
-        }
-
-        #debugger
-        {
-          plugin = nvim-dap;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/dap.lua;
-        }
-        nvim-dap-ui
-        nvim-dap-virtual-text
-        telescope-dap-nvim
-        nvim-dap-go
-        {
-          plugin = customPlugins.vim-maximizer;
-        }
-
-        #misc
-        popup-nvim
-        plenary-nvim
-        registers-nvim
-        vim-suda
-        nui-nvim
-        # {
-        #   plugin = (pluginGit "amitds1997" "remote-nvim.nvim" "main"
-        #     "yU9eqb4YSSnJ/tgsqq/P/LQBz/yJCwbQJhPoqYBOlaY=");
-        #   type = "lua";
-        #   config = ''require("remote-nvim").setup()'';
-        # }
-        {
-          plugin = harpoon;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/harpoon.lua;
-        }
-        {
-          plugin = flash-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/flash.lua;
-        }
-        {
-          plugin = nvim-config-local;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/local.lua;
-        }
         {
           plugin = customPlugins.opencode;
           type = "lua";
@@ -300,69 +257,14 @@
         }
 
         {
-          plugin = noice-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/noice.lua;
-        }
-        {
           plugin = customPlugins.twoslash-queries;
           type = "lua";
         }
 
-        # playground
-        {
-          plugin = (
-            nvim-treesitter.withPlugins (
-              _:
-              nvim-treesitter.allGrammars
-              ++ [
-                nvim-treesitter-parsers.wgsl
-                nvim-treesitter-parsers.astro
-
-                # (pkgs.tree-sitter.buildGrammar
-                #   {
-                #     language = "wgsl";
-                #     version = "40259f3";
-                #     src = pkgs.fetchFromGitHub {
-                #       owner = "szebniok";
-                #       repo = "tree-sitter-wgsl";
-                #       rev = "40259f3c77ea856841a4e0c4c807705f3e4a2b65";
-                #       sha256 = "sha256-voLkcJ/062hzipb3Ak/mgQvFbrLUJdnXq1IupzjMJXA=";
-                #     };
-                #   })
-                # (pkgs.tree-sitter.buildGrammar {
-                #   language = "astro";
-                #   version = "e122a8f";
-                #   src = pkgs.fetchFromGitHub {
-                #     owner = "virchau13";
-                #     repo = "tree-sitter-astro";
-                #     rev = "e122a8fcd07e808a7b873bfadc2667834067daf1";
-                #     sha256 = "sha256-iCVRTX2fMW1g40rHcJEwwE+tfwun+reIaj5y4AFgmKk=";
-                #   };
-                # })
-              ]
-            )
-          );
-          type = "lua";
-          config = builtins.readFile ../config/nvim/treesitter.lua;
-        }
-        # (vim-wakatime.overrideAttrs (old: {
-        #   patchPhase = ''
-        #     # Move the BufEnter hook from the InitAndHandleActivity call
-        #     # to the common HandleActivity call. This is necessary because
-        #     # InitAndHandleActivity prompts the user for an API key if
-        #     # one is not found, which breaks the remote plugin manifest
-        #     # generation.
-        #     substituteInPlace plugin/wakatime.vim \
-        #       --replace 'autocmd BufEnter,VimEnter' \
-        #                 'autocmd VimEnter' \
-        #       --replace 'autocmd CursorMoved,CursorMovedI' \
-        #                 'autocmd CursorMoved,CursorMovedI,BufEnter'
-        #   '';
-        #   configurePhase = ''
-        #     export
-        #   '';
-        # }))
+        # Misc utilities (dependencies)
+        popup-nvim
+        plenary-nvim
+        vim-suda
       ];
   };
 }

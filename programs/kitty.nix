@@ -88,6 +88,8 @@
       italic_font = "auto";
       bold_italic_font = "auto";
       scrollback_lines = 6000;
+      # OSC 52 clipboard support - allows remote machines to copy to local clipboard
+      clipboard_control = "write-clipboard write-primary read-clipboard-ask read-primary-ask";
     };
   };
 }

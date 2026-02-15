@@ -65,6 +65,10 @@
       url = "github:davidmh/mdx.nvim";
       flake = false;
     };
+    vimPlugins_lz-n = {
+      url = "github:nvim-neorocks/lz.n";
+      flake = false;
+    };
   };
 
   outputs =

@@ -38,6 +38,6 @@
     nix-index
 
     ## Development tools
-    wakatime-cli
+    # wakatime-cli
   ];
 }

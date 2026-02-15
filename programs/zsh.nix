@@ -76,8 +76,8 @@ in
       export VAGRANT_HOME="$XDG_DATA_HOME"/vagrant
       export WINEPREFIX="$XDG_DATA_HOME"/wine
       export _Z_DATA="$XDG_DATA_HOME"/z
-      export WAKATIME_HOME="$XDG_CONFIG_HOME/wakatime"
-      export ZSH_WAKATIME_BIN="$WAKATIME_HOME/.wakatime/wakatime-cli"
+      # export WAKATIME_HOME="$XDG_CONFIG_HOME/wakatime"
+      # export ZSH_WAKATIME_BIN="$WAKATIME_HOME/.wakatime/wakatime-cli"
 
       # PATH - Common
       export PATH=$PATH:$CARGO_HOME/bin
@@ -449,11 +449,11 @@ in
       zinit wait lucid for \
         ellie/atuin
 
-      ${lib.optionalString pkgs.stdenv.isLinux ''
-        # Wakatime - Linux only, deferred
-        zinit wait lucid for \
-          sobolevn/wakatime-zsh-plugin
-      ''}
+      # ${lib.optionalString pkgs.stdenv.isLinux ''
+        #   # Wakatime - Linux only, deferred
+        #   zinit wait lucid for \
+        #     sobolevn/wakatime-zsh-plugin
+        # ''}
 
       # Syntax highlighting, autosuggestions, and completions - load last, deferred
       # zicompinit replaces compinit with a faster cached version

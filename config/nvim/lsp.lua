@@ -23,7 +23,6 @@ local source_mapping = {
 
 local lspkind = require("lspkind")
 local cmp = require("cmp")
-local lsp = require("lspconfig")
 
 cmp.setup({
   snippet = {
@@ -119,11 +118,6 @@ null_ls.setup({
 
 -- vim.api.nvim_exec([[ autocmd BufWritePost,FileWritePost *.go execute 'PrettyTag' | checktime ]], false)
 
-lsp.diagnosticls.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
-})
-
 -- Setup lspconfig.
 local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
@@ -131,14 +125,6 @@ capabilities.textDocument.foldingRange = {
   dynamicRegistration = false,
   lineFoldingOnly = true,
 }
--- local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
--- for _, ls in ipairs(language_servers) do
--- 	require("lspconfig")[ls].setup({
--- 		capabilities = capabilities,
--- 		-- you can add other fields for setting up lsp server in this table
--- 	})
--- end
--- require("ufo").setup()
 
 -- vim.api.nvim_command(
 -- 	"autocmd FileType sql,mysql,plsql lua require('cmp').setup.buffer({ sources = {{ name = 'vim-dadbod-completion' }} })"
@@ -161,6 +147,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
+-- Configure LSP servers using vim.lsp.config (Neovim 0.11+)
 local servers = {
   "clangd",
   "hls",
@@ -187,13 +174,15 @@ local servers = {
   "intelephense",
   "cmake",
   "lua_ls",
+  "diagnosticls",
 }
 
 for _, server in ipairs(servers) do
-  lsp[server].setup({
+  vim.lsp.config[server] = {
     capabilities = capabilities,
     on_attach = on_attach,
-  })
+  }
+  vim.lsp.enable(server)
 end
 
 -- Update this path
@@ -226,11 +215,10 @@ end
 -- 	},
 -- })
 
-lsp.ts_ls.setup({
+-- TypeScript/JavaScript LSP with custom settings
+vim.lsp.config.ts_ls = {
   capabilities = capabilities,
-  on_attach = function(c, b)
-    on_attach(c, b)
-  end,
+  on_attach = on_attach,
   settings = {
     typescript = {
       inlayHints = {
@@ -255,9 +243,11 @@ lsp.ts_ls.setup({
       },
     },
   },
-})
+}
+vim.lsp.enable("ts_ls")
 
-lsp.jsonls.setup({
+-- JSON LSP with custom format command
+vim.lsp.config.jsonls = {
   capabilities = capabilities,
   on_attach = on_attach,
   commands = {
@@ -267,7 +257,8 @@ lsp.jsonls.setup({
       end,
     },
   },
-})
+}
+vim.lsp.enable("jsonls")
 
 -- local jdtls = require('jdtls')
 -- jdtls.start_or_attach({})

@@ -69,6 +69,10 @@
       url = "github:nvim-neorocks/lz.n";
       flake = false;
     };
+    vimPlugins_nvim-sops = {
+      url = "github:prismatic-koi/nvim-sops";
+      flake = false;
+    };
   };
 
   outputs =

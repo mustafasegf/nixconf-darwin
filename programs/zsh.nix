@@ -83,6 +83,7 @@ in
       export PATH=$PATH:$CARGO_HOME/bin
       export PATH=$PATH:$RUSTUP_HOME:~/.rustup/toolchains/${RUSTC_VERSION}-${rustArch}/bin/
       export PATH=$PATH:$GOPATH/bin
+      export PATH=$PATH:~/.cache/.bun/bin
 
       # PATH - Platform-specific
       ${platformPaths}
@@ -445,9 +446,8 @@ in
       zinit wait lucid for \
         dracula/zsh
 
-      # Atuin - deferred
-      zinit wait lucid for \
-        ellie/atuin
+      # Atuin - initialize properly instead of using zinit plugin
+      eval "$(atuin init zsh)"
 
       # ${lib.optionalString pkgs.stdenv.isLinux ''
         #   # Wakatime - Linux only, deferred

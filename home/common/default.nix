@@ -50,8 +50,8 @@
     enableZshIntegration = true;
     settings = {
       add_newline = true;
-      format = "[$symbol$version]($style)[$directory]($style)[$git_branch]($style)[$git_commit]($style)[$git_state]($style)[$git_status]($style)[$line_break]($style)[$username]($style)[$hostname]($style)[$shlvl]($style)[$jobs]($style)[$time]($style)[$status]($style)[$character]($style)";
-      line_break.disabled = true;
+      format = "$hostname$username$directory$git_branch$git_commit$git_state$git_status$line_break$shlvl$jobs$time$status$character";
+      line_break.disabled = false;
       cmd_duration.disabled = true;
       character = {
         success_symbol = "[➜](bold green)";

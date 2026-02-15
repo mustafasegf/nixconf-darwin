@@ -299,6 +299,7 @@
         "vimPlugins_lsp-inlayhints": "vimPlugins_lsp-inlayhints",
         "vimPlugins_lz-n": "vimPlugins_lz-n",
         "vimPlugins_mdx": "vimPlugins_mdx",
+        "vimPlugins_nvim-sops": "vimPlugins_nvim-sops",
         "vimPlugins_opencode": "vimPlugins_opencode",
         "vimPlugins_rainbow-csv": "vimPlugins_rainbow-csv",
         "vimPlugins_twoslash-queries": "vimPlugins_twoslash-queries",
@@ -420,6 +421,22 @@
       "original": {
         "owner": "davidmh",
         "repo": "mdx.nvim",
+        "type": "github"
+      }
+    },
+    "vimPlugins_nvim-sops": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1769726770,
+        "narHash": "sha256-PkCZZuigHAAlGNcVD/bBTkGyZs9e3tgmnaDuPpKrBKM=",
+        "owner": "prismatic-koi",
+        "repo": "nvim-sops",
+        "rev": "1791eec21e78c9736ae504f02712a2f509c69b2c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "prismatic-koi",
+        "repo": "nvim-sops",
         "type": "github"
       }
     },

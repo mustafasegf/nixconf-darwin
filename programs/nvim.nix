@@ -62,6 +62,13 @@
           config = builtins.readFile ../config/nvim/keymap.lua;
         }
 
+        # Sops - automatic encryption/decryption
+        {
+          plugin = customPlugins.nvim-sops;
+          type = "lua";
+          config = builtins.readFile ../config/nvim/sops.lua;
+        }
+
         # LSP & Completion - core functionality, load eagerly
         {
           plugin = nvim-lspconfig;

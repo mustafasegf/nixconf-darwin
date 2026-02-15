@@ -258,11 +258,11 @@ require("lz.n").load({
   },
 
   -- ============================================
-  -- UI ENHANCEMENTS - load on VeryLazy
+  -- UI ENHANCEMENTS - load after startup
   -- ============================================
   {
     "noice.nvim",
-    event = "VeryLazy",
+    event = "UIEnter",
     after = function()
       require("noice").setup({
         lsp = {
@@ -282,7 +282,7 @@ require("lz.n").load({
   },
   {
     "neoscroll.nvim",
-    event = "VeryLazy",
+    event = "UIEnter",
     after = function()
       require("neoscroll").setup()
     end,

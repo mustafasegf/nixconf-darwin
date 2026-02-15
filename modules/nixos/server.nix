@@ -121,6 +121,7 @@
         set -euo pipefail
         # Decrypt the secret file using sops with the user's age key
         export SOPS_AGE_KEY_FILE=/home/mustafa/.config/sops/age/keys.txt
+        export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
         ${pkgs.sops}/bin/sops -d ${./../../secrets/github-runner.yaml} | ${pkgs.kubectl}/bin/kubectl apply -f -
       '';
       Restart = "on-failure";
@@ -145,6 +146,7 @@
         set -euo pipefail
         # Decrypt the secret file using sops with the user's age key
         export SOPS_AGE_KEY_FILE=/home/mustafa/.config/sops/age/keys.txt
+        export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
         ${pkgs.sops}/bin/sops -d ${./../../secrets/leetbot.yaml} | ${pkgs.kubectl}/bin/kubectl apply -f -
       '';
       Restart = "on-failure";

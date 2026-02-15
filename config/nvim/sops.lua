@@ -1,0 +1,3 @@
+-- nvim-sops configuration
+-- Plugin is configured in lazy.lua
+-- This file is kept for consistency but can be removed

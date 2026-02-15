@@ -58,6 +58,11 @@
         error_symbol = "[✖](bold red)";
         vicmd_symbol = "[❮](bold yellow)";
       };
+      hostname = {
+        ssh_only = false;
+        format = "[@$hostname](bold blue) ";
+        disabled = false;
+      };
       package.disabled = true;
     };
   };

@@ -18,6 +18,12 @@
     ../modules/nixos/desktop.nix
   ];
 
+  # Build configuration - limit parallel builds to 14 cores
+  nix.settings = {
+    cores = 14;
+    max-jobs = "auto";
+  };
+
   # ========================================
   # BOOT & KERNEL
   # ========================================

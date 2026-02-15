@@ -14,6 +14,12 @@
     ../modules/nixos/server.nix
   ];
 
+  # Build configuration - limit parallel builds to 7 cores
+  nix.settings = {
+    cores = 7;
+    max-jobs = "auto";
+  };
+
   # Hardware configuration
   boot.initrd.availableKernelModules = [
     "ehci_pci"

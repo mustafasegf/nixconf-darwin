@@ -411,6 +411,9 @@ in
 
       # Vi-mode - load immediately (better than OMZ vi-mode)
       # Use sourcing mode to avoid zle-line-init hijack that causes invisible prompt in tmux
+      # Atuin must be registered BEFORE zsh-vi-mode loads, because sourcing mode
+      # fires zvm_after_init immediately during zinit light
+      zvm_after_init_commands+=('eval "$(atuin init zsh)"')
       ZVM_INIT_MODE=sourcing
       zinit ice depth=1
       zinit light jeffreytse/zsh-vi-mode
@@ -439,17 +442,10 @@ in
         atload"unset -f _awscli-homebrew-installed 2>/dev/null" \
         OMZP::aws
 
-      # History substring search - deferred
-      zinit wait lucid for \
-        zsh-users/zsh-history-substring-search
-
       # z for directory jumping - deferred
       zinit wait lucid for \
         agkozak/zsh-z
 
-      # Atuin - use zvm_after_init to ensure keybindings (Ctrl+R, etc.)
-      # are set AFTER zsh-vi-mode, which otherwise overrides them
-      zvm_after_init_commands+=('eval "$(atuin init zsh)"')
 
       # ${lib.optionalString pkgs.stdenv.isLinux ''
         #   # Wakatime - Linux only, deferred

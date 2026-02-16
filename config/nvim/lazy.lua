@@ -2,6 +2,9 @@
 -- Plugins are installed by Nix, lz.n handles deferred loading
 -- This file defines WHEN plugins load, configs are in separate files
 
+-- Set mapleader BEFORE lz.n.load() so <leader> keymaps resolve correctly
+vim.g.mapleader = " "
+
 require("lz.n").load({
   -- ============================================
   -- FILE TREE - load on command/keymap

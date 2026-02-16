@@ -1,6 +1,5 @@
 -- keymap
--- change leader
-vim.g.mapleader = " "
+-- mapleader is set in lazy.lua (must be set before lz.n.load)
 vim.keymap.set("n", "<space", "<nop>", { silent = true })
 
 -- resize buffer

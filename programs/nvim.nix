@@ -134,34 +134,59 @@
         # ============================================
         # LAZY LOADED PLUGINS - Installed here, loaded by lz.n
         # No config here - lz.n handles setup in lazy.lua
+        # optional = true puts them in 'opt' packpath so lz.n controls loading
         # ============================================
 
         # File tree
-        nvim-tree-lua
-        nvim-web-devicons
+        {
+          plugin = nvim-tree-lua;
+          optional = true;
+        }
+        nvim-web-devicons # dependency - keep eager for nvim-tree, telescope, etc.
 
         # Telescope
-        telescope-nvim
+        {
+          plugin = telescope-nvim;
+          optional = true;
+        }
 
         # Git
-        gitsigns-nvim
-        octo-nvim
-        vim-fugitive
-        customPlugins.blamer
+        {
+          plugin = gitsigns-nvim;
+          optional = true;
+        }
+        {
+          plugin = octo-nvim;
+          optional = true;
+        }
+        {
+          plugin = vim-fugitive;
+          optional = true;
+        }
+        customPlugins.blamer # loaded via gitsigns after hook
 
         # Debugger
-        nvim-dap
-        nvim-dap-ui
-        nvim-dap-virtual-text
-        telescope-dap-nvim
-        nvim-dap-go
+        {
+          plugin = nvim-dap;
+          optional = true;
+        }
+        nvim-dap-ui # dependency - required by nvim-dap after hook
+        nvim-dap-virtual-text # dependency - required by nvim-dap after hook
+        telescope-dap-nvim # dependency - required by telescope after hook
+        nvim-dap-go # dependency - required by nvim-dap after hook
 
         # Terminal
-        toggleterm-nvim
+        {
+          plugin = toggleterm-nvim;
+          optional = true;
+        }
 
         # Database
-        vim-dadbod
-        vim-dadbod-ui
+        vim-dadbod # dependency of vim-dadbod-ui
+        {
+          plugin = vim-dadbod-ui;
+          optional = true;
+        }
         (vim-dadbod-completion.overrideAttrs (old: {
           patchPhase = ''
             substituteInPlace autoload/vim_dadbod_completion.vim \
@@ -180,62 +205,116 @@
         }))
 
         # Markdown
-        markdown-preview-nvim
+        {
+          plugin = markdown-preview-nvim;
+          optional = true;
+        }
 
         # Trouble
-        trouble-nvim
+        {
+          plugin = trouble-nvim;
+          optional = true;
+        }
 
         # Search/Replace
-        nvim-spectre
+        {
+          plugin = nvim-spectre;
+          optional = true;
+        }
 
         # Refactoring
-        refactoring-nvim
+        {
+          plugin = refactoring-nvim;
+          optional = true;
+        }
 
         # Todo comments
-        todo-comments-nvim
+        {
+          plugin = todo-comments-nvim;
+          optional = true;
+        }
 
         # Motion
-        flash-nvim
-        harpoon
+        {
+          plugin = flash-nvim;
+          optional = true;
+        }
+        {
+          plugin = harpoon;
+          optional = true;
+        }
 
         # UI enhancements
-        noice-nvim
-        nvim-notify
-        dressing-nvim
-        nui-nvim
+        {
+          plugin = noice-nvim;
+          optional = true;
+        }
+        nvim-notify # dependency of noice
+        dressing-nvim # dependency of noice/telescope
+        nui-nvim # dependency of noice
 
         # Smooth scrolling
-        neoscroll-nvim
+        {
+          plugin = neoscroll-nvim;
+          optional = true;
+        }
 
         # Folding
-        promise-async
-        nvim-ufo
+        promise-async # dependency of nvim-ufo
+        {
+          plugin = nvim-ufo;
+          optional = true;
+        }
 
         # Colorizer
-        nvim-colorizer-lua
+        {
+          plugin = nvim-colorizer-lua;
+          optional = true;
+        }
 
         # Indentation
-        indent-blankline-nvim
-        rainbow-delimiters-nvim
+        {
+          plugin = indent-blankline-nvim;
+          optional = true;
+        }
+        rainbow-delimiters-nvim # dependency of indent-blankline
 
         # Comment
-        comment-nvim
-        nvim-ts-context-commentstring
+        {
+          plugin = comment-nvim;
+          optional = true;
+        }
+        nvim-ts-context-commentstring # dependency of Comment.nvim
 
         # Surround
-        nvim-surround
+        {
+          plugin = nvim-surround;
+          optional = true;
+        }
 
         # Maximizer
-        customPlugins.vim-maximizer
+        {
+          plugin = customPlugins.vim-maximizer;
+          optional = true;
+        }
 
         # Registers
-        registers-nvim
+        {
+          plugin = registers-nvim;
+          optional = true;
+        }
 
         # Session
-        auto-session
+        {
+          plugin = auto-session;
+          optional = true;
+        }
 
         # Local config
-        nvim-config-local
+        {
+          plugin = nvim-config-local;
+          optional = true;
+        }
 
         # ============================================
         # OTHER PLUGINS - Language specific or misc

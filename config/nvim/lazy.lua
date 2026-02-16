@@ -14,7 +14,7 @@ local plugins = {
   -- Eager: loaded immediately at startup, ordered by priority
   "color",       -- colorscheme (priority 1000)
   "notify",      -- nvim-notify (priority 900)
-  "lsp",         -- LSP & completion (priority 800)
+  "lsp",         -- LSP (priority 800)
   "treesitter",  -- syntax highlighting (priority 700)
   "lualine",     -- statusline (priority 600)
   "bufferline",  -- bufferline (priority 500, disabled)
@@ -24,6 +24,7 @@ local plugins = {
   "mdx",         -- MDX filetype (priority 100)
   "opencode",    -- opencode (priority 100)
   -- Lazy: loaded on demand by lz.n triggers
+  "completion",
   "filetree",
   "telescope",
   "git",

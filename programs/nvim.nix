@@ -35,6 +35,7 @@
           "mdx"
           "opencode"
           # Lazy plugin specs (loaded by lz.n)
+          "completion"
           "filetree"
           "telescope"
           "git"
@@ -90,13 +91,8 @@
         # Sops
         customPlugins.nvim-sops
 
-        # LSP & Completion
+        # LSP
         nvim-lspconfig
-        cmp-nvim-lsp
-        cmp-buffer
-        nvim-cmp
-        luasnip
-        lspkind-nvim
         none-ls-nvim
         nvim-jdtls
         neoconf-nvim
@@ -128,6 +124,12 @@
         # No config here - lz.n handles setup in lazy.lua
         # optional = true puts them in 'opt' packpath so lz.n controls loading
         # ============================================
+
+        # Completion
+        {
+          plugin = blink-cmp;
+          optional = true;
+        }
 
         # File tree
         {

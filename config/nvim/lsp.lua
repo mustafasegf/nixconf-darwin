@@ -1,50 +1,8 @@
--- LSP, completion, null-ls
+-- LSP, null-ls
 return {
   "nvim-lspconfig",
   priority = 800,
   after = function()
-    local source_mapping = {
-      luasnip = "[Snip]",
-      ["vim-dadbod-completion"] = "[DB]",
-      nvim_lsp = "[LSP]",
-      otter = "[Otter]",
-      buffer = "[Buff]",
-      path = "[Path]",
-    }
-
-    local lspkind = require("lspkind")
-    local cmp = require("cmp")
-
-    cmp.setup({
-      snippet = {
-        expand = function(args)
-          require("luasnip").lsp_expand(args.body)
-        end,
-      },
-      mapping = cmp.mapping.preset.insert({
-        ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-        ["<C-f>"] = cmp.mapping.scroll_docs(4),
-        ["<C-Space>"] = cmp.mapping.complete(),
-        ["<C-e>"] = cmp.mapping.abort(),
-        ["<CR>"] = cmp.mapping.confirm({ select = false }),
-      }),
-      sources = cmp.config.sources({
-        { name = "otter" },
-        { name = "vim-dadbod-completion" },
-        { name = "luasnip" },
-        { name = "nvim_lsp" },
-        { name = "buffer" },
-      }),
-      formatting = {
-        format = function(entry, vim_item)
-          vim_item.kind = lspkind.presets.default[vim_item.kind]
-          local menu = source_mapping[entry.source.name]
-          vim_item.menu = menu
-          return vim_item
-        end,
-      },
-    })
-
     local opts = { noremap = true, silent = true }
     vim.api.nvim_set_keymap("n", "ge", ':lua vim.diagnostic.open_float(0, { scope = "line", border = "single" })<CR>', opts)
     vim.api.nvim_set_keymap("n", "[d", ":lua vim.diagnostic.goto_prev()<CR>", opts)
@@ -95,9 +53,8 @@ return {
       },
     })
 
-    -- Setup lspconfig
-    local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-
+    -- Setup lspconfig (Neovim 0.11+ handles blink.cmp capabilities automatically)
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities.textDocument.foldingRange = {
       dynamicRegistration = false,
       lineFoldingOnly = true,

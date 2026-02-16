@@ -1,13 +1,16 @@
--- MDX configuration
--- Register MDX filetype to use markdown treesitter parser
--- This enables proper syntax highlighting for MDX files including code blocks
+-- MDX filetype support
+return {
+  "mdx",
+  priority = 100,
+  after = function()
+    vim.treesitter.language.register("markdown", "mdx")
 
-vim.treesitter.language.register('markdown', 'mdx')
-
--- Ensure treesitter highlighting is attached to MDX buffers
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "mdx",
-  callback = function()
-    vim.treesitter.start()
+    -- Ensure treesitter highlighting is attached to MDX buffers
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "mdx",
+      callback = function()
+        vim.treesitter.start()
+      end,
+    })
   end,
-})
+}

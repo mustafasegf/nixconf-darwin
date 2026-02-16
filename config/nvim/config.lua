@@ -28,6 +28,10 @@ vim.o.shortmess = vim.o.shortmess .. "c"
 vim.o.termguicolors = true
 vim.o.pumblend = 15
 vim.o.mouse = "a"
+vim.o.foldcolumn = "1"
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
 vim.o.winbar = "%=%{expand('%:~:.')}"
 vim.cmd("syntax on")
 

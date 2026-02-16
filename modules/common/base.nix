@@ -39,6 +39,7 @@
     nix-index
 
     ## Development tools
+    python3
     # wakatime-cli
   ];
 }

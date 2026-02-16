@@ -17,14 +17,53 @@
         # Build all vim plugins from flake inputs with "vimPlugins_" prefix
         customPlugins = import ../lib/mkFlake2VimPlugin.nix inputs pkgs;
 
-        keymapConfig = pkgs.vimUtils.buildVimPlugin {
-          name = "keymap-config";
-          src = ../config/nvim/keymapconfig;
-        };
-
-        config = pkgs.vimUtils.buildVimPlugin {
-          name = "config";
-          src = ../config/nvim/config;
+        # All config files live flat in config/nvim/
+        # Nix copies them into lua/plugins/ so require("plugins.X") works
+        configFiles = [
+          # Eager configs (loaded on startup via require in lazy.lua)
+          "config"
+          "color"
+          "keymap"
+          "sops"
+          "lsp"
+          "treesitter"
+          "lualine"
+          "bufferline"
+          "autopairs"
+          "autosave"
+          "notify"
+          "mdx"
+          "opencode"
+          # Lazy plugin specs (loaded by lz.n)
+          "filetree"
+          "telescope"
+          "git"
+          "dap"
+          "toggleterm"
+          "misc"
+          "spectre"
+          "refactoring"
+          "todocomments"
+          "flash"
+          "harpoon"
+          "noice"
+          "neoscroll"
+          "fold"
+          "colorizer"
+          "indentline"
+          "editing"
+          "session"
+        ];
+        pluginSpecs = pkgs.vimUtils.buildVimPlugin {
+          name = "plugin-specs";
+          src = pkgs.runCommand "plugin-specs-src" { } (
+            ''
+              mkdir -p $out/lua/plugins
+            ''
+            + builtins.concatStringsSep "\n" (
+              map (f: "cp ${../config/nvim/${f + ".lua"}} $out/lua/plugins/${f}.lua") configFiles
+            )
+          );
         };
 
       in
@@ -34,47 +73,25 @@
         # CORE PLUGINS - Load immediately at startup
         # ============================================
 
+        # Config files (lua/plugins/*.lua) - must be on runtimepath before lz.n
+        pluginSpecs
+
         # lz.n - lazy loading plugin (must load first to setup lazy loading)
+        # lazy.lua is the only file loaded via builtins.readFile - it bootstraps everything else
         {
           plugin = customPlugins.lz-n;
           type = "lua";
           config = builtins.readFile ../config/nvim/lazy.lua;
         }
 
-        # Base config
-        {
-          plugin = config;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/config.lua;
-        }
+        # Theme
+        dracula-vim
 
-        # Theme - needs to load early for colors
-        {
-          plugin = dracula-vim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/color.lua;
-        }
+        # Sops
+        customPlugins.nvim-sops
 
-        # Keymap - essential keybindings (non-plugin-specific)
-        {
-          plugin = keymapConfig;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/keymap.lua;
-        }
-
-        # Sops - automatic encryption/decryption
-        {
-          plugin = customPlugins.nvim-sops;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/sops.lua;
-        }
-
-        # LSP & Completion - core functionality, load eagerly
-        {
-          plugin = nvim-lspconfig;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/lsp.lua;
-        }
+        # LSP & Completion
+        nvim-lspconfig
         cmp-nvim-lsp
         cmp-buffer
         nvim-cmp
@@ -84,52 +101,27 @@
         nvim-jdtls
         neoconf-nvim
 
-        {
-          plugin = customPlugins.lsp-inlayhints;
-          type = "lua";
-        }
+        customPlugins.lsp-inlayhints
 
-        # Treesitter - essential for syntax highlighting, load eagerly
-        {
-          plugin = (
-            nvim-treesitter.withPlugins (
-              _:
-              nvim-treesitter.allGrammars
-              ++ [
-                nvim-treesitter-parsers.wgsl
-                nvim-treesitter-parsers.astro
-              ]
-            )
-          );
-          type = "lua";
-          config = builtins.readFile ../config/nvim/treesitter.lua;
-        }
+        # Treesitter
+        (nvim-treesitter.withPlugins (
+          _:
+          nvim-treesitter.allGrammars
+          ++ [
+            nvim-treesitter-parsers.wgsl
+            nvim-treesitter-parsers.astro
+          ]
+        ))
 
-        # Statusline & Bufferline - visible UI elements, load eagerly
-        {
-          plugin = lualine-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/lualine.lua;
-        }
-        {
-          plugin = bufferline-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/bufferline.lua;
-        }
+        # Statusline & Bufferline
+        lualine-nvim
+        bufferline-nvim
 
-        # Autopairs - needed for typing immediately
-        {
-          plugin = nvim-autopairs;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/autopairs.lua;
-        }
+        # Autopairs
+        nvim-autopairs
 
-        # Autosave - needs to work from start
-        {
-          plugin = auto-save-nvim;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/autosave.lua;
-        }
+        # Autosave
+        auto-save-nvim
 
         # ============================================
         # LAZY LOADED PLUGINS - Installed here, loaded by lz.n
@@ -170,10 +162,22 @@
           plugin = nvim-dap;
           optional = true;
         }
-        nvim-dap-ui # dependency - required by nvim-dap after hook
-        nvim-dap-virtual-text # dependency - required by nvim-dap after hook
-        telescope-dap-nvim # dependency - required by telescope after hook
-        nvim-dap-go # dependency - required by nvim-dap after hook
+        {
+          plugin = nvim-dap-ui; # dependency - required by nvim-dap after hook
+          optional = true;
+        }
+        {
+          plugin = nvim-dap-virtual-text; # dependency - required by nvim-dap after hook
+          optional = true;
+        }
+        {
+          plugin = telescope-dap-nvim; # dependency - required by telescope after hook
+          optional = true;
+        }
+        {
+          plugin = nvim-dap-go; # dependency - required by nvim-dap after hook
+          optional = true;
+        }
 
         # Terminal
         {
@@ -249,11 +253,7 @@
           plugin = noice-nvim;
           optional = true;
         }
-        {
-          plugin = nvim-notify; # dependency of noice
-          type = "lua";
-          config = builtins.readFile ../config/nvim/notify.lua;
-        }
+        nvim-notify # dependency of noice
         dressing-nvim # dependency of noice/telescope
         nui-nvim # dependency of noice
 
@@ -328,11 +328,7 @@
         {
           plugin = customPlugins.rainbow-csv;
         }
-        {
-          plugin = customPlugins.mdx;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/mdx.lua;
-        }
+        customPlugins.mdx
 
         vim-android
         otter-nvim
@@ -340,16 +336,8 @@
         vim-move
         vim-visual-multi
 
-        {
-          plugin = customPlugins.opencode;
-          type = "lua";
-          config = builtins.readFile ../config/nvim/opencode.lua;
-        }
-
-        {
-          plugin = customPlugins.twoslash-queries;
-          type = "lua";
-        }
+        customPlugins.opencode
+        customPlugins.twoslash-queries
 
         # Misc utilities (dependencies)
         popup-nvim

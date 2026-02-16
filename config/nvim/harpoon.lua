@@ -1,16 +1,12 @@
--- harpoon
--- require("harpoon").setup({
--- 	menu = {
--- 		width = 100,
--- 	},
--- })
---
--- vim.keymap.set("n", "<leader>mm", ':lua require("harpoon.mark").add_file()<CR>')
--- vim.keymap.set("n", "<leader>mr", ':lua require("harpoon.mark").rm_file()<CR>')
--- vim.keymap.set("n", "<leader>mc", ':lua require("harpoon.mark").clear_all()<CR>')
--- vim.keymap.set("n", "<leader>mf", ':lua require("harpoon.ui").toggle_quick_menu()<CR>')
---
--- vim.keymap.set("n", "<leader>ml", ':lua require("harpoon.ui").nav_next()<CR>')
--- vim.keymap.set("n", "<leader>mh", ':lua require("harpoon.ui").nav_prev()<CR>')
---
--- vim.keymap.set("n", "<leader>fm", ":Telescope harpoon marks<CR>")
+return {
+  "harpoon",
+  keys = {
+    { "<leader>mm", function() require("harpoon.mark").add_file() end, desc = "Harpoon add file" },
+    { "<leader>mf", function() require("harpoon.ui").toggle_quick_menu() end, desc = "Harpoon menu" },
+    { "<leader>ml", function() require("harpoon.ui").nav_next() end, desc = "Harpoon next" },
+    { "<leader>mh", function() require("harpoon.ui").nav_prev() end, desc = "Harpoon prev" },
+  },
+  after = function()
+    require("harpoon").setup({ menu = { width = 100 } })
+  end,
+}

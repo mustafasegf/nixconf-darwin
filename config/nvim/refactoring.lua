@@ -1,48 +1,14 @@
--- refactoring
--- Remaps for the refactoring operations currently offered by the plugin
-vim.keymap.set(
-	"v",
-	"<leader>re",
-	":lua require('refactoring').refactor('Extract Function')<CR>",
-	{ noremap = true, silent = true, expr = false }
-)
-vim.keymap.set(
-	"v",
-	"<leader>rf",
-	":lua require('refactoring').refactor('Extract Function To File')<CR>",
-	{ noremap = true, silent = true, expr = false }
-)
-vim.keymap.set(
-	"v",
-	"<leader>rv",
-	":lua require('refactoring').refactor('Extract Variable')<CR>",
-	{ noremap = true, silent = true, expr = false }
-)
-vim.keymap.set(
-	"v",
-	"<leader>ri",
-	":lua require('refactoring').refactor('Inline Variable')<CR>",
-	{ noremap = true, silent = true, expr = false }
-)
-
--- Extract block doesn't need visual mode
-vim.keymap.set(
-	"n",
-	"<leader>rb",
-	":lua require('refactoring').refactor('Extract Block')<CR>",
-	{ noremap = true, silent = true, expr = false }
-)
-vim.keymap.set(
-	"n",
-	"<leader>rbf",
-	":lua require('refactoring').refactor('Extract Block To File')<CR>",
-	{ noremap = true, silent = true, expr = false }
-)
-
--- Inline variable can also pick up the identifier currently under the cursor without visual mode
-vim.keymap.set(
-	"n",
-	"<leader>ri",
-	":lua require('refactoring').refactor('Inline Variable')<CR>",
-	{ noremap = true, silent = true, expr = false }
-)
+return {
+  "refactoring.nvim",
+  keys = {
+    { "<leader>re", function() require("refactoring").refactor("Extract Function") end, mode = "x", desc = "Extract function" },
+    { "<leader>rf", function() require("refactoring").refactor("Extract Function To File") end, mode = "x", desc = "Extract function to file" },
+    { "<leader>rv", function() require("refactoring").refactor("Extract Variable") end, mode = "x", desc = "Extract variable" },
+    { "<leader>ri", function() require("refactoring").refactor("Inline Variable") end, mode = { "n", "x" }, desc = "Inline variable" },
+    { "<leader>rb", function() require("refactoring").refactor("Extract Block") end, desc = "Extract block" },
+    { "<leader>rbf", function() require("refactoring").refactor("Extract Block To File") end, desc = "Extract block to file" },
+  },
+  after = function()
+    require("refactoring").setup()
+  end,
+}

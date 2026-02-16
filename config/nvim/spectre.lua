@@ -1,7 +1,13 @@
--- spectre
-require("spectre").setup()
-
-vim.keymap.set("n", "<leader>fr", ":lua require('spectre').open()<CR>")
-vim.keymap.set("n", "<leader>fw", ":lua require('spectre').open_visual({select_word=true})<CR>")
-vim.keymap.set("v", "<leader>fw", ":lua require('spectre').open_visual()<CR>")
-vim.keymap.set("n", "<leader>fe", ":lua require('spectre').open_file_search()<CR>")
+return {
+  "nvim-spectre",
+  keys = {
+    { "<leader>fr", function() require("spectre").open() end, desc = "Open Spectre" },
+    { "<leader>fw", function() require("spectre").open_visual({ select_word = true }) end, desc = "Search current word" },
+    { "<leader>fw", function() require("spectre").open_visual() end, mode = "v", desc = "Search selection" },
+    { "<leader>fe", function() require("spectre").open_file_search() end, desc = "Search in file" },
+  },
+  cmd = "Spectre",
+  after = function()
+    require("spectre").setup()
+  end,
+}

@@ -110,11 +110,8 @@
   # NIX OVERLAYS
   # ========================================
 
-  nixpkgs.overlays = [
-    (self: super: {
-      nix-direnv = super.nix-direnv.override { enableFlakes = true; };
-    })
-  ];
+  # nix-direnv flakes support is now enabled by default
+  nixpkgs.overlays = [ ];
 
   # ========================================
   # PROGRAMS
@@ -130,11 +127,13 @@
   programs.noisetorch.enable = true;
   programs.dconf.enable = true;
   programs.zsh.enable = true;
-  programs.adb.enable = true;
   programs.command-not-found.enable = false;
 
-  # nix-ld for running unpatched binaries
-  programs.nix-ld.enable = true;
+  # Nix substituters
+  nix.settings.substituters = lib.mkForce [ "https://cache.nixos.org" ];
+
+  # nix-ld for running unpatched binaries (dev version from flake)
+  programs.nix-ld.dev.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     # Toolchain + basics
     stdenv.cc.cc
@@ -156,6 +155,11 @@
     xorg.libXcursor
     xorg.libXi
     xorg.libxcb
+    xorg.libXtst
+    xorg.libXScrnSaver
+    xorg.libXinerama
+    xorg.libXdmcp
+    xorg.libXau
 
     # XCB util modules
     xorg.xcbutil
@@ -175,6 +179,190 @@
     # OpenGL/EGL
     libglvnd
     mesa
+  ];
+
+  # ========================================
+  # LINUX DESKTOP PACKAGES
+  # ========================================
+
+  environment.systemPackages = with pkgs; [
+    ## Desktop essentials
+    arandr
+    copyq
+    dunst
+    find-cursor
+    flameshot
+    killall
+    libnotify
+    nitrogen
+    pavucontrol
+    ncpamixer
+    pulseaudioFull
+    alsa-utils
+    screenkey
+    xclip
+    xsel
+    xcolor
+    scrot
+
+    ## File managers and archive tools
+    file-roller
+    kdePackages.ark
+    kdePackages.filelight
+
+    ## Graphics and media
+    mesa-demos
+    ffmpeg-full
+    ffmpegthumbnailer
+    vlc
+    mpv
+    pinta
+    krita
+    blender
+    gimp
+    handbrake
+    kdePackages.kdenlive
+    imagemagick
+    poppler-utils
+    yt-dlp
+    cheese
+    webcamoid
+    mangohud
+    radeontop
+    nvtopPackages.full
+
+    ## Office and productivity
+    libreoffice
+    kdePackages.okular
+    xournalpp
+    qalculate-qt
+    kdePackages.kcalc
+    calibre
+    thunderbird
+
+    ## Communication
+    zoom-us
+    telegram-desktop
+    google-chrome
+    firefox
+    bitwarden-desktop
+    bitwarden-cli
+
+    ## Gaming
+    steam
+    lutris
+    wine
+    wine64
+    winetricks
+    prismlauncher
+    mangohud
+
+    ## Networking
+    bind
+    nmap
+    httpie
+    inxi
+    awscli2
+    x11vnc
+
+    ## Audio tools
+    qpwgraph
+    helvum
+    wireplumber
+
+    ## Theming
+    libsForQt5.qt5ct
+    libsForQt5.qtstyleplugin-kvantum
+    lxqt.lxqt-qtplugin
+    lxqt.lxqt-config
+    lxappearance
+    papirus-icon-theme
+    dracula-theme
+
+    ## System tools
+    input-remapper
+    pciutils
+    usbutils
+    fwupd
+    psmisc
+    lsof
+    dos2unix
+    solaar
+    logitech-udev-rules
+    powertop
+    dmidecode
+    inotify-tools
+    smartmontools
+    nvme-cli
+
+    ## Development (Linux-specific)
+    appimage-run
+    clang
+    clang-tools
+    gdb
+    gnumake
+    cmake
+    sqlite
+    openssl
+    musl
+    nasm
+    statix
+    poetry
+    pandoc
+    texlive.combined.scheme-full
+    vulkan-tools
+    clinfo
+    SDL2
+    SDL2_ttf
+    SDL2_net
+    SDL2_gfx
+    SDL2_sound
+    SDL2_mixer
+    SDL2_image
+    virt-manager
+    docker
+    distrobox
+
+    ## Xorg tools
+    xorg.xkbcomp
+    xorg.xkbutils
+    xorg.xmodmap
+    xorg.xinput
+    xorg.libX11
+    xorg.libXft
+    xorg.libXinerama
+
+    ## Misc
+    home-manager
+    openrgb
+    tor-browser
+    qbittorrent
+    seahorse
+    cloudflare-warp
+    spotify
+    parsec-bin
+    chafa
+
+    ## Python scientific stack
+    (python3.withPackages (ps: [
+      ps.jupyterlab
+      ps.notebook
+      ps.jupyter-console
+      ps.ipykernel
+      ps.pandas
+      ps.scikit-learn
+      ps.matplotlib
+      ps.numpy
+      ps.scipy
+      ps.pip
+      ps.statsmodels
+      ps.opencv4
+      ps.selenium
+      ps.scikit-image
+      ps.onnxruntime
+      ps.pillow
+      ps.tkinter
+    ]))
   ];
 
   # ========================================
@@ -204,6 +392,8 @@
   # SERVICES - X11 & QTILE
   # ========================================
 
+  services.displayManager.defaultSession = "qtile";
+
   services.xserver = {
     enable = true;
     digimend.enable = false;
@@ -212,7 +402,6 @@
 
     autorun = true;
     displayManager = {
-      defaultSession = "none+qtile";
       lightdm = {
         enable = true;
         greeter.enable = true;
@@ -238,14 +427,12 @@
         in
         ''
           sleep 5 && ${pkgs.xorg.xmodmap}/bin/xmodmap ${functionkey}
+          gnome-keyring-daemon --start -d --components=pkcs11,secrets,ssh
         '';
     };
 
     windowManager.qtile = {
       enable = true;
-      # Use ppkgs (previous stable) for Qtile - more stable than bleeding edge
-      package = ppkgs.qtile;
-      backend = "x11";
     };
   };
 
@@ -276,7 +463,7 @@
 
   # xrdp remote desktop
   services.xrdp.enable = true;
-  services.xrdp.defaultWindowManager = "${ppkgs.qtile}/bin/qtile start x11";
+  services.xrdp.defaultWindowManager = "${config.services.xserver.windowManager.qtile.finalPackage}/bin/qtile start x11";
   services.xrdp.openFirewall = true;
 
   # OpenVPN

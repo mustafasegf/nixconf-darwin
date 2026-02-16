@@ -15,6 +15,24 @@
     ];
   };
 
+  # OOM protection for nix builds
+  # https://discourse.nixos.org/t/nix-build-ate-my-ram/35752
+  services.earlyoom = {
+    enable = true;
+    enableNotifications = true;
+    freeSwapThreshold = 100;
+    freeSwapKillThreshold = 100;
+  };
+
+  systemd.slices.nix-daemon.sliceConfig = {
+    ManagedOOMMemoryPressure = "kill";
+    ManagedOOMMemoryPressureLimit = "50%";
+  };
+  systemd.services.nix-daemon.serviceConfig = {
+    Slice = "nix-daemon.slice";
+    OOMScoreAdjust = 1000;
+  };
+
   # Systemd services
   systemd.services.ryzen-disable-c6 = {
     description = "Ryzen Disable C6";

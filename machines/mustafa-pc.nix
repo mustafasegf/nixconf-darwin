@@ -18,11 +18,7 @@
     ../modules/nixos/desktop.nix
   ];
 
-  # Build configuration - limit parallel builds to 14 cores
-  nix.settings = {
-    cores = 14;
-    max-jobs = "auto";
-  };
+  nix.settings.cores = 14;
 
   # ========================================
   # BOOT & KERNEL
@@ -118,12 +114,12 @@
     powerOnBoot = true;
   };
 
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport32Bit = true;
-    # Use upkgs for latest Mesa drivers (better AMD GPU support)
-    package = upkgs.mesa.drivers;
-    package32 = upkgs.pkgsi686Linux.mesa.drivers;
+    enable32Bit = true;
+    # Use upkgs for latest Mesa (better AMD GPU support)
+    package = upkgs.mesa;
+    package32 = upkgs.pkgsi686Linux.mesa;
     extraPackages = [
       upkgs.mesa.opencl
     ];

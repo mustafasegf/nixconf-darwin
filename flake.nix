@@ -141,6 +141,8 @@
                   ./modules/nixos/common.nix
                   ./machines/mustafa-pc.nix
                   inputs.ucodenix.nixosModules.default
+                  inputs.nix-index-database.nixosModules.nix-index
+                  inputs.nix-ld.nixosModules.nix-ld
 
                   # Home-manager configuration
                   {

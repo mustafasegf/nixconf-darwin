@@ -249,7 +249,11 @@
           plugin = noice-nvim;
           optional = true;
         }
-        nvim-notify # dependency of noice
+        {
+          plugin = nvim-notify; # dependency of noice
+          type = "lua";
+          config = builtins.readFile ../config/nvim/notify.lua;
+        }
         dressing-nvim # dependency of noice/telescope
         nui-nvim # dependency of noice
 

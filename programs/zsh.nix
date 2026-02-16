@@ -442,10 +442,6 @@ in
       zinit wait lucid for \
         agkozak/zsh-z
 
-      # Dracula theme - deferred
-      zinit wait lucid for \
-        dracula/zsh
-
       # Atuin - initialize properly instead of using zinit plugin
       eval "$(atuin init zsh)"
 

@@ -55,8 +55,6 @@
     shell = "${pkgs.zsh}/bin/zsh";
 
     extraConfig = ''
-      # Update PATH to include NixOS system binaries
-      set-environment -g PATH "/run/current-system/sw/bin:/home/mustafa/.local/share/zinit/polaris/bin:/run/wrappers/bin:/home/mustafa/.nix-profile/bin:/nix/profile/bin:/home/mustafa/.local/state/nix/profile/bin:/etc/profiles/per-user/mustafa/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin:/home/mustafa/.local/share/cargo/bin:/home/mustafa/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin:/home/mustafa/.local/share/go/bin"
 
       # OSC 52 clipboard support - allows clipboard to work over SSH
       # This enables tmux to pass through OSC 52 escape sequences to the terminal

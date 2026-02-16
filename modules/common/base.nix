@@ -12,6 +12,7 @@
     unzip
     htop
     gnused
+    gnugrep
     atuin
     cowsay
 

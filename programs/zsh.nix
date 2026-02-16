@@ -388,6 +388,9 @@ in
         }
       ''}
 
+      # yo - LLM shell assistant (uses opencode run)
+      source ${../config/yo/yo.zsh}
+
       # Tmux auto-attach on supported terminals
       if [ "$TERM" = "xterm-ghostty" ] || [[ "$TERM" == "xterm-256color" ]] || [ "$TERM" = "xterm-kitty" ]; then
         tmux new -As0
@@ -407,6 +410,8 @@ in
         OMZL::key-bindings.zsh
 
       # Vi-mode - load immediately (better than OMZ vi-mode)
+      # Use sourcing mode to avoid zle-line-init hijack that causes invisible prompt in tmux
+      ZVM_INIT_MODE=sourcing
       zinit ice depth=1
       zinit light jeffreytse/zsh-vi-mode
 
@@ -442,8 +447,9 @@ in
       zinit wait lucid for \
         agkozak/zsh-z
 
-      # Atuin - initialize properly instead of using zinit plugin
-      eval "$(atuin init zsh)"
+      # Atuin - use zvm_after_init to ensure keybindings (Ctrl+R, etc.)
+      # are set AFTER zsh-vi-mode, which otherwise overrides them
+      zvm_after_init_commands+=('eval "$(atuin init zsh)"')
 
       # ${lib.optionalString pkgs.stdenv.isLinux ''
         #   # Wakatime - Linux only, deferred

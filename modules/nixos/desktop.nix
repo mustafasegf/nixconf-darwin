@@ -156,7 +156,15 @@
   # Nix substituters
   nix.settings.substituters = lib.mkForce [ "https://cache.nixos.org" ];
 
-  # nix-ld for running unpatched binaries (dev version from flake)
+  # musl dynamic linker for unpatched musl binaries (e.g. bun-installed CLIs)
+  systemd.tmpfiles.rules = [
+    "L+ /lib/ld-musl-x86_64.so.1 - - - - ${pkgs.musl}/lib/ld-musl-x86_64.so.1"
+  ];
+  environment.etc."ld-musl-x86_64.path".text = lib.concatStringsSep "\n" [
+    "${pkgs.pkgsMusl.stdenv.cc.cc.lib}/lib"
+  ];
+
+  # nix-ld for running unpatched glibc binaries (dev version from flake)
   programs.nix-ld.dev.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     # Toolchain + basics

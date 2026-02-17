@@ -48,6 +48,7 @@
     "hid-playstasion"
     "v4l2loopback"
     "k10temp"
+    "msr"
   ];
   boot.kernelParams = [
     "amd_iommu=on"

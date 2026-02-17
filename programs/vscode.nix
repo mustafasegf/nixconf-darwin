@@ -8,7 +8,7 @@
 
   programs.vscode = {
     enable = true;
-    extensions =
+    profiles.default.extensions =
       with pkgs.vscode-extensions;
       [
         arrterian.nix-env-selector
@@ -76,7 +76,7 @@
         # }
       ];
 
-    userSettings = {
+    profiles.default.userSettings = {
       "code-runner.saveFileBeforeRun" = true;
       "code-runner.runInTerminal" = true;
       "code-runner.respectShebang" = false;

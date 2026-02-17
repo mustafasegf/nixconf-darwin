@@ -20,6 +20,9 @@
 
   nix.settings.cores = 14;
 
+  # xcodes is macOS-only (manages Xcode installations)
+  custom.enableXcode = false;
+
   # ========================================
   # BOOT & KERNEL
   # ========================================

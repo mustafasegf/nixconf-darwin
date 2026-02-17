@@ -119,7 +119,7 @@
 
   programs.wireshark.enable = true;
   programs.thunar.enable = true;
-  programs.thunar.plugins = with pkgs.xfce; [
+  programs.thunar.plugins = with pkgs; [
     thunar-volman
     thunar-archive-plugin
     thunar-media-tags-plugin
@@ -212,7 +212,8 @@
 
     ## Graphics and media
     mesa-demos
-    ffmpeg-full
+    # NOTE: ffmpeg-full has shaderc linking bug in this nixpkgs rev, use ffmpeg instead
+    ffmpeg
     ffmpegthumbnailer
     vlc
     mpv
@@ -220,8 +221,10 @@
     krita
     blender
     gimp
-    handbrake
-    kdePackages.kdenlive
+    # NOTE: handbrake disabled - depends on ffmpeg-full which has build issues in this nixpkgs rev
+    # handbrake
+    # NOTE: kdenlive disabled - depends on mlt -> ffmpeg-full which has shaderc linking bug
+    # kdePackages.kdenlive
     imagemagick
     poppler-utils
     yt-dlp
@@ -229,7 +232,7 @@
     webcamoid
     mangohud
     radeontop
-    nvtopPackages.full
+    nvtopPackages.amd
 
     ## Office and productivity
     libreoffice

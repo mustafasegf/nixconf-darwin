@@ -143,8 +143,7 @@
   # OBS Studio with plugins
   programs.obs-studio = {
     enable = true;
-    # NOTE: ffmpeg-full override removed due to shaderc linking bug in nixpkgs
-    # package = (pkgs.obs-studio.override { ffmpeg = pkgs.ffmpeg-full; });
+    package = (pkgs.obs-studio.override { ffmpeg = pkgs.ffmpeg-full; });
     plugins = with pkgs.obs-studio-plugins; [
       obs-backgroundremoval
       obs-pipewire-audio-capture

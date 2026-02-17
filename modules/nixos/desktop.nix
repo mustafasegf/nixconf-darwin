@@ -111,7 +111,31 @@
   # ========================================
 
   # nix-direnv flakes support is now enabled by default
-  nixpkgs.overlays = [ ];
+  nixpkgs.overlays = [
+    (final: prev: {
+      # Workaround: shaderc linking is broken in this nixpkgs rev (ffmpeg 8.x)
+      # https://github.com/NixOS/nixpkgs/pull/477464
+      ffmpeg-full = prev.ffmpeg-full.override { withShaderc = false; };
+
+      # Workaround: unbreak-hardcoded-tables.patch (written for ffmpeg 8.x) removes the
+      # av_malloc stub from tableprint_vlc.h, but ffmpeg 7.x still uses av_malloc in vlc.c.
+      # Re-add the stub so tablegen compilation works.
+      handbrake = prev.handbrake.override {
+        ffmpeg_7-full = prev.ffmpeg_7-full // {
+          override =
+            args:
+            (prev.ffmpeg_7-full.override args).overrideAttrs (old: {
+              postPatch = (old.postPatch or "") + ''
+                if grep -q 'av_mallocz(s) NULL' libavcodec/tableprint_vlc.h 2>/dev/null && \
+                   ! grep -q 'av_malloc(s) NULL' libavcodec/tableprint_vlc.h 2>/dev/null; then
+                  sed -i '/define av_mallocz(s) NULL/a #define av_malloc(s) NULL' libavcodec/tableprint_vlc.h
+                fi
+              '';
+            });
+        };
+      };
+    })
+  ];
 
   # ========================================
   # PROGRAMS
@@ -212,8 +236,7 @@
 
     ## Graphics and media
     mesa-demos
-    # NOTE: ffmpeg-full has shaderc linking bug in this nixpkgs rev, use ffmpeg instead
-    ffmpeg
+    ffmpeg-full
     ffmpegthumbnailer
     vlc
     mpv
@@ -221,10 +244,8 @@
     krita
     blender
     gimp
-    # NOTE: handbrake disabled - depends on ffmpeg-full which has build issues in this nixpkgs rev
-    # handbrake
-    # NOTE: kdenlive disabled - depends on mlt -> ffmpeg-full which has shaderc linking bug
-    # kdePackages.kdenlive
+    handbrake
+    kdePackages.kdenlive
     imagemagick
     poppler-utils
     yt-dlp

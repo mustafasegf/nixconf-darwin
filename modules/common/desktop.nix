@@ -41,6 +41,39 @@
         nodePackages.npm
         nodePackages.pnpm
 
+        ## Rust ecosystem
+        cargo-watch
+        cargo-expand
+        bacon
+        evcxr
+        rust-script
+        cargo-flamegraph
+        cargo-tarpaulin
+        cargo-generate
+        cargo-zigbuild
+        cargo-bootimage
+        cargo-mommy
+
+        ## Additional languages
+        zig
+        deno
+        gleam
+        erlang
+        ghc
+        cabal-install
+        dotnet-sdk
+        php83
+        php83Packages.composer
+        swi-prolog
+        vlang
+
+        ## OCaml ecosystem
+        dune_3
+        ocaml
+        opam
+        ocamlPackages.findlib
+        ocamlPackages.ocaml-lsp
+
         ## Cloud and Infrastructure
         terragrunt
         opentofu
@@ -66,6 +99,17 @@
         hyfetch
         fastfetch
         uwufetch
+        patchelf
+        nix-output-monitor
+        glow
+        gum
+        tmate
+        mods
+        mold
+        geckodriver
+        go-swag
+        autoconf
+        subversionClient
 
         ## Networking and security
         wireguard-tools
@@ -77,6 +121,8 @@
         black
         stylua
         shfmt
+        nodePackages.prettier
+        cmake-format
 
         ## Language servers
         pyright
@@ -95,6 +141,10 @@
         nodePackages.diagnostic-languageserver
         nixd
         nixfmt
+        texlab
+        nodePackages.intelephense
+        cmake-language-server
+        quick-lint-js
 
         ## Debugging and profiling
         gcc
@@ -128,9 +178,12 @@
         grpc-tools
         protoc-gen-go
         protoc-gen-doc
+        protoc-gen-rust
 
         ## Package managers
         yarn
+        nodePackages.sass
+        nodePackages.vercel
         dive
         inetutils
         rar

@@ -110,6 +110,9 @@
   # NIX OVERLAYS
   # ========================================
 
+  # envfs: provides /usr/bin/env and similar for unpatched scripts
+  services.envfs.enable = true;
+
   # nix-direnv flakes support is now enabled by default
   nixpkgs.overlays = [
     (final: prev: {
@@ -251,7 +254,7 @@
     pinta
     krita
     blender
-    gimp
+    gimp-with-plugins
     handbrake
     kdePackages.kdenlive
     imagemagick
@@ -259,9 +262,24 @@
     yt-dlp
     cheese
     webcamoid
+    kdePackages.kamoso
     mangohud
     radeontop
     nvtopPackages.amd
+    aseprite
+    tiled
+    d2
+    ascii-image-converter
+    mediainfo
+    djvu2pdf
+    djvulibre
+    ghostscript
+    gImageReader
+    waifu2x-converter-cpp
+
+    ## Editors
+    kdePackages.kate
+    gedit
 
     ## Office and productivity
     libreoffice
@@ -271,6 +289,7 @@
     kdePackages.kcalc
     calibre
     thunderbird
+    pspp
 
     ## Communication
     zoom-us
@@ -279,6 +298,10 @@
     firefox
     bitwarden-desktop
     bitwarden-cli
+    discord-ptb
+    vesktop
+    weechat
+    kdePackages.konversation
 
     ## Gaming
     steam
@@ -288,6 +311,14 @@
     winetricks
     prismlauncher
     mangohud
+    tetrio-desktop
+    pcsx2
+    bottles
+    godot_4
+    godot3
+    # _86Box-with-roms  # build failure in Qt UI (86Box 5.3)
+    dosbox
+    sidequest
 
     ## Networking
     bind
@@ -296,11 +327,16 @@
     inxi
     awscli2
     x11vnc
+    radare2
+    imhex
+    winbox
+    winbox4
 
     ## Audio tools
     qpwgraph
     helvum
     wireplumber
+    qjackctl
 
     ## Theming
     libsForQt5.qt5ct
@@ -326,12 +362,30 @@
     inotify-tools
     smartmontools
     nvme-cli
+    pmutils
+    wol
+    dragon-drop
+    toilet
+    most
+    libsecret
+    usermount
+    devmem2
+    gpm
+    chntpw
+    smem
+    xdg-user-dirs
+    libcamera
+    libarchive
 
     ## Development (Linux-specific)
     appimage-run
     clang
     clang-tools
     gdb
+    lldb
+    llvmPackages_latest.llvm
+    llvmPackages_latest.bintools
+    llvmPackages_latest.lld
     gnumake
     cmake
     sqlite
@@ -354,6 +408,19 @@
     virt-manager
     docker
     distrobox
+    zlib.out
+    xorriso
+    grub2
+    glade
+    gtk3
+    gtk4
+    gfortran
+    gdal
+    prefetch-npm-deps
+    nix-prefetch-scripts
+    nixpacks
+    libguestfs
+    gvisor
 
     ## Xorg tools
     xorg.xkbcomp
@@ -363,6 +430,26 @@
     xorg.libX11
     xorg.libXft
     xorg.libXinerama
+
+    ## Databases
+    postgresql
+    redis
+
+    ## Apps
+    beekeeper-studio
+    onedrive
+    android-studio
+    rpi-imager
+    bruno
+    alacritty
+    deskreen
+    rescuetime
+    pomodoro
+    ventoy
+    phoronix-test-suite
+    termscp
+    revanced-cli
+    exercism
 
     ## Misc
     home-manager
@@ -374,6 +461,17 @@
     spotify
     parsec-bin
     chafa
+    fim
+    license-cli
+    bunyan-rs
+    gf
+    reveal-md
+    html-tidy
+    wdiff
+    dwdiff
+    measureme
+    open-watcom-bin
+    cargo-mommy
 
     ## Python scientific stack
     (python3.withPackages (ps: [

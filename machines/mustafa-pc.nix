@@ -174,5 +174,11 @@
   # SYSTEM
   # ========================================
 
+  # Allow insecure packages (e.g. EOL Electron, binary blobs)
+  nixpkgs.config.permittedInsecurePackages = [
+    "beekeeper-studio-5.5.3"
+    "ventoy-1.1.10"
+  ];
+
   system.stateVersion = "22.11";
 }

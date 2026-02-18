@@ -21,16 +21,25 @@
     ripgrep
     jq
     yq-go
+    file
+    trash-cli
+    colordiff
 
     ## System monitoring
     man
     man-pages
     man-pages-posix
+    iotop
 
     ## Terminal tools
     lazygit
     mosh
     p7zip
+    yazi
+    eza
+    dust
+    hexyl
+    w3m
 
     ## Nix ecosystem
     comma

@@ -138,7 +138,7 @@
   networking.hostName = "mustafa-pc";
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
-  networking.interfaces.enp10s0.wakeOnLan.enable = true;
+  networking.interfaces.enp113s0.wakeOnLan.enable = true;
 
   # ========================================
   # USERS

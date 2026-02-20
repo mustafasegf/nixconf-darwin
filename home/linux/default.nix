@@ -170,23 +170,29 @@
   # ========================================
   # XDG AUTOSTART - GUI apps at login
   # ========================================
-  xdg.desktopEntries = {
-    autostart-copyq = {
-      name = "CopyQ";
-      exec = "copyq";
-      settings.X-GNOME-Autostart-enabled = "true";
-    };
-    autostart-thunderbird = {
-      name = "Thunderbird";
-      exec = "thunderbird";
-      settings.X-GNOME-Autostart-enabled = "true";
-    };
-    autostart-nitrogen = {
-      name = "Nitrogen Restore";
-      exec = "nitrogen --restore";
-      settings.X-GNOME-Autostart-enabled = "true";
-    };
-  };
+  xdg.configFile."autostart/copyq.desktop".text = ''
+    [Desktop Entry]
+    Name=CopyQ
+    Exec=copyq
+    Type=Application
+    X-GNOME-Autostart-enabled=true
+  '';
+
+  xdg.configFile."autostart/thunderbird.desktop".text = ''
+    [Desktop Entry]
+    Name=Thunderbird
+    Exec=thunderbird
+    Type=Application
+    X-GNOME-Autostart-enabled=true
+  '';
+
+  xdg.configFile."autostart/nitrogen.desktop".text = ''
+    [Desktop Entry]
+    Name=Nitrogen Restore
+    Exec=nitrogen --restore
+    Type=Application
+    X-GNOME-Autostart-enabled=true
+  '';
 
   # Noisetorch - noise suppression daemon
   systemd.user.services.noisetorch = {

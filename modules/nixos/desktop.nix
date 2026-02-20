@@ -106,6 +106,14 @@
     EndSection
   '';
 
+  # Qtile supporting config files (config.py itself is set via configFile option)
+  environment.etc."xdg/qtile/floating_window_snapping.py".source =
+    ../../config/qtile/floating_window_snapping.py;
+  environment.etc."xdg/qtile/autostart.sh" = {
+    source = ../../config/qtile/autostart.sh;
+    mode = "0755";
+  };
+
   # ========================================
   # NIX OVERLAYS
   # ========================================
@@ -327,6 +335,7 @@
     inxi
     awscli2
     x11vnc
+    sunshine
     radare2
     imhex
     winbox
@@ -524,6 +533,11 @@
 
   services.displayManager.defaultSession = "qtile";
 
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "mustafa";
+  };
+
   services.xserver = {
     enable = true;
     digimend.enable = false;
@@ -563,6 +577,7 @@
 
     windowManager.qtile = {
       enable = true;
+      configFile = ../../config/qtile/config.py;
     };
   };
 
@@ -596,6 +611,46 @@
   services.xrdp.defaultWindowManager = "${config.services.xserver.windowManager.qtile.finalPackage}/bin/qtile start x11";
   services.xrdp.openFirewall = true;
 
+  # x11vnc - mirror real display with configurable clipping
+  # Clip regions for 4K (3840x2160) screen:
+  #   Top-left:     1920x1080+0+0
+  #   Top-right:    1920x1080+1920+0
+  #   Bottom-left:  1920x1080+0+1080
+  #   Bottom-right: 1920x1080+1920+1080
+  #   Full screen:  remove -clip flag
+  systemd.services.x11vnc = {
+    description = "x11vnc VNC Server";
+    after = [ "display-manager.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.x11vnc}/bin/x11vnc -display :0 -clip 1920x1080+0+0 -forever -shared -rfbport 5900 -nopw -listen 0.0.0.0 -xkb -noxdamage";
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+  };
+
+  # Open firewall for VNC
+  networking.firewall.allowedTCPPorts = [ 5900 ];
+
+  # Sunshine game streaming server (for Moonlight clients)
+  # Web UI: https://localhost:47990 (first run: set username/password)
+  # Ports: TCP 47984-47990, UDP 47998-48010
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true; # Required for display capture
+    openFirewall = true;
+    settings = {
+      origin_web_ui_allowed = "wan"; # Allow access from Tailscale/ZeroTier IPs
+    };
+  };
+
+  # Grant user access to uinput for Sunshine input capture
+  services.udev.extraRules = ''
+    KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"
+  '';
+
   # OpenVPN
   services.openvpn.servers = {
     uihpc = {
@@ -619,7 +674,11 @@
             action.id == "org.freedesktop.login1.reboot" ||
             action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
             action.id == "org.freedesktop.login1.power-off" ||
-            action.id == "org.freedesktop.login1.power-off-multiple-sessions"
+            action.id == "org.freedesktop.login1.power-off-multiple-sessions" ||
+            action.id == "org.freedesktop.login1.set-reboot-parameter" ||
+            action.id == "org.freedesktop.login1.set-reboot-to-firmware-setup" ||
+            action.id == "org.freedesktop.login1.set-reboot-to-boot-loader-menu" ||
+            action.id == "org.freedesktop.login1.set-reboot-to-boot-loader-entry"
           )
         )
       {

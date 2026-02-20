@@ -14,7 +14,6 @@
   imports = [
     ../../programs/rofi.nix
     ../../programs/mimeapps.nix
-    ../../programs/qtile.nix
     ../../programs/vscode.nix
   ];
 

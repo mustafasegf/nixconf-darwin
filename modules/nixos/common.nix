@@ -3,6 +3,10 @@
 {
   # Common configuration for all NixOS systems
 
+  environment.systemPackages = with pkgs; [
+    systemd-manager-tui
+  ];
+
   # Services common to all Linux systems
   services.netdata.enable = true;
   services.ucodenix.enable = true;

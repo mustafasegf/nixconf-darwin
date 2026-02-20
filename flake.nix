@@ -155,7 +155,7 @@
                         mpkgs
                         ;
                     };
-                    home-manager.backupFileExtension = "hm-backup";
+                    home-manager.backupFileExtension = "hm-bak";
                     home-manager.users.${myUserName} = {
                       imports = [
                         ./home/common

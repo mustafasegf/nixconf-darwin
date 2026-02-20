@@ -61,7 +61,7 @@
         erlang
         ghc
         cabal-install
-        dotnet-sdk
+        # dotnet-sdk  # Disabled on personal Mac - requires Swift build
         php83
         php83Packages.composer
         swi-prolog

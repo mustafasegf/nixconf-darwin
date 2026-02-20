@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+if [ "$(pgrep "spotifyd")" ]; then
+	kill "$(pgrep "spotifyd")"
+fi
+
+spotifyd
+spt

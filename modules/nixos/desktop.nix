@@ -109,8 +109,21 @@
   # Qtile supporting config files (config.py itself is set via configFile option)
   environment.etc."xdg/qtile/floating_window_snapping.py".source =
     ../../config/qtile/floating_window_snapping.py;
-  environment.etc."xdg/qtile/autostart.sh" = {
-    source = ../../config/qtile/autostart.sh;
+
+  environment.etc."xdg/qtile/scripts/powermenu.sh" = {
+    source = ../../config/scripts/powermenu.sh;
+    mode = "0755";
+  };
+  environment.etc."xdg/qtile/scripts/brightness.sh" = {
+    source = ../../config/scripts/brightness.sh;
+    mode = "0755";
+  };
+  environment.etc."xdg/qtile/scripts/volume.sh" = {
+    source = ../../config/scripts/volume.sh;
+    mode = "0755";
+  };
+  environment.etc."xdg/qtile/scripts/runspt" = {
+    source = ../../config/scripts/runspt;
     mode = "0755";
   };
 
@@ -334,7 +347,6 @@
     httpie
     inxi
     awscli2
-    x11vnc
     sunshine
     radare2
     imhex
@@ -518,6 +530,20 @@
     motherboard = "amd";
   };
 
+  # Apply OpenRGB "off" profile at boot (after the openrgb server starts)
+  systemd.services.openrgb-profile = {
+    description = "Set OpenRGB profile to off";
+    after = [ "openrgb.service" ];
+    wants = [ "openrgb.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+      ExecStart = "${pkgs.openrgb}/bin/openrgb -p off";
+    };
+  };
+
+  services.autorandr.enable = true;
   services.udisks2.enable = true;
   services.printing.enable = true;
   services.blueman.enable = true;
@@ -572,6 +598,7 @@
         ''
           sleep 5 && ${pkgs.xorg.xmodmap}/bin/xmodmap ${functionkey}
           gnome-keyring-daemon --start -d --components=pkcs11,secrets,ssh
+          xsetwacom --set "HUION Huion Tablet stylus" Area 0 0 48768 15240 || true
         '';
     };
 
@@ -605,33 +632,6 @@
     enable = true;
     client.enable = true;
   };
-
-  # xrdp remote desktop
-  services.xrdp.enable = true;
-  services.xrdp.defaultWindowManager = "${config.services.xserver.windowManager.qtile.finalPackage}/bin/qtile start x11";
-  services.xrdp.openFirewall = true;
-
-  # x11vnc - mirror real display with configurable clipping
-  # Clip regions for 4K (3840x2160) screen:
-  #   Top-left:     1920x1080+0+0
-  #   Top-right:    1920x1080+1920+0
-  #   Bottom-left:  1920x1080+0+1080
-  #   Bottom-right: 1920x1080+1920+1080
-  #   Full screen:  remove -clip flag
-  systemd.services.x11vnc = {
-    description = "x11vnc VNC Server";
-    after = [ "display-manager.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.x11vnc}/bin/x11vnc -display :0 -clip 1920x1080+0+0 -forever -shared -rfbport 5900 -nopw -listen 0.0.0.0 -xkb -noxdamage";
-      Restart = "on-failure";
-      RestartSec = "5s";
-    };
-  };
-
-  # Open firewall for VNC
-  networking.firewall.allowedTCPPorts = [ 5900 ];
 
   # Sunshine game streaming server (for Moonlight clients)
   # Web UI: https://localhost:47990 (first run: set username/password)

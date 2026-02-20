@@ -139,6 +139,74 @@
     + "/Xresources"
   );
 
+  # ========================================
+  # AUTORANDR - Declarative display profiles
+  # ========================================
+  programs.autorandr = {
+    enable = true;
+    profiles.dual-4k = {
+      fingerprint = {
+        DP-2 = "00ffffffffffff0030aec96647414c5025200104b54627783bf795ae4f44a9260c5054adef00714f8180818a9500a9c0a9cfb300d1cf4dd000a0f0703e8030203500b9882100001a000000ff0055353131504c41470a20202020000000fd00324ba0a03c010a202020202020000000fc004c3332702d33300a202020202001ab02032ef14a01020304901112131f612309070783010000e2006a681a00000101283c00e305c000e606050161561c023a801871382d40582c4500b9882100001ecc7400a0a0a01e5030203500b9882100001a565e00a0a0a0295030203500b9882100001e0000000000000000000000000000000000000000000000000000000f";
+        HDMI-1 = "00ffffffffffff006318512800000100141d0103807944780a0dc9a05747982712484c2108008140a940818081c0a9c001010101010108e80030f2705a80b0588a00b9a84200001e023a801871382d40582c4500b9a84200001e000000fc004265796f6e642054560a202020000000fd00324b1e503c000a202020202020017d020352f25a61605f6665909f051420041312110302161507060121225e5d622909070715175055170083010000e200cb6e030c001000b8442100800102030467d85dc401788807e305e301e20f1be3060f01023a801871382d40582c4500b9a84200001e011d007251d01e206e285500b9a84200001e0000000000000000005d";
+      };
+      config = {
+        DP-2 = {
+          enable = true;
+          primary = true;
+          mode = "3840x2160";
+          position = "0x0";
+          rate = "60.00";
+        };
+        HDMI-1 = {
+          enable = true;
+          mode = "3840x2160";
+          position = "3840x0";
+          rate = "60.00";
+        };
+      };
+    };
+  };
+
+  # ========================================
+  # XDG AUTOSTART - GUI apps at login
+  # ========================================
+  xdg.desktopEntries = {
+    autostart-copyq = {
+      name = "CopyQ";
+      exec = "copyq";
+      settings.X-GNOME-Autostart-enabled = "true";
+    };
+    autostart-thunderbird = {
+      name = "Thunderbird";
+      exec = "thunderbird";
+      settings.X-GNOME-Autostart-enabled = "true";
+    };
+    autostart-nitrogen = {
+      name = "Nitrogen Restore";
+      exec = "nitrogen --restore";
+      settings.X-GNOME-Autostart-enabled = "true";
+    };
+  };
+
+  # Noisetorch - noise suppression daemon
+  systemd.user.services.noisetorch = {
+    Unit = {
+      Description = "NoiseTorch noise suppression";
+      After = [
+        "graphical-session.target"
+        "pipewire.service"
+      ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "/run/wrappers/bin/noisetorch -i";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # OBS Studio with plugins
   programs.obs-studio = {
     enable = true;

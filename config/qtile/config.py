@@ -27,14 +27,39 @@
 from typing import List  # noqa: F401
 
 import subprocess
-
-from libqtile import bar, layout, widget, hook
-from libqtile.config import Click, Drag, Group, Key, Match, Screen
-from libqtile.lazy import lazy
-from time import sleep
 import os
 
+from libqtile import bar, layout, widget
+from libqtile.config import Click, Drag, Group, Key, Match, Screen
+from libqtile.lazy import lazy
+
 from floating_window_snapping import move_snap_window
+
+
+@lazy.function
+def show_keybindings(qtile):
+    """Show all keybindings in a rofi menu."""
+    lines = []
+    for k in qtile.config.keys:
+        mods = "+".join(
+            m.replace("mod4", "Super").replace("mod1", "Alt") for m in k.modifiers
+        )
+        binding = f"{mods}+{k.key}" if mods else k.key
+        desc = k.desc or ""
+        lines.append(f"{binding:30s} {desc}")
+    text = "\n".join(lines)
+    subprocess.Popen(
+        [
+            "rofi",
+            "-dmenu",
+            "-i",
+            "-p",
+            "Keybindings",
+            "-theme-str",
+            "listview {lines: 20;}",
+        ],
+        stdin=subprocess.PIPE,
+    ).communicate(input=text.encode())
 
 
 mod = "mod4"
@@ -42,7 +67,9 @@ mod = "mod4"
 terminal = "kitty"
 browser = "google-chrome-stable"
 home = os.path.expanduser("~")
-script = home + "/script"
+config_dir = os.path.dirname(os.path.abspath(__file__))
+# Scripts are deployed to /etc/xdg/qtile/scripts/ via NixOS environment.etc
+script_dir = os.path.join(config_dir, "scripts")
 
 keys = [
     # common app
@@ -52,19 +79,20 @@ keys = [
         lazy.spawn("rofi -modi drun -show drun -term kitty"),
         desc="launch app launcher",
     ),
+    Key([mod], "slash", show_keybindings, desc="show keybinding cheat sheet"),
     Key([mod], "e", lazy.spawn("rofi -show emoji -modi emoji")),
     Key([mod], "c", lazy.spawn("rofi -show calc -modi calc -no-show-match -no-sort")),
     Key([mod], "x", lazy.spawn("rofi-wifi-menu")),
     Key(
         [mod, "shift"],
         "q",
-        lazy.spawn(home + "/script/powermenu.sh"),
+        lazy.spawn(f"{script_dir}/powermenu.sh"),
         desc="Shutdown Qtile",
     ),
     Key(["mod1", "shift"], "q", lazy.shutdown()),
     Key([mod], "o", lazy.spawn("kitty lf"), desc="launch lf"),
     Key([mod, "shift"], "o", lazy.spawn("thunar"), desc="launch lf"),
-    Key([mod], "u", lazy.spawn(f"kitty {script}/runspt"), desc="launch spt"),
+    Key([mod], "u", lazy.spawn(f"kitty {script_dir}/runspt"), desc="launch spt"),
     Key(
         [mod],
         "w",
@@ -139,11 +167,11 @@ keys = [
     ),
     Key([mod, "shift"], "f", lazy.window.toggle_floating(), desc="toggle floating"),
     Key([mod], "f", lazy.window.toggle_fullscreen(), desc="toggle fullscreen"),
-    Key([], "XF86MonBrightnessUp", lazy.spawn(f"sh {script}/brightness.sh up")),
-    Key([], "XF86MonBrightnessDown", lazy.spawn(f"sh {script}/brightness.sh down")),
-    Key([], "XF86AudioRaiseVolume", lazy.spawn(f"sh {script}/volume.sh up")),
-    Key([], "XF86AudioLowerVolume", lazy.spawn(f"sh {script}/volume.sh down")),
-    Key([], "XF86AudioMute", lazy.spawn(f"sh {script}/volume.sh mute")),
+    Key([], "XF86MonBrightnessUp", lazy.spawn(f"sh {script_dir}/brightness.sh up")),
+    Key([], "XF86MonBrightnessDown", lazy.spawn(f"sh {script_dir}/brightness.sh down")),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn(f"sh {script_dir}/volume.sh up")),
+    Key([], "XF86AudioLowerVolume", lazy.spawn(f"sh {script_dir}/volume.sh down")),
+    Key([], "XF86AudioMute", lazy.spawn(f"sh {script_dir}/volume.sh mute")),
     # Key([mod], "v", lazy.spawn(home + "/.local/bin/rofi-copyq")),
     Key([mod], "v", lazy.spawn("copyq show")),
     Key([], "Print", lazy.spawn("flameshot screen -c")),
@@ -313,16 +341,6 @@ mouse = [
     Click([mod], "Button2", lazy.window.bring_to_front()),
     Click([mod, "shift"], "Button2", lazy.window.toggle_minimize()),
 ]
-
-
-@hook.subscribe.startup_once
-def auto_start():
-    # subprocess.call([home+ '/script/monitor.sh'])
-    # lazy.spawn(home+ '/script/monitor.sh')
-    sleep(5)
-    config_dir = os.path.dirname(os.path.abspath(__file__))
-    subprocess.call([os.path.join(config_dir, "autostart.sh")])
-    # pass
 
 
 dgroups_key_binder = None

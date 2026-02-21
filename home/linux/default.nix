@@ -115,6 +115,7 @@
     "lxqt/session.conf".source = ../../config/dracula/lxqt/session.conf;
     "gtk-3.0/settings.ini".source = ../../config/dracula/gtk-3.0/settings.ini;
     "gtk-2.0/gtkrc".source = ../../config/dracula/gtk-2.0/gtkrc-2.0;
+    "rofi/config.rasi".source = ../../config/rofi/config.rasi;
   };
 
   # XDG desktop entries
@@ -152,13 +153,13 @@
       config = {
         DP-2 = {
           enable = true;
-          primary = true;
           mode = "3840x2160";
           position = "0x0";
           rate = "60.00";
         };
         HDMI-1 = {
           enable = true;
+          primary = true;
           mode = "3840x2160";
           position = "3840x0";
           rate = "60.00";

@@ -179,6 +179,16 @@
     ];
   };
 
+  users.users.guest = {
+    isNormalUser = true;
+    description = "Guest account";
+    extraGroups = [
+      "networkmanager"
+      "docker"
+    ];
+    openssh.authorizedKeys.keys = [ ];
+  };
+
   # ========================================
   # SYSTEM
   # ========================================

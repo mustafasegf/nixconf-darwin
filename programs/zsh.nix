@@ -478,6 +478,7 @@ in
       xbindkeys = ''xbindkeys -f "$XDG_CONFIG_HOME"/xbindkeys/config'';
 
       mans = ''man -k . | cut -d " " -f 1 | fzf -m --preview "man {1}" | xargs man'';
+      m = "make";
 
       ".." = "cd ..";
       "..." = "cd ../..";

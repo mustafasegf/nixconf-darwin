@@ -5,17 +5,16 @@
   ...
 }:
 {
-  programs.rofi = {
-    enable = true;
-
-    plugins = with pkgs; [
-      rofi-calc
-      rofi-emoji
-      rofi-pass
-      rofi-systemd
-    ];
-    font = "IBM Plex Mono 12";
-
-    # Theme is defined in xdg.configFile."rofi/config.rasi" below
-  };
+  # Rofi is installed via home.packages with wrapped plugins
+  # Config is managed via xdg.configFile in home/linux/default.nix
+  home.packages = with pkgs; [
+    (rofi.override {
+      plugins = [
+        rofi-calc
+        rofi-emoji
+        rofi-pass
+        rofi-systemd
+      ];
+    })
+  ];
 }

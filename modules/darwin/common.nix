@@ -16,5 +16,6 @@
     cyberduck
     nixfmt
     moonlight-qt # Sunshine/GameStream client for remote desktop streaming
+    winbox4
   ];
 }

@@ -29,11 +29,17 @@ from typing import List  # noqa: F401
 import subprocess
 import os
 
-from libqtile import bar, layout, widget
+from libqtile import bar, layout, widget, hook
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 
 from floating_window_snapping import move_snap_window
+
+
+@hook.subscribe.startup_once
+def set_wallpaper():
+    """Set wallpaper on startup using nitrogen."""
+    subprocess.Popen(["nitrogen", "--restore"])
 
 
 @lazy.function

@@ -530,12 +530,15 @@
     motherboard = "amd";
   };
 
-  # Apply OpenRGB "off" profile at boot (after the openrgb server starts)
+  # Apply OpenRGB "off" profile after GUI is up (deferred from boot critical path)
   systemd.services.openrgb-profile = {
     description = "Set OpenRGB profile to off";
-    after = [ "openrgb.service" ];
+    after = [
+      "openrgb.service"
+      "graphical.target"
+    ];
     wants = [ "openrgb.service" ];
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = [ "graphical.target" ];
     serviceConfig = {
       Type = "oneshot";
       ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
@@ -709,6 +712,16 @@
     };
   };
 
+  # Defer Docker startup to after GUI and Tailscale (off the boot critical path)
+  systemd.services.docker = {
+    after = [
+      "graphical.target"
+      "tailscale-autoconnect.service"
+    ];
+    wants = [ "tailscale-autoconnect.service" ];
+    wantedBy = lib.mkForce [ "graphical.target" ];
+  };
+
   virtualisation.virtualbox.host = {
     enable = false;
     enableExtensionPack = true;
@@ -746,18 +759,19 @@
     };
   };
 
-  # Tailscale auto-connect
+  # Tailscale auto-connect (deferred to after GUI is up)
   systemd.services.tailscale-autoconnect = {
     description = "Automatic connection to Tailscale";
     after = [
       "network-pre.target"
       "tailscale.service"
+      "graphical.target"
     ];
     wants = [
       "network-pre.target"
       "tailscale.service"
     ];
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = [ "graphical.target" ];
     serviceConfig.Type = "oneshot";
     script = with pkgs; ''
       sleep 2

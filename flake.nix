@@ -32,6 +32,9 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
+    # GRUB theme
+    minegrub-theme.url = "github:Lxtharia/minegrub-theme";
+
     # Flake framework
     flake-parts.url = "github:hercules-ci/flake-parts";
     nixos-unified.url = "github:srid/nixos-unified";
@@ -143,6 +146,7 @@
                   inputs.ucodenix.nixosModules.default
                   inputs.nix-index-database.nixosModules.nix-index
                   inputs.nix-ld.nixosModules.nix-ld
+                  inputs.minegrub-theme.nixosModules.default
 
                   # Home-manager configuration
                   {

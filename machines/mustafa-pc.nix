@@ -71,6 +71,14 @@
   boot.loader.grub.useOSProber = true;
   boot.loader.grub.efiSupport = true;
 
+  # Minecraft GRUB theme
+  boot.loader.grub.minegrub-theme = {
+    enable = true;
+    splash = "100% Flakes!";
+    background = "background_options/1.8  - [Classic Minecraft].png";
+    boot-options-count = 4;
+  };
+
   # ========================================
   # FILESYSTEMS
   # ========================================
@@ -138,7 +146,7 @@
   networking.hostName = "mustafa-pc";
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
-  networking.interfaces.enp10s0.wakeOnLan.enable = true;
+  networking.interfaces.enp113s0.wakeOnLan.enable = true;
 
   # ========================================
   # USERS
@@ -169,6 +177,16 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNEKM6YnhuLcLfy5FkCt+rX1M10vMS00zynI6tsta1s mustafa.segf@gmail.com"
     ];
+  };
+
+  users.users.guest = {
+    isNormalUser = true;
+    description = "Guest account";
+    extraGroups = [
+      "networkmanager"
+      "docker"
+    ];
+    openssh.authorizedKeys.keys = [ ];
   };
 
   # ========================================

@@ -115,6 +115,7 @@
     "lxqt/session.conf".source = ../../config/dracula/lxqt/session.conf;
     "gtk-3.0/settings.ini".source = ../../config/dracula/gtk-3.0/settings.ini;
     "gtk-2.0/gtkrc".source = ../../config/dracula/gtk-2.0/gtkrc-2.0;
+    "rofi/config.rasi".source = ../../config/rofi/config.rasi;
   };
 
   # XDG desktop entries
@@ -152,13 +153,13 @@
       config = {
         DP-2 = {
           enable = true;
-          primary = true;
           mode = "3840x2160";
           position = "0x0";
           rate = "60.00";
         };
         HDMI-1 = {
           enable = true;
+          primary = true;
           mode = "3840x2160";
           position = "3840x0";
           rate = "60.00";
@@ -170,23 +171,29 @@
   # ========================================
   # XDG AUTOSTART - GUI apps at login
   # ========================================
-  xdg.desktopEntries = {
-    autostart-copyq = {
-      name = "CopyQ";
-      exec = "copyq";
-      settings.X-GNOME-Autostart-enabled = "true";
-    };
-    autostart-thunderbird = {
-      name = "Thunderbird";
-      exec = "thunderbird";
-      settings.X-GNOME-Autostart-enabled = "true";
-    };
-    autostart-nitrogen = {
-      name = "Nitrogen Restore";
-      exec = "nitrogen --restore";
-      settings.X-GNOME-Autostart-enabled = "true";
-    };
-  };
+  xdg.configFile."autostart/copyq.desktop".text = ''
+    [Desktop Entry]
+    Name=CopyQ
+    Exec=copyq
+    Type=Application
+    X-GNOME-Autostart-enabled=true
+  '';
+
+  xdg.configFile."autostart/thunderbird.desktop".text = ''
+    [Desktop Entry]
+    Name=Thunderbird
+    Exec=thunderbird
+    Type=Application
+    X-GNOME-Autostart-enabled=true
+  '';
+
+  xdg.configFile."autostart/nitrogen.desktop".text = ''
+    [Desktop Entry]
+    Name=Nitrogen Restore
+    Exec=nitrogen --restore
+    Type=Application
+    X-GNOME-Autostart-enabled=true
+  '';
 
   # Noisetorch - noise suppression daemon
   systemd.user.services.noisetorch = {

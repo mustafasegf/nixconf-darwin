@@ -277,7 +277,7 @@ extension_defaults = widget_defaults.copy()
 
 def init_widget_list():
     widget_list = [
-        widget.CurrentLayout(),
+        widget.CurrentLayout(mode="both"),
         widget.GroupBox(this_current_screen_border="#805bb5", rdisable_drag=True),
         widget.Spacer(bar.STRETCH),
         widget.WindowName(max_chars=69),
@@ -302,7 +302,7 @@ def init_widget_list():
 
 def init_widget_screen_vertical():
     widget_list = [
-        widget.CurrentLayout(),
+        widget.CurrentLayout(mode="both"),
         widget.GroupBox(),
         widget.Spacer(50),
         widget.WindowName(max_chars=30),

@@ -40,6 +40,7 @@
     dust
     hexyl
     w3m
+    zellij
 
     ## Nix ecosystem
     comma

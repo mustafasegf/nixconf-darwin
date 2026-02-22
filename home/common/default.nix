@@ -9,6 +9,7 @@
     ../../programs/kitty.nix
     ../../programs/nvim.nix
     ../../programs/tmux.nix
+    ../../programs/zellij.nix
     ../../programs/zsh.nix
   ];
 

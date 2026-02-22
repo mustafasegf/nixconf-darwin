@@ -56,8 +56,7 @@
 
     extraConfig = ''
 
-      # OSC 52 clipboard support - allows clipboard to work over SSH
-      # This enables tmux to pass through OSC 52 escape sequences to the terminal
+      # OSC 52 clipboard support - works over SSH and mosh (mosh is patched for OSC 52)
       set -g set-clipboard on
       set -ag terminal-features ',xterm-256color:clipboard'
       set -ag terminal-features ',xterm-kitty:clipboard'

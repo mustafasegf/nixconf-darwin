@@ -262,11 +262,10 @@ in
       source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
       unset -v SSH_ASKPASS
 
-      # Tmux configuration
-      ZSH_TMUX_AUTOSTART=false
-      ZSH_TMUX_AUTOSTART_ONCE=false
-      ZSH_TMUX_AUTOCONNECT=true
-      ZSH_TMUX_CONFIG=~/.config/tmux/tmux.conf
+      # SSH greeting - remind to attach to tmux
+      if [[ -n "$SSH_CONNECTION" ]] && [[ -z "$TMUX" ]]; then
+        echo "Run 'ta' to attach to tmux"
+      fi
 
       # Vi-mode configuration
       VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
@@ -391,11 +390,6 @@ in
       # yo - LLM shell assistant (uses opencode run)
       source ${../config/yo/yo.zsh}
 
-      # Tmux auto-attach on supported terminals
-      if [ "$TERM" = "xterm-ghostty" ] || [[ "$TERM" == "xterm-256color" ]] || [ "$TERM" = "xterm-kitty" ]; then
-        tmux new -As0
-      fi
-
       # Initialize zinit for fast plugin loading with turbo mode
       ZINIT_HOME="''${XDG_DATA_HOME:-''${HOME}/.local/share}/zinit/zinit.git"
       if [[ ! -d "$ZINIT_HOME" ]]; then
@@ -420,7 +414,6 @@ in
 
       # Deferred plugins - load after prompt (turbo mode)
       zinit wait lucid for \
-        OMZP::tmux \
         OMZP::sudo \
         OMZP::copyfile \
         OMZP::copypath \
@@ -479,6 +472,7 @@ in
 
       mans = ''man -k . | cut -d " " -f 1 | fzf -m --preview "man {1}" | xargs man'';
       m = "make";
+      ta = "tmux new -As0";
 
       ".." = "cd ..";
       "..." = "cd ../..";

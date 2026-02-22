@@ -446,12 +446,14 @@ in
         #     sobolevn/wakatime-zsh-plugin
         # ''}
 
-      # Syntax highlighting, autosuggestions, and completions - load last, deferred
+      # Autosuggestions - load immediately (needed on first prompt for history suggestions)
+      zinit light zsh-users/zsh-autosuggestions
+
+      # Syntax highlighting and completions - deferred (cosmetic + non-essential on first prompt)
       # zicompinit replaces compinit with a faster cached version
       zinit wait lucid for \
         atinit"zicompinit; zicdreplay" \
-        zsh-users/zsh-syntax-highlighting \
-        zsh-users/zsh-autosuggestions
+        zsh-users/zsh-syntax-highlighting
     '';
 
     shellAliases = {

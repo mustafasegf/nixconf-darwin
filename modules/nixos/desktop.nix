@@ -624,6 +624,67 @@
     alsa.support32Bit = true;
     pulse.enable = true;
     jack.enable = true;
+
+    # Audio output priority: WH-1000XM5 > HDMI (Beyond TV) > DP > AUX
+    # Audio input priority:  Easy Effects > FIFINE K678 > WH-1000XM5 > AUX
+    wireplumber.extraConfig."50-audio-priority" = {
+      "monitor.alsa.rules" = [
+        # === Output (sinks) ===
+        {
+          # HDMI - Beyond TV (port 1)
+          matches = [ { "node.name" = "alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1"; } ];
+          actions.update-props = {
+            "priority.driver" = 1500;
+            "priority.session" = 1500;
+          };
+        }
+        {
+          # DisplayPort (port 0)
+          matches = [ { "node.name" = "alsa_output.pci-0000_03_00.1.hdmi-stereo"; } ];
+          actions.update-props = {
+            "priority.driver" = 1000;
+            "priority.session" = 1000;
+          };
+        }
+        {
+          # AUX - 3.5mm analog output
+          matches = [ { "node.name" = "alsa_output.pci-0000_7f_00.6.analog-stereo"; } ];
+          actions.update-props = {
+            "priority.driver" = 500;
+            "priority.session" = 500;
+          };
+        }
+        # === Input (sources) ===
+        {
+          # FIFINE K678 microphone
+          matches = [
+            {
+              "node.name" = "alsa_input.usb-FIFINE_Microphones_FIFINE_K678_Microphone_REV1.0-00.analog-stereo";
+            }
+          ];
+          actions.update-props = {
+            "priority.driver" = 1800;
+            "priority.session" = 1800;
+          };
+        }
+        {
+          # AUX - 3.5mm analog input (lowest)
+          matches = [ { "node.name" = "alsa_input.pci-0000_7f_00.6.analog-stereo"; } ];
+          actions.update-props = {
+            "priority.driver" = 500;
+            "priority.session" = 500;
+          };
+        }
+      ];
+      # Bluetooth loopback nodes get hardcoded priority.session = 2010 in
+      # WirePlumber's bluez.lua script, which cannot be overridden by rules.
+      # BT headphone priority is inherently highest (2010) for both sink and
+      # source when connected, and disappears when disconnected - triggering
+      # automatic fallback to the next highest priority ALSA device.
+      # The XM5 mic input (also 2010) will be below Easy Effects Source
+      # (set as default source) and FIFINE (1800) due to WirePlumber's
+      # default node selection logic preferring the saved default.
+    };
   };
 
   # ========================================

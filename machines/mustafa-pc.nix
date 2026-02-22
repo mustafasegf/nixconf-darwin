@@ -127,6 +127,17 @@
     powerOnBoot = true;
   };
 
+  systemd.services.bluetooth-rfkill-unblock = {
+    description = "Unblock Bluetooth soft-kill";
+    wantedBy = [ "bluetooth.service" ];
+    before = [ "bluetooth.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.util-linux}/bin/rfkill unblock bluetooth";
+      RemainAfterExit = true;
+    };
+  };
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;

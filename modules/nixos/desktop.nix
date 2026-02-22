@@ -530,19 +530,19 @@
     motherboard = "amd";
   };
 
-  # Apply OpenRGB "off" profile after GUI is up (deferred from boot critical path)
+  # Apply OpenRGB "off" profile via systemd (not XDG tray)
   systemd.services.openrgb-profile = {
     description = "Set OpenRGB profile to off";
-    after = [
-      "openrgb.service"
-      "graphical.target"
-    ];
+    after = [ "openrgb.service" ];
     wants = [ "openrgb.service" ];
-    wantedBy = [ "graphical.target" ];
+    wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
       ExecStart = "${pkgs.openrgb}/bin/openrgb -p off";
+      Restart = "on-failure";
+      RestartSec = 5;
+      RemainAfterExit = true;
     };
   };
 
@@ -665,9 +665,29 @@
   # SECURITY
   # ========================================
 
-  security.sudo.configFile = ''
-    mustafa ALL = NOPASSWD: /sbin/halt, /sbin/reboot, /sbin/poweroff
-  '';
+  security.sudo.extraRules = [
+    {
+      users = [ "mustafa" ];
+      commands = [
+        {
+          command = "${pkgs.systemd}/bin/halt";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "${pkgs.systemd}/bin/reboot";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "${pkgs.systemd}/bin/poweroff";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "${pkgs.systemd}/bin/shutdown";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
 
   security.polkit.extraConfig = ''
     polkit.addRule(function(action, subject) {

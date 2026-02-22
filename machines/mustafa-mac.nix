@@ -21,6 +21,11 @@
     mutableTaps = false;
   };
 
+  # Hostname configuration
+  networking.hostName = "mustafa-darwin";
+  networking.computerName = "mustafa-darwin";
+  networking.localHostName = "mustafa-darwin";
+
   # User configuration
   users.users."mustafa".home = "/Users/mustafa";
 

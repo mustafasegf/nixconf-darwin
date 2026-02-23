@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -41,5 +41,7 @@
 
     python3
     # wakatime-cli
+
+    inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

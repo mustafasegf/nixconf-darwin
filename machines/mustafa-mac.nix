@@ -22,9 +22,9 @@
   };
 
   # Hostname configuration
-  networking.hostName = "mustafa-darwin";
-  networking.computerName = "mustafa-darwin";
-  networking.localHostName = "mustafa-darwin";
+  networking.hostName = "mustafa-mac";
+  networking.computerName = "mustafa-mac";
+  networking.localHostName = "mustafa-mac";
 
   # User configuration
   users.users."mustafa".home = "/Users/mustafa";

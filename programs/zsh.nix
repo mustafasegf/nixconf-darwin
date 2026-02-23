@@ -458,7 +458,6 @@ in
 
     shellAliases = {
       # Common aliases (all platforms)
-      rm = "trash put";
       cat = "bat";
       grep = "rg";
       c = "clear";
@@ -475,6 +474,7 @@ in
       mans = ''man -k . | cut -d " " -f 1 | fzf -m --preview "man {1}" | xargs man'';
       m = "make";
       ta = "tmux new -As0";
+      zj = "zellij";
 
       ".." = "cd ..";
       "..." = "cd ../..";
@@ -482,7 +482,7 @@ in
       "....." = "cd ../../../..";
     }
     // lib.optionalAttrs pkgs.stdenv.isLinux {
-      # Linux-only: cargo-mommy aliases
+      # cargo-mommy aliases
       car = "cargo";
       cm = "cargo mommy";
       cmr = "cargo mommy run";
@@ -492,7 +492,7 @@ in
       cma = "cargo mommy add";
     }
     // lib.optionalAttrs pkgs.stdenv.isDarwin {
-      # Mac-only: Kubernetes aliases
+      # Kubernetes aliases
       k = "kubectl";
       kl = "kubectl logs";
       klf = "kubectl logs -f";

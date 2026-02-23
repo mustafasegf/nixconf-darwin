@@ -10,22 +10,13 @@
 }:
 
 {
-  # Machine-specific configuration for mustafa-pc
-  # Desktop Linux workstation with AMD CPU/GPU, Qtile WM
-  # Multiple package sets available: pkgs, upkgs, ppkgs, staging-pkgs, mpkgs
-
   imports = [
     ../modules/nixos/desktop.nix
   ];
 
   nix.settings.cores = 14;
 
-  # xcodes is macOS-only (manages Xcode installations)
   custom.enableXcode = false;
-
-  # ========================================
-  # BOOT & KERNEL
-  # ========================================
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -71,17 +62,12 @@
   boot.loader.grub.useOSProber = true;
   boot.loader.grub.efiSupport = true;
 
-  # Minecraft GRUB theme
   boot.loader.grub.minegrub-theme = {
     enable = true;
     splash = "100% Flakes!";
     background = "background_options/1.8  - [Classic Minecraft].png";
     boot-options-count = 4;
   };
-
-  # ========================================
-  # FILESYSTEMS
-  # ========================================
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/1877725c-b780-4b31-8304-0c8a17ac975b";
@@ -114,10 +100,6 @@
     }
   ];
 
-  # ========================================
-  # HARDWARE
-  # ========================================
-
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.amd.updateMicrocode = true;
@@ -141,7 +123,7 @@
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
-    # Use upkgs for latest Mesa (better AMD GPU support)
+    # upkgs for latest Mesa (better AMD GPU support)
     package = upkgs.mesa;
     package32 = upkgs.pkgsi686Linux.mesa;
     extraPackages = [
@@ -149,19 +131,11 @@
     ];
   };
 
-  # ========================================
-  # NETWORKING
-  # ========================================
-
   networking.useDHCP = lib.mkDefault true;
   networking.hostName = "mustafa-pc";
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
   networking.interfaces.enp113s0.wakeOnLan.enable = true;
-
-  # ========================================
-  # USERS
-  # ========================================
 
   users.defaultUserShell = pkgs.zsh;
 
@@ -200,11 +174,6 @@
     openssh.authorizedKeys.keys = [ ];
   };
 
-  # ========================================
-  # SYSTEM
-  # ========================================
-
-  # Allow insecure packages (e.g. EOL Electron, binary blobs)
   nixpkgs.config.permittedInsecurePackages = [
     "beekeeper-studio-5.5.3"
     "ventoy-1.1.10"

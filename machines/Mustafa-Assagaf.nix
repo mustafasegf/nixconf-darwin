@@ -1,9 +1,6 @@
 { inputs, ... }:
 
 {
-  # Machine-specific configuration for Mustafa-Assagaf (Work Mac)
-  # NOTE: nix-homebrew modules are imported at flake level
-
   imports = [
     ../modules/darwin/work.nix
   ];
@@ -21,9 +18,7 @@
     mutableTaps = false;
   };
 
-  # User configuration
   users.users."mustafa.assagaf".home = "/users/mustafa.assagaf";
 
-  # System version
   system.stateVersion = 4;
 }

@@ -8,9 +8,6 @@
 }:
 
 {
-  # Linux-specific home-manager configuration
-  # Multiple package sets available: pkgs, upkgs, ppkgs, staging-pkgs, mpkgs
-
   imports = [
     ../../programs/rofi.nix
     ../../programs/mimeapps.nix
@@ -19,7 +16,6 @@
 
   xsession.enable = true;
 
-  # Linux-specific services
   services.kdeconnect.enable = true;
   services.kdeconnect.indicator = true;
   services.blueman-applet.enable = true;
@@ -76,49 +72,14 @@
     ];
   };
 
-  # GTK theme
-  gtk = {
-    enable = true;
-    theme = {
-      name = "Dracula";
-      package = pkgs.dracula-theme;
-    };
-  };
+  gtk.enable = true;
 
-  # XDG config files - Kvantum/lxqt/gtk Dracula theming
   xdg.configFile = {
-    "Kvantum/Dracula/Dracula.kvconfig".source =
-      let
-        dracula-gtk = pkgs.fetchFromGitHub {
-          owner = "dracula";
-          repo = "gtk";
-          rev = "502f212d83bc67e8f0499574546b99ec6c8e16f9";
-          sha256 = "1wx9nzq7cqyvpaq4j60bs8g7gh4jk8qg4016yi4c331l4iw1ymsa";
-        };
-      in
-      "${dracula-gtk}/kde/kvantum/Dracula-purple-solid/Dracula-purple-solid.kvconfig";
-    "Kvantum/Dracula/Dracula.svg".source =
-      let
-        dracula-gtk = pkgs.fetchFromGitHub {
-          owner = "dracula";
-          repo = "gtk";
-          rev = "502f212d83bc67e8f0499574546b99ec6c8e16f9";
-          sha256 = "1wx9nzq7cqyvpaq4j60bs8g7gh4jk8qg4016yi4c331l4iw1ymsa";
-        };
-      in
-      "${dracula-gtk}/kde/kvantum/Dracula-purple-solid/Dracula-purple-solid.svg";
-    "Kvantum/kvantum.kvconfig".text = ''
-      [General]
-      theme=Dracula
-    '';
-    "lxqt/lxqt.conf".source = ../../config/dracula/lxqt/lxqt.conf;
-    "lxqt/session.conf".source = ../../config/dracula/lxqt/session.conf;
-    "gtk-3.0/settings.ini".source = ../../config/dracula/gtk-3.0/settings.ini;
-    "gtk-2.0/gtkrc".source = ../../config/dracula/gtk-2.0/gtkrc-2.0;
+    "lxqt/lxqt.conf".source = ../../config/catppuccin/lxqt/lxqt.conf;
+    "lxqt/session.conf".source = ../../config/catppuccin/lxqt/session.conf;
     "rofi/config.rasi".source = ../../config/rofi/config.rasi;
   };
 
-  # XDG desktop entries
   xdg.desktopEntries.ocr = {
     name = "OCR image";
     exec = "${pkgs.writeScript "ocr" ''
@@ -129,26 +90,51 @@
     ''}";
   };
 
-  # Xresources for Dracula theme
-  xresources.extraConfig = builtins.readFile (
-    pkgs.fetchFromGitHub {
-      owner = "dracula";
-      repo = "xresources";
-      rev = "8de11976678054f19a9e0ec49a48ea8f9e881a05";
-      sha256 = "12wmjynk0ryxgwb0hg4kvhhf886yvjzkp96a5bi9j0ryf3pc9kx7";
-    }
-    + "/Xresources"
-  );
+  xresources.extraConfig = ''
+    ! Catppuccin Mocha
+    *background: #1e1e2e
+    *foreground: #cdd6f4
+    *cursorColor: #f5e0dc
 
-  # ========================================
-  # AUTORANDR - Declarative display profiles
-  # ========================================
+    ! black
+    *color0: #45475a
+    *color8: #585b70
+
+    ! red
+    *color1: #f38ba8
+    *color9: #f38ba8
+
+    ! green
+    *color2: #a6e3a1
+    *color10: #a6e3a1
+
+    ! yellow
+    *color3: #f9e2af
+    *color11: #f9e2af
+
+    ! blue
+    *color4: #89b4fa
+    *color12: #89b4fa
+
+    ! magenta
+    *color5: #f5c2e7
+    *color13: #f5c2e7
+
+    ! cyan
+    *color6: #94e2d5
+    *color14: #94e2d5
+
+    ! white
+    *color7: #bac2de
+    *color15: #a6adc8
+  '';
+
   programs.autorandr = {
     enable = true;
     profiles.dual-4k = {
       fingerprint = {
         DP-2 = "00ffffffffffff0030aec96647414c5025200104b54627783bf795ae4f44a9260c5054adef00714f8180818a9500a9c0a9cfb300d1cf4dd000a0f0703e8030203500b9882100001a000000ff0055353131504c41470a20202020000000fd00324ba0a03c010a202020202020000000fc004c3332702d33300a202020202001ab02032ef14a01020304901112131f612309070783010000e2006a681a00000101283c00e305c000e606050161561c023a801871382d40582c4500b9882100001ecc7400a0a0a01e5030203500b9882100001a565e00a0a0a0295030203500b9882100001e0000000000000000000000000000000000000000000000000000000f";
-        HDMI-1 = "00ffffffffffff006318512800000100141d0103807944780a0dc9a05747982712484c2108008140a940818081c0a9c001010101010108e80030f2705a80b0588a00b9a84200001e023a801871382d40582c4500b9a84200001e000000fc004265796f6e642054560a202020000000fd00324b1e503c000a202020202020017d020352f25a61605f6665909f051420041312110302161507060121225e5d622909070715175055170083010000e200cb6e030c001000b8442100800102030467d85dc401788807e305e301e20f1be3060f01023a801871382d40582c4500b9a84200001e011d007251d01e206e285500b9a84200001e0000000000000000005d";
+        HDMI-1 = "00ffffffffffff006318522800000100141d0103807944780a0dc9a05747982712484c2108008140a940818081c0a9c001010101010108e80030f2705a80b0588a00b9a84200001e023a801871382d40582c4500b9a84200001e000000fc004265796f6e642054560a202020000000fd00324b1e503c000a202020202020017d020352f25a61605f6665909f051420041312110302161507060121225e5d622909070715175055170083010000e200cb6e030c001000b8442100800102030467d85dc401788807e305e301e20f1be3060f01023a801871382d40582c4500b9a84200001e011d007251d01e206e285500b9a84200001e0000000000000000005d";
       };
       config = {
         DP-2 = {
@@ -168,9 +154,6 @@
     };
   };
 
-  # ========================================
-  # XDG AUTOSTART - GUI apps at login
-  # ========================================
   xdg.configFile."autostart/copyq.desktop".text = ''
     [Desktop Entry]
     Name=CopyQ
@@ -195,7 +178,6 @@
     X-GNOME-Autostart-enabled=true
   '';
 
-  # Noisetorch - noise suppression daemon
   systemd.user.services.noisetorch = {
     Unit = {
       Description = "NoiseTorch noise suppression";
@@ -214,7 +196,11 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # OBS Studio with plugins
+  services.dunst.enable = true;
+  programs.mpv.enable = true;
+  programs.alacritty.enable = true;
+  programs.mangohud.enable = true;
+
   programs.obs-studio = {
     enable = true;
     package = (pkgs.obs-studio.override { ffmpeg = pkgs.ffmpeg-full; });

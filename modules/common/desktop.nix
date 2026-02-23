@@ -15,12 +15,9 @@
   };
 
   config = {
-    # Desktop/development packages - for machines used for interactive development
-    # Not needed on headless servers
     environment.systemPackages =
       with pkgs;
       [
-        ## Development toolchains
         go
         gofumpt
         gopls
@@ -41,7 +38,6 @@
         nodePackages.npm
         nodePackages.pnpm
 
-        ## Rust ecosystem
         cargo-watch
         cargo-expand
         bacon
@@ -54,31 +50,28 @@
         cargo-bootimage
         cargo-mommy
 
-        ## Additional languages
         zig
         deno
         gleam
         erlang
         ghc
         cabal-install
-        # dotnet-sdk  # Disabled on personal Mac - requires Swift build
+        # dotnet-sdk  # requires Swift build on macOS
         php83
         php83Packages.composer
         swi-prolog
         vlang
 
-        ## OCaml ecosystem
         dune_3
         ocaml
         opam
         ocamlPackages.findlib
         ocamlPackages.ocaml-lsp
 
-        ## Cloud and Infrastructure
         terragrunt
         opentofu
         kubectl
-        k9s
+        # k9s - moved to HM for catppuccin theming
         kustomize
         kcat
         grpcurl
@@ -87,7 +80,6 @@
         kubernetes-helm
         google-cloud-sdk
 
-        ## Development utilities
         libiconv
         speedtest-cli
         git-filter-repo
@@ -111,20 +103,17 @@
         autoconf
         subversionClient
 
-        ## Networking and security
         wireguard-tools
         android-tools
         mtr
         scrcpy
 
-        ## Code formatters
         black
         stylua
         shfmt
         nodePackages.prettier
         cmake-format
 
-        ## Language servers
         pyright
         nodePackages.typescript-language-server
         tflint
@@ -146,14 +135,12 @@
         cmake-language-server
         quick-lint-js
 
-        ## Debugging and profiling
         gcc
-        # gdb  # Disabled - build fails on modern macOS with clang
+        # gdb  # build fails on modern macOS with clang
         k6
         semgrep
         tig
 
-        ## Analysis tools
         scc
         hexedit
         nasm
@@ -162,7 +149,6 @@
         cookiecutter
         termshark
 
-        ## DevOps tools
         krew
         ossutil
         confluent-platform
@@ -173,14 +159,12 @@
         prometheus-alertmanager
         prometheus
 
-        ## Protobuf
         protobuf
         grpc-tools
         protoc-gen-go
         protoc-gen-doc
         protoc-gen-rust
 
-        ## Package managers
         yarn
         nodePackages.sass
         nodePackages.vercel
@@ -190,7 +174,6 @@
         unrar
         gifsicle
 
-        ## File management
         lf
         rclone
         zerotierone

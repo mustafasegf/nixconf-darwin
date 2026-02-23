@@ -1,14 +1,10 @@
 { pkgs, ... }:
 
 {
-  # This file now just imports base.nix for truly common packages
-  # For desktop systems, also import desktop.nix and gui.nix
   imports = [
     ./base.nix
   ];
 
-  # Commented out packages that should only be on desktop systems
-  # These are now in desktop.nix and gui.nix
   environment.systemPackages = with pkgs; [
     # (let
     #   packagePypi = name: ver: ref: deps:

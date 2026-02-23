@@ -10,20 +10,6 @@
 }:
 
 {
-  # Desktop NixOS configuration - for Linux desktop/workstation systems
-  # Includes X11, Qtile, desktop services, virtualization, etc.
-  #
-  # Multiple package sets available:
-  # - pkgs: nixpkgs (unstable)
-  # - upkgs: nixpkgs-unstable (same as pkgs usually)
-  # - ppkgs: nixpkgs-prev (23.11 stable)
-  # - staging-pkgs: staging-next branch
-  # - mpkgs: master branch (bleeding edge)
-
-  # ========================================
-  # LOCALIZATION
-  # ========================================
-
   time.timeZone = "Asia/Jakarta";
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -39,24 +25,18 @@
     LC_TIME = "id_ID.utf8";
   };
 
+  catppuccin.tty.enable = true;
+
   console = {
     font = "Lat2-Terminus16";
     useXkbConfig = true;
   };
-
-  # ========================================
-  # QT/GTK THEMING
-  # ========================================
 
   qt = {
     enable = true;
     platformTheme = "lxqt";
     style = "adwaita-dark";
   };
-
-  # ========================================
-  # XDG PORTAL
-  # ========================================
 
   xdg = {
     mime.enable = true;
@@ -71,10 +51,6 @@
       ];
     };
   };
-
-  # ========================================
-  # ENVIRONMENT
-  # ========================================
 
   environment.pathsToLink = [ "/share/nix-direnv" ];
 
@@ -92,11 +68,9 @@
   };
 
   environment.extraInit = ''
-    # Do not want SSH_ASKPASS in the environment
     unset -v SSH_ASKPASS
   '';
 
-  # Wacom tablet configuration
   environment.etc."X11/xorg.conf.d/10-tablet.conf".source = pkgs.writeText "10-tablet.conf" ''
     Section "InputClass"
     Identifier "Tablet"
@@ -106,7 +80,6 @@
     EndSection
   '';
 
-  # Qtile supporting config files (config.py itself is set via configFile option)
   environment.etc."xdg/qtile/floating_window_snapping.py".source =
     ../../config/qtile/floating_window_snapping.py;
 
@@ -127,14 +100,8 @@
     mode = "0755";
   };
 
-  # ========================================
-  # NIX OVERLAYS
-  # ========================================
-
-  # envfs: provides /usr/bin/env and similar for unpatched scripts
   services.envfs.enable = true;
 
-  # nix-direnv flakes support is now enabled by default
   nixpkgs.overlays = [
     (final: prev: {
       # Workaround: shaderc linking is broken in this nixpkgs rev (ffmpeg 8.x)
@@ -143,7 +110,6 @@
 
       # Workaround: unbreak-hardcoded-tables.patch (written for ffmpeg 8.x) removes the
       # av_malloc stub from tableprint_vlc.h, but ffmpeg 7.x still uses av_malloc in vlc.c.
-      # Re-add the stub so tablegen compilation works.
       handbrake = prev.handbrake.override {
         ffmpeg_7-full = prev.ffmpeg_7-full // {
           override =
@@ -161,10 +127,6 @@
     })
   ];
 
-  # ========================================
-  # PROGRAMS
-  # ========================================
-
   programs.wireshark.enable = true;
   programs.thunar.enable = true;
   programs.thunar.plugins = with pkgs; [
@@ -177,7 +139,6 @@
   programs.zsh.enable = true;
   programs.command-not-found.enable = false;
 
-  # Nix substituters
   nix.settings.substituters = lib.mkForce [ "https://cache.nixos.org" ];
 
   # musl dynamic linker for unpatched musl binaries (e.g. bun-installed CLIs)
@@ -188,10 +149,9 @@
     "${pkgs.pkgsMusl.stdenv.cc.cc.lib}/lib"
   ];
 
-  # nix-ld for running unpatched glibc binaries (dev version from flake)
+  # nix-ld for running unpatched glibc binaries
   programs.nix-ld.dev.enable = true;
   programs.nix-ld.libraries = with pkgs; [
-    # Toolchain + basics
     stdenv.cc.cc
     zlib
     openssl
@@ -202,7 +162,6 @@
     icu
     fuse3
 
-    # X11/XCB core
     xorg.libX11
     xorg.libXext
     xorg.libXrender
@@ -217,35 +176,26 @@
     xorg.libXdmcp
     xorg.libXau
 
-    # XCB util modules
     xorg.xcbutil
     xorg.xcbutilimage
     xorg.xcbutilkeysyms
     xorg.xcbutilrenderutil
     xorg.xcbutilwm
 
-    # Keyboard handling
     libxkbcommon
     libxkbcommon_x11
 
-    # Fonts
     freetype
     fontconfig
 
-    # OpenGL/EGL
     libglvnd
     mesa
   ];
 
-  # ========================================
-  # LINUX DESKTOP PACKAGES
-  # ========================================
-
   environment.systemPackages = with pkgs; [
-    ## Desktop essentials
     arandr
     copyq
-    dunst
+    # dunst - moved to HM for catppuccin theming
     find-cursor
     flameshot
     killall
@@ -261,17 +211,15 @@
     xcolor
     scrot
 
-    ## File managers and archive tools
     file-roller
     kdePackages.ark
     kdePackages.filelight
 
-    ## Graphics and media
     mesa-demos
     ffmpeg-full
     ffmpegthumbnailer
     vlc
-    mpv
+    # mpv - moved to HM for catppuccin theming
     pinta
     krita
     blender
@@ -284,7 +232,7 @@
     cheese
     webcamoid
     kdePackages.kamoso
-    mangohud
+    # mangohud - moved to HM for catppuccin theming
     radeontop
     nvtopPackages.amd
     aseprite
@@ -298,11 +246,9 @@
     gImageReader
     waifu2x-converter-cpp
 
-    ## Editors
     kdePackages.kate
     gedit
 
-    ## Office and productivity
     libreoffice
     kdePackages.okular
     xournalpp
@@ -312,7 +258,6 @@
     thunderbird
     pspp
 
-    ## Communication
     zoom-us
     telegram-desktop
     google-chrome
@@ -324,14 +269,12 @@
     weechat
     kdePackages.konversation
 
-    ## Gaming
     steam
     lutris
     wine
     wine64
     winetricks
     prismlauncher
-    mangohud
     tetrio-desktop
     pcsx2
     bottles
@@ -341,7 +284,6 @@
     dosbox
     sidequest
 
-    ## Networking
     bind
     nmap
     httpie
@@ -353,22 +295,19 @@
     winbox
     winbox4
 
-    ## Audio tools
     qpwgraph
     helvum
     wireplumber
     qjackctl
 
-    ## Theming
     libsForQt5.qt5ct
     libsForQt5.qtstyleplugin-kvantum
     lxqt.lxqt-qtplugin
     lxqt.lxqt-config
     lxappearance
     papirus-icon-theme
-    dracula-theme
+    catppuccin-gtk
 
-    ## System tools
     input-remapper
     pciutils
     usbutils
@@ -398,7 +337,6 @@
     libcamera
     libarchive
 
-    ## Development (Linux-specific)
     appimage-run
     clang
     clang-tools
@@ -443,7 +381,6 @@
     libguestfs
     gvisor
 
-    ## Xorg tools
     xorg.xkbcomp
     xorg.xkbutils
     xorg.xmodmap
@@ -452,17 +389,15 @@
     xorg.libXft
     xorg.libXinerama
 
-    ## Databases
     postgresql
     redis
 
-    ## Apps
     beekeeper-studio
     onedrive
     android-studio
     rpi-imager
     bruno
-    alacritty
+    # alacritty - moved to HM for catppuccin theming
     deskreen
     rescuetime
     pomodoro
@@ -472,7 +407,6 @@
     revanced-cli
     exercism
 
-    ## Misc
     home-manager
     openrgb
     tor-browser
@@ -494,7 +428,6 @@
     open-watcom-bin
     cargo-mommy
 
-    ## Python scientific stack
     (python3.withPackages (ps: [
       ps.jupyterlab
       ps.notebook
@@ -516,10 +449,6 @@
     ]))
   ];
 
-  # ========================================
-  # SERVICES - DESKTOP
-  # ========================================
-
   services.dbus.packages = with pkgs; [
     dconf
     gnome-keyring
@@ -530,7 +459,6 @@
     motherboard = "amd";
   };
 
-  # Apply OpenRGB "off" profile via systemd (not XDG tray)
   systemd.services.openrgb-profile = {
     description = "Set OpenRGB profile to off";
     after = [ "openrgb.service" ];
@@ -556,10 +484,6 @@
   services.flatpak.enable = true;
   services.gnome.gnome-keyring.enable = true;
 
-  # ========================================
-  # SERVICES - X11 & QTILE
-  # ========================================
-
   services.displayManager.defaultSession = "qtile";
 
   services.displayManager.autoLogin = {
@@ -580,7 +504,6 @@
         greeter.enable = true;
       };
 
-      # Remap F13-F24 keys (for tablet buttons)
       sessionCommands =
         let
           functionkey = pkgs.writeText "xkb-layout" ''
@@ -611,10 +534,6 @@
     };
   };
 
-  # ========================================
-  # SERVICES - AUDIO
-  # ========================================
-
   security.rtkit.enable = true;
 
   services.pipewire = {
@@ -629,9 +548,7 @@
     # Audio input priority:  Easy Effects > FIFINE K678 > WH-1000XM5 > AUX
     wireplumber.extraConfig."50-audio-priority" = {
       "monitor.alsa.rules" = [
-        # === Output (sinks) ===
         {
-          # HDMI - Beyond TV (port 1)
           matches = [ { "node.name" = "alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1"; } ];
           actions.update-props = {
             "priority.driver" = 1500;
@@ -639,7 +556,6 @@
           };
         }
         {
-          # DisplayPort (port 0)
           matches = [ { "node.name" = "alsa_output.pci-0000_03_00.1.hdmi-stereo"; } ];
           actions.update-props = {
             "priority.driver" = 1000;
@@ -647,16 +563,13 @@
           };
         }
         {
-          # AUX - 3.5mm analog output
           matches = [ { "node.name" = "alsa_output.pci-0000_7f_00.6.analog-stereo"; } ];
           actions.update-props = {
             "priority.driver" = 500;
             "priority.session" = 500;
           };
         }
-        # === Input (sources) ===
         {
-          # FIFINE K678 microphone
           matches = [
             {
               "node.name" = "alsa_input.usb-FIFINE_Microphones_FIFINE_K678_Microphone_REV1.0-00.analog-stereo";
@@ -668,7 +581,6 @@
           };
         }
         {
-          # AUX - 3.5mm analog input (lowest)
           matches = [ { "node.name" = "alsa_input.pci-0000_7f_00.6.analog-stereo"; } ];
           actions.update-props = {
             "priority.driver" = 500;
@@ -678,18 +590,10 @@
       ];
       # Bluetooth loopback nodes get hardcoded priority.session = 2010 in
       # WirePlumber's bluez.lua script, which cannot be overridden by rules.
-      # BT headphone priority is inherently highest (2010) for both sink and
-      # source when connected, and disappears when disconnected - triggering
-      # automatic fallback to the next highest priority ALSA device.
-      # The XM5 mic input (also 2010) will be below Easy Effects Source
-      # (set as default source) and FIFINE (1800) due to WirePlumber's
-      # default node selection logic preferring the saved default.
+      # BT headphone priority is inherently highest when connected, and
+      # disappears when disconnected - triggering automatic fallback.
     };
   };
-
-  # ========================================
-  # SERVICES - NETWORK
-  # ========================================
 
   services.openssh.enable = true;
   services.tor = {
@@ -697,34 +601,27 @@
     client.enable = true;
   };
 
-  # Sunshine game streaming server (for Moonlight clients)
-  # Web UI: https://localhost:47990 (first run: set username/password)
+  # Web UI: https://localhost:47990
   # Ports: TCP 47984-47990, UDP 47998-48010
   services.sunshine = {
     enable = true;
     autoStart = true;
-    capSysAdmin = true; # Required for display capture
+    capSysAdmin = true;
     openFirewall = true;
     settings = {
-      origin_web_ui_allowed = "wan"; # Allow access from Tailscale/ZeroTier IPs
+      origin_web_ui_allowed = "wan";
     };
   };
 
-  # Grant user access to uinput for Sunshine input capture
   services.udev.extraRules = ''
     KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"
   '';
 
-  # OpenVPN
   services.openvpn.servers = {
     uihpc = {
       config = "config /home/mustafa/openvpn/hpc12.ovpn ";
     };
   };
-
-  # ========================================
-  # SECURITY
-  # ========================================
 
   security.sudo.extraRules = [
     {
@@ -771,10 +668,6 @@
     })
   '';
 
-  # ========================================
-  # VIRTUALIZATION
-  # ========================================
-
   virtualisation.docker = {
     enable = true;
     daemon.settings = {
@@ -793,7 +686,7 @@
     };
   };
 
-  # Defer Docker startup to after GUI and Tailscale (off the boot critical path)
+  # Defer Docker startup to after GUI and Tailscale
   systemd.services.docker = {
     after = [
       "graphical.target"
@@ -817,15 +710,10 @@
 
   users.extraGroups.vboxusers.members = [ "mustafa" ];
 
-  # ========================================
-  # SYSTEMD SERVICES
-  # ========================================
-
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.services.pcscd.enable = false;
   systemd.sockets.pcscd.enable = false;
 
-  # Polkit authentication agent
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
     description = "polkit-gnome-authentication-agent-1";
     wantedBy = [ "graphical-session.target" ];
@@ -840,7 +728,6 @@
     };
   };
 
-  # Tailscale auto-connect (deferred to after GUI is up)
   systemd.services.tailscale-autoconnect = {
     description = "Automatic connection to Tailscale";
     after = [
@@ -896,13 +783,8 @@
       [ env ];
   };
 
-  # Cloudflare WARP
   systemd.services.warp-svc.enable = true;
   systemd.packages = with pkgs; [ cloudflare-warp ];
-
-  # ========================================
-  # DOCUMENTATION
-  # ========================================
 
   documentation.man.generateCaches = true;
   documentation.dev.enable = true;

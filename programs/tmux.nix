@@ -10,14 +10,6 @@
     enable = true;
     plugins = with pkgs.tmuxPlugins; [
       {
-        plugin = dracula;
-        extraConfig = ''
-          set -g @dracula-plugins "git"
-          set -g @dracula-show-left-icon session
-          set -g @dracula-show-fahrenheit false
-        '';
-      }
-      {
         plugin = resurrect;
         extraConfig = "set -g @resurrect-strategy-nvim 'session'";
       }
@@ -56,7 +48,7 @@
 
     extraConfig = ''
 
-      # OSC 52 clipboard support - works over SSH and mosh (mosh is patched for OSC 52)
+      # OSC 52 clipboard - works over SSH and mosh (mosh is patched for OSC 52)
       set -g set-clipboard on
       set -ag terminal-features ',xterm-256color:clipboard'
       set -ag terminal-features ',xterm-kitty:clipboard'

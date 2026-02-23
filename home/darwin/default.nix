@@ -6,8 +6,6 @@
 }:
 
 {
-  # macOS-specific home-manager configuration
-
   targets.darwin.search = "Bing";
 
   home.packages =

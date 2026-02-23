@@ -6,7 +6,6 @@
 }:
 
 let
-  # Auto-detect Rust architecture for toolchain paths
   rustArch =
     if pkgs.stdenv.isLinux then
       if pkgs.stdenv.isAarch64 then "aarch64-unknown-linux-gnu" else "x86_64-unknown-linux-gnu"
@@ -15,14 +14,12 @@ let
     else
       throw "Unsupported platform";
 
-  # Platform-specific PATH additions
   platformPaths = lib.optionalString pkgs.stdenv.isDarwin ''
     export PATH=$PATH:/opt/homebrew/bin:~/Library/Python/3.9/bin
     export PATH=$PATH:~/.cache/.bun/bin
     export LIBRARY_PATH=$LIBRARY_PATH:${pkgs.libiconv}/lib
   '';
 
-  # Linux-specific env vars
   linuxEnv = lib.optionalString pkgs.stdenv.isLinux ''
     CARGO_MOMMYS_LITTLE="boy/baby"
   '';
@@ -34,7 +31,7 @@ in
     enable = true;
     autocd = true;
 
-    # Disable built-in plugin loading - zinit handles everything (faster with deferred loading)
+    # Disabled - zinit handles everything (faster with deferred loading)
     autosuggestion.enable = false;
     enableCompletion = false;
     syntaxHighlighting.enable = false;
@@ -42,13 +39,11 @@ in
     defaultKeymap = "viins";
 
     envExtra = ''
-      # XDG directories
       export XDG_DATA_HOME=$HOME/.local/share
       export XDG_CONFIG_HOME=$HOME/.config
       export XDG_STATE_HOME=$HOME/.local/state
       export XDG_CACHE_HOME=$HOME/.cache
 
-      # Home cleaning - move config files to XDG directories
       export ANDROID_HOME="$XDG_DATA_HOME"/android
       export ASDF_DATA_DIR="$XDG_DATA_HOME"/asdf
       export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME"/aws/credentials
@@ -79,22 +74,16 @@ in
       # export WAKATIME_HOME="$XDG_CONFIG_HOME/wakatime"
       # export ZSH_WAKATIME_BIN="$WAKATIME_HOME/.wakatime/wakatime-cli"
 
-      # PATH - Common
       export PATH=$PATH:$CARGO_HOME/bin
       export PATH=$PATH:$RUSTUP_HOME:~/.rustup/toolchains/${RUSTC_VERSION}-${rustArch}/bin/
       export PATH=$PATH:$GOPATH/bin
       export PATH=$PATH:~/.cache/.bun/bin
 
-      # PATH - Platform-specific
       ${platformPaths}
-
-      # Platform-specific env vars
       ${linuxEnv}
 
-      # Misc settings
       export CHTSH_QUERY_OPTIONS="style=rrt"
 
-      # LF file manager icons
       export LF_ICONS="\
       di=:\
       fi=:\
@@ -262,33 +251,27 @@ in
       source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
       unset -v SSH_ASKPASS
 
-      # SSH greeting - remind to attach to tmux
       if [[ -n "$SSH_CONNECTION" ]] && [[ -z "$TMUX" ]]; then
         echo "Run 'ta' to attach to tmux"
       fi
 
-      # Vi-mode configuration
       VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
       VI_MODE_SET_CURSOR=true
       MODE_INDICATOR="%F{yellow}+%f"
       KEYTIMEOUT=15
       VI_MODE_PROMPT_INFO=true
 
-      # LF file manager integration
       LFCD="$HOME/.config/lf/lfcd.sh"
       if [ -f "$LFCD" ]; then
         source "$LFCD"
       fi
 
-      # Helper function to create and cd into directory
       function mkcdir() {
         mkdir -p -- "$1" && cd -P -- "$1"
       }
 
-      # Jump to git repository root
       function cdg() { cd "$(git rev-parse --show-toplevel)" }
 
-      # Git shortcuts
       function gsts() { git status }
       function gc() { git commit -am "$@" }
       function ga() { git add "$@" }
@@ -307,7 +290,7 @@ in
       function gpu() { git push upstream "$@" }
       function gplu() { git pull upstream "$@" }
 
-      # Dynamic main branch detection (works with main/master/etc)
+      # Dynamic main branch detection
       function gsm() { gs "$(basename `git symbolic-ref refs/remotes/origin/HEAD`)" }
       function gpom() { gpo "$(basename `git symbolic-ref refs/remotes/origin/HEAD`)" }
       function gpum() { gpu "$(basename `git symbolic-ref refs/remotes/origin/HEAD`)" }
@@ -319,11 +302,9 @@ in
       function gpob() { gpo "$(git symbolic-ref --short HEAD)" }
       function gpub() { gpu "$(git symbolic-ref --short HEAD)" }
 
-      # Generate gitignore from toptal.com
       function gi() { curl -sLw "\n" https://www.toptal.com/developers/gitignore/api/$@ }
       function gil() { gi list | tr , '\n' | fzf --multi | xargs echo | tr ' ' , | xargs -I {} curl -sLw "\n" 'https://www.toptal.com/developers/gitignore/api/{}' | tee .gitignore }
 
-      # Nix rebuild helpers
       function update() {
         pushd $HOME/.config/nixpkgs
         sudo nixos-rebuild switch --flake .#
@@ -338,13 +319,11 @@ in
 
       alias update-flake='nix flake update --commit-lock-file'
 
-      # Memory usage by process
       function tmem() {
         smem -t -k -c pss -P "$@"
       }
 
       ${lib.optionalString pkgs.stdenv.isLinux ''
-        # Linux-only: cargo-mommy wrappers
         function cmw() {
           cargo watch -x "mommy $@"
         }
@@ -355,7 +334,6 @@ in
       ''}
 
       ${lib.optionalString pkgs.stdenv.isDarwin ''
-        # Mac-only: Delete current directory and go up
         function frfr() {
           original_dir="$(pwd)"
           original_dir_name="$(basename "$original_dir")"
@@ -374,7 +352,6 @@ in
           fi
         }
 
-        # Mac-only: Kubernetes helpers
         function kgrep() {
           kubectl get "$1" | grep "$2" | awk '{print $1}'
         }
@@ -387,10 +364,8 @@ in
         }
       ''}
 
-      # yo - LLM shell assistant (uses opencode run)
       source ${../config/yo/yo.zsh}
 
-      # Initialize zinit for fast plugin loading with turbo mode
       ZINIT_HOME="''${XDG_DATA_HOME:-''${HOME}/.local/share}/zinit/zinit.git"
       if [[ ! -d "$ZINIT_HOME" ]]; then
         mkdir -p "$(dirname $ZINIT_HOME)"
@@ -398,13 +373,10 @@ in
       fi
       source "''${ZINIT_HOME}/zinit.zsh"
 
-      # Essential plugins - load immediately
       zinit light-mode for \
         OMZL::history.zsh \
         OMZL::key-bindings.zsh
 
-      # Vi-mode - load immediately (better than OMZ vi-mode)
-      # Use sourcing mode to avoid zle-line-init hijack that causes invisible prompt in tmux
       # Atuin must be registered BEFORE zsh-vi-mode loads, because sourcing mode
       # fires zvm_after_init immediately during zinit light
       zvm_after_init_commands+=('eval "$(atuin init zsh)"')
@@ -412,7 +384,6 @@ in
       zinit ice depth=1
       zinit light jeffreytse/zsh-vi-mode
 
-      # Deferred plugins - load after prompt (turbo mode)
       zinit wait lucid for \
         OMZP::sudo \
         OMZP::copyfile \
@@ -421,35 +392,28 @@ in
         OMZP::history \
         OMZP::colored-man-pages
 
-      # Docker completions - deferred
       zinit wait lucid for \
         OMZP::docker \
         OMZP::docker-compose
 
-      # Cloud tools - heavily deferred (these are slow)
       zinit wait"2" lucid for \
         OMZP::gcloud
 
-      # AWS - deferred, skip slow homebrew check
       zinit wait"2" lucid for \
         atload"unset -f _awscli-homebrew-installed 2>/dev/null" \
         OMZP::aws
 
-      # z for directory jumping - deferred
       zinit wait lucid for \
         agkozak/zsh-z
 
 
       # ${lib.optionalString pkgs.stdenv.isLinux ''
-        #   # Wakatime - Linux only, deferred
         #   zinit wait lucid for \
         #     sobolevn/wakatime-zsh-plugin
         # ''}
 
-      # Autosuggestions - load immediately (needed on first prompt for history suggestions)
       zinit light zsh-users/zsh-autosuggestions
 
-      # Syntax highlighting and completions - deferred (cosmetic + non-essential on first prompt)
       # zicompinit replaces compinit with a faster cached version
       zinit wait lucid for \
         atinit"zicompinit; zicdreplay" \
@@ -457,7 +421,6 @@ in
     '';
 
     shellAliases = {
-      # Common aliases (all platforms)
       cat = "bat";
       grep = "rg";
       c = "clear";
@@ -482,7 +445,6 @@ in
       "....." = "cd ../../../..";
     }
     // lib.optionalAttrs pkgs.stdenv.isLinux {
-      # cargo-mommy aliases
       car = "cargo";
       cm = "cargo mommy";
       cmr = "cargo mommy run";
@@ -492,7 +454,6 @@ in
       cma = "cargo mommy add";
     }
     // lib.optionalAttrs pkgs.stdenv.isDarwin {
-      # Kubernetes aliases
       k = "kubectl";
       kl = "kubectl logs";
       klf = "kubectl logs -f";

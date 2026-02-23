@@ -1,8 +1,6 @@
 { pkgs, inputs, ... }:
 
 {
-  # Common home-manager configuration shared across all systems
-
   imports = [
     ../../modules/common/sops.nix
     ../../programs/btop.nix
@@ -13,7 +11,11 @@
     ../../programs/zsh.nix
   ];
 
-  # Programs
+  catppuccin = {
+    enable = true;
+    flavor = "mocha";
+  };
+
   programs.bash.enable = true;
   programs.zsh.enable = true;
 
@@ -25,7 +27,6 @@
   programs.bat = {
     enable = true;
     config = {
-      theme = "Dracula";
       tabs = "2";
       style = "plain";
       paging = "never";
@@ -120,9 +121,20 @@
     };
   };
 
+  programs.lazygit.enable = true;
+  programs.yazi.enable = true;
+  programs.k9s.enable = true;
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = false;
+  };
+  programs.atuin = {
+    enable = true;
+    enableZshIntegration = false; # handled via zinit for zsh-vi-mode compat
+  };
+
   home.packages = with pkgs; [ ];
 
-  # Global environment variables
   home.sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";

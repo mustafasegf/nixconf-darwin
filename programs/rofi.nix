@@ -5,8 +5,6 @@
   ...
 }:
 {
-  # Rofi is installed via home.packages with wrapped plugins
-  # Config is managed via xdg.configFile in home/linux/default.nix
   home.packages = with pkgs; [
     (rofi.override {
       plugins = [

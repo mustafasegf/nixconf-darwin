@@ -6,21 +6,15 @@
 }:
 
 {
-  # Machine-specific configuration for minipc
-  # This is a server machine running k3s, Docker, and cloudflared
-
-  # Import server profile
   imports = [
     ../modules/nixos/server.nix
   ];
 
-  # Build configuration - limit parallel builds to 7 cores
   nix.settings = {
     cores = 7;
     max-jobs = "auto";
   };
 
-  # Hardware configuration
   boot.initrd.availableKernelModules = [
     "ehci_pci"
     "nvme"
@@ -39,7 +33,6 @@
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.device = "nodev";
 
-  # Filesystems
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/0ed1f3c0-c49c-4ff6-bdbe-267bc24a997e";
     fsType = "ext4";
@@ -61,18 +54,14 @@
 
   swapDevices = [ ];
 
-  # Networking
   networking.useDHCP = lib.mkDefault true;
   networking.hostName = "minipc";
 
-  # Platform
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
-  # CPU microcode
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   hardware.cpu.x86.msr.enable = true;
 
-  # Users
   users.users."mustafa" = {
     isNormalUser = true;
     shell = pkgs.zsh;
@@ -97,6 +86,5 @@
     ];
   };
 
-  # System version
   system.stateVersion = "24.05";
 }

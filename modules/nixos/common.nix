@@ -1,21 +1,18 @@
 { pkgs, ... }:
 
 {
-  # Common configuration for all NixOS systems
-
   environment.systemPackages = with pkgs; [
     systemd-manager-tui
   ];
 
-  # Services common to all Linux systems
   services.netdata.enable = true;
   services.ucodenix.enable = true;
 
   services.zerotierone = {
     enable = true;
     joinNetworks = [
-      "35c192ce9b045898" # home network
-      "8850338390eddd9b" # minecraft
+      "35c192ce9b045898"
+      "8850338390eddd9b"
     ];
   };
 
@@ -37,7 +34,6 @@
     OOMScoreAdjust = 1000;
   };
 
-  # Systemd services
   systemd.services.ryzen-disable-c6 = {
     description = "Ryzen Disable C6";
     wantedBy = [

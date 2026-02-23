@@ -76,6 +76,10 @@
       url = "github:prismatic-koi/nvim-sops";
       flake = false;
     };
+
+    # Applications
+    handy.url = "github:cjpais/Handy";
+    handy.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =

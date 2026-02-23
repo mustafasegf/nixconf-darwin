@@ -17,5 +17,8 @@
 
     ## Network analysis
     wireshark
+
+    ## Speech-to-text
+    handy
   ];
 }

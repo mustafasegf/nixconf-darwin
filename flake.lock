@@ -52,6 +52,26 @@
         "type": "github"
       }
     },
+    "handy": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1771602168,
+        "narHash": "sha256-PH/pS57F6xxoDnOk/qfn1WPnJSMvRelFgYGp9fDsTic=",
+        "owner": "cjpais",
+        "repo": "Handy",
+        "rev": "a5c3f88acea26e140854ec8e02d834f852663f79",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cjpais",
+        "repo": "Handy",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -314,6 +334,7 @@
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
+        "handy": "handy",
         "home-manager": "home-manager",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",

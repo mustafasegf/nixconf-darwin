@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   # Base configuration shared across ALL systems (NixOS and macOS)
@@ -90,6 +95,53 @@
           ]
         ) (old.patches or [ ]);
       });
+
+      # Handy - offline speech-to-text (https://github.com/cjpais/Handy)
+      # Linux: built from source via the upstream flake
+      # macOS: pre-built app bundle from GitHub releases
+      handy =
+        if prev.stdenv.hostPlatform.isLinux then
+          inputs.handy.packages.${prev.stdenv.hostPlatform.system}.handy
+        else
+          prev.stdenv.mkDerivation rec {
+            pname = "handy";
+            version = "0.7.7";
+
+            src = prev.fetchurl (
+              if prev.stdenv.hostPlatform.isAarch64 then
+                {
+                  url = "https://github.com/cjpais/Handy/releases/download/v${version}/Handy_aarch64.app.tar.gz";
+                  hash = "sha256-qsSxZJHe4uf0+DEgLTSFolv+Hm1IV1T2vr5RzYVtp6U=";
+                }
+              else
+                {
+                  url = "https://github.com/cjpais/Handy/releases/download/v${version}/Handy_x64.app.tar.gz";
+                  hash = "sha256-/X26tirmdcZNM9vDcqYqqj8grQm7lmf7Ef9PNcE5AW0=";
+                }
+            );
+
+            sourceRoot = ".";
+
+            nativeBuildInputs = [ prev.gnutar ];
+
+            installPhase = ''
+              runHook preInstall
+              mkdir -p $out/Applications
+              cp -r Handy.app $out/Applications/
+              runHook postInstall
+            '';
+
+            meta = {
+              description = "A free, open source, and extensible speech-to-text application that works completely offline";
+              homepage = "https://github.com/cjpais/Handy";
+              license = lib.licenses.mit;
+              mainProgram = "Handy";
+              platforms = [
+                "aarch64-darwin"
+                "x86_64-darwin"
+              ];
+            };
+          };
     })
   ];
 

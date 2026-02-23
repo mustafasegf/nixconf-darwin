@@ -1,24 +1,25 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
-  # GUI packages shared across desktop systems (not for headless servers)
-  environment.systemPackages = with pkgs; [
-    ## Terminal emulators
-    iterm2
-    kitty
-
-    ## Development tools
-    postman
-    dbeaver-bin
-
-    ## Communication
-    slack
-    discord
-
-    ## Network analysis
-    wireshark
-
-    ## Speech-to-text
-    handy
-  ];
+  environment.systemPackages =
+    with pkgs;
+    [
+      iterm2
+      kitty
+      postman
+      dbeaver-bin
+      slack
+      discord
+      wireshark
+      handy
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [
+      # Ghostty can't build from flake on macOS, uses Homebrew cask there
+      inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ];
 }

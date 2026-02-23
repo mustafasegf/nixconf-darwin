@@ -6,13 +6,10 @@
 }:
 
 {
-  # Base configuration shared across ALL systems (NixOS and macOS)
-
   imports = [
     ./packages.nix
   ];
 
-  # Environment variables
   environment.variables = {
     SUDO_EDITOR = "nvim";
     EDITOR = "nvim";
@@ -21,7 +18,6 @@
     MANPAGER = "nvim +Man!";
   };
 
-  # Fonts
   fonts.packages =
     with pkgs;
     [
@@ -38,7 +34,6 @@
     ]
     ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
 
-  # Nix configuration
   nix.settings = {
     keep-outputs = true;
     keep-derivations = true;
@@ -51,23 +46,26 @@
       "mustafa.assagaf"
       "mustafa"
     ];
+    substituters = [
+      "https://ghostty.cachix.org"
+    ];
+    trusted-public-keys = [
+      "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
+    ];
     fallback = true;
   };
 
-  # Programs
   programs.zsh.enable = true;
 
-  # Nixpkgs config
   nixpkgs.config = {
     allowUnfree = true;
     allowUnsupportedSystem = true;
     allowBroken = true;
   };
 
-  # Overlays
   nixpkgs.overlays = [
     (final: prev: {
-      # Use jdrouhard's patched mosh fork with many fixes:
+      # Use jdrouhard's patched mosh fork:
       # - OSC 52 clipboard support for tmux (PR #1104)
       # - SSH agent forwarding (PR #1297)
       # - Undercurl/underline color support
@@ -82,7 +80,6 @@
           rev = "3d613c845cae0b8966a5d5dbadf2639a9e2f6fd8";
           hash = "sha256-I0YlND+B7MigFKQg+nnTFQb/li+D5oe/CFwoAc9eODg=";
         };
-        # Keep only Nix-specific patches, drop version-specific ones
         patches = builtins.filter (
           p:
           let
@@ -145,6 +142,5 @@
     })
   ];
 
-  # Services
   services.tailscale.enable = true;
 }

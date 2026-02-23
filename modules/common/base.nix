@@ -22,7 +22,7 @@
     jq
     yq-go
     file
-    trash-cli
+    rmw
     colordiff
 
     ## System monitoring

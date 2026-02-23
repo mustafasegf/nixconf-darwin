@@ -72,28 +72,6 @@
     (python312.withPackages (ps: [
       ps.pip
     ]))
-    (pkgs.rustPlatform.buildRustPackage rec {
-      pname = "trashy";
-      version = "c95b22";
-
-      src = fetchFromGitHub {
-        owner = "oberblastmeister";
-        repo = "trashy";
-        rev = "c95b22c0522f616b8700821540a1e58edcf709eb";
-        hash = "sha256-O4r/bfK33hJ6w7+p+8uqEdREGUhcaEg+Zjh/T7Bm6sY=";
-      };
-
-      cargoHash = "sha256-qrqhIT7FKcRmz9AWAvdbPi1uzVpkGXBJefr3y06n9F0=";
-
-      nativeBuildInputs = [ installShellFiles ];
-
-      preFixup = ''
-        installShellCompletion --cmd trash \
-          --bash <($out/bin/trash completions bash) \
-          --fish <($out/bin/trash completions fish) \
-          --zsh <($out/bin/trash completions zsh) \
-      '';
-    })
   ];
 
   # Firewall configuration for k3s and services

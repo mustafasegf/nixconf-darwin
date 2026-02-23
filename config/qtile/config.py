@@ -225,8 +225,8 @@ for i in groups:
 
 def init_border_config():
     config = {
-        "border_focus": "#6c71c4",
-        "border_normal": "#073642",
+        "border_focus": "#cba6f7",  # Catppuccin Mocha Mauve
+        "border_normal": "#313244",  # Catppuccin Mocha Surface0
         "margin": 5,
         "border_width": 1,
         "grow_amount": 2,
@@ -236,11 +236,11 @@ def init_border_config():
 
 def init_treetab_config():
     config = {
-        "active_bg": "#6c71c4",
-        "inactive_bg": "#6272a4",
-        "active_fg": "#f8f8f2",
-        "inactive_fg": "#f8f8f2",
-        "bg_color": "#282a36",
+        "active_bg": "#cba6f7",  # Catppuccin Mocha Mauve
+        "inactive_bg": "#6c7086",  # Catppuccin Mocha Overlay0
+        "active_fg": "#cdd6f4",  # Catppuccin Mocha Text
+        "inactive_fg": "#cdd6f4",  # Catppuccin Mocha Text
+        "bg_color": "#1e1e2e",  # Catppuccin Mocha Base
         "padding_left": 0,
         "padding_x": 0,
         "fontsize": 13,
@@ -278,7 +278,7 @@ extension_defaults = widget_defaults.copy()
 def init_widget_list():
     widget_list = [
         widget.CurrentLayout(mode="both"),
-        widget.GroupBox(this_current_screen_border="#805bb5", rdisable_drag=True),
+        widget.GroupBox(this_current_screen_border="#cba6f7", rdisable_drag=True),
         widget.Spacer(bar.STRETCH),
         widget.WindowName(max_chars=69),
         # widget.Spacer(bar.STRETCH),

@@ -1,20 +1,23 @@
--- dracula colorscheme + highlight overrides
+-- catppuccin mocha colorscheme + highlight overrides
 return {
-  "dracula-vim",
+  "catppuccin-nvim",
   priority = 1000,
   after = function()
-    vim.api.nvim_command("colorscheme dracula")
-    vim.api.nvim_command("highlight Normal guibg=none ctermbg=none")
-    vim.api.nvim_command("highlight WinBar guibg=#44475A")
+    require("catppuccin").setup({
+      flavour = "mocha",
+      transparent_background = true,
+    })
+    vim.cmd.colorscheme("catppuccin")
+    vim.api.nvim_command("highlight WinBar guibg=#45475a")
     vim.api.nvim_command("highlight WinSeparator guifg=None")
     vim.api.nvim_command("highlight NvimTreeVertSplit guibg=None")
-    vim.api.nvim_command("hi LspInlayHint guifg=#f8f8f2 guibg=#44475A")
+    vim.api.nvim_command("hi LspInlayHint guifg=#cdd6f4 guibg=#45475a")
 
-    vim.api.nvim_command("highlight RainbowRed guifg=#E06C75 ctermfg=Red")
-    vim.api.nvim_command("highlight RainbowYellow guifg=#E5C07B ctermfg=Yellow")
-    vim.api.nvim_command("highlight RainbowBlue guifg=#61AFEF ctermfg=Blue")
-    vim.api.nvim_command("highlight RainbowGreen guifg=#98C379 ctermfg=Green")
-    vim.api.nvim_command("highlight RainbowViolet guifg=#C678DD ctermfg=Magenta")
-    vim.api.nvim_command("highlight RainbowCyan guifg=#56B6C2 ctermfg=Cyan")
+    vim.api.nvim_command("highlight RainbowRed guifg=#f38ba8 ctermfg=Red")
+    vim.api.nvim_command("highlight RainbowYellow guifg=#f9e2af ctermfg=Yellow")
+    vim.api.nvim_command("highlight RainbowBlue guifg=#89b4fa ctermfg=Blue")
+    vim.api.nvim_command("highlight RainbowGreen guifg=#a6e3a1 ctermfg=Green")
+    vim.api.nvim_command("highlight RainbowViolet guifg=#cba6f7 ctermfg=Magenta")
+    vim.api.nvim_command("highlight RainbowCyan guifg=#94e2d5 ctermfg=Cyan")
   end,
 }

@@ -34,31 +34,31 @@ configuration {
 }
 
 * {
-    /* Dracula theme colour palette */
-    drac-bgd: #282a36;
-    drac-cur: #44475a;
-    drac-fgd: #f8f8f2;
-    drac-cmt: #6272a4;
-    drac-cya: #8be9fd;
-    drac-grn: #50fa7b;
-    drac-ora: #ffb86c;
-    drac-pnk: #ff79c6;
-    drac-pur: #bd93f9;
-    drac-red: #ff5555;
-    drac-yel: #f1fa8c;
+    /* Catppuccin Mocha colour palette */
+    ctp-base: #1e1e2e;
+    ctp-surface0: #313244;
+    ctp-text: #cdd6f4;
+    ctp-overlay0: #6c7086;
+    ctp-sky: #89dceb;
+    ctp-green: #a6e3a1;
+    ctp-peach: #fab387;
+    ctp-mauve: #cba6f7;
+    ctp-lavender: #b4befe;
+    ctp-red: #f38ba8;
+    ctp-yellow: #f9e2af;
 
     font: "IBM Plex Mono 11";
 
-    foreground: @drac-fgd;
-    background-color: @drac-bgd;
-    active-background: @drac-pnk;
-    urgent-background: @drac-red;
+    foreground: @ctp-text;
+    background-color: @ctp-base;
+    active-background: @ctp-mauve;
+    urgent-background: @ctp-red;
     
     selected-background: @active-background;
     selected-urgent-background: @urgent-background;
     selected-active-background: @active-background;
     separatorcolor: @active-background;
-    bordercolor: #6272a4;
+    bordercolor: #6c7086;
 }
 
 #window {
@@ -155,11 +155,11 @@ configuration {
 }
 #entry {
     spacing:    0;
-    text-color: @drac-cya;
+    text-color: @ctp-sky;
 }
 #prompt {
     spacing:    0;
-    text-color: @drac-grn;
+    text-color: @ctp-green;
 }
 #inputbar {
     children:   [ prompt,textbox-prompt-colon,entry,case-indicator ];
@@ -168,7 +168,7 @@ configuration {
     expand:     false;
     str:        ":";
     margin:     0px 0.3em 0em 0em ;
-    text-color: @drac-grn;
+    text-color: @ctp-green;
 }
 element-text, element-icon {
     background-color: inherit;

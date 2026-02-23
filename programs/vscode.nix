@@ -16,7 +16,7 @@
         rust-lang.rust-analyzer
         bradlc.vscode-tailwindcss
         davidanson.vscode-markdownlint
-        dracula-theme.theme-dracula
+        catppuccin.catppuccin-vsc
         # eg2.vscode-npm-script
         esbenp.prettier-vscode
         formulahendry.auto-close-tag
@@ -153,11 +153,11 @@
       "editor.minimap.enabled" = true;
       "indentRainbow.indentSetter" = { };
       "indentRainbow.colors" = [
-        "rgba(199, 206, 234, 0.2)" # Purple
-        "rgba(135, 209, 237, 0.2)" # blue
-        "rgba(181, 234, 215, 0.2)" # green
-        "rgba(226, 240, 203, 0.2)" # yellow
-        "rgba(255, 154, 162, 0.2)" # red
+        "rgba(203, 166, 247, 0.2)" # Mauve
+        "rgba(137, 180, 250, 0.2)" # Blue
+        "rgba(148, 226, 213, 0.2)" # Teal
+        "rgba(166, 227, 161, 0.2)" # Green
+        "rgba(249, 226, 175, 0.2)" # Yellow
       ];
       "bracketPairColorizer.timeOut" = 0;
       "bracketPairColorizer.activeScopeCSS" = [
@@ -187,13 +187,13 @@
           "]"
         ]
         [
-          "#CC33FF" # purple
-          "#61c3e8" # blue
-          "#33FF66" # green
-          "#FFCC33" # yellow
-          "#ff3366" # red
+          "#cba6f7" # Mauve
+          "#89b4fa" # Blue
+          "#a6e3a1" # Green
+          "#f9e2af" # Yellow
+          "#f38ba8" # Red
         ]
-        "#ddd" # grey
+        "#585b70" # Surface2
       ];
       "bracketPairColorizer.highlightActiveScope" = true;
       "editor.detectIndentation" = false;
@@ -245,7 +245,7 @@
       "zenMode.hideStatusBar" = false;
       "zenMode.hideLineNumbers" = false;
       "zenMode.centerLayout" = false;
-      "workbench.colorTheme" = "Dracula";
+      "workbench.colorTheme" = "Catppuccin Mocha";
       "[html]" = {
         "editor.defaultFormatter" = "esbenp.prettier-vscode";
       };

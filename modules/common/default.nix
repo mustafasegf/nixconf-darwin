@@ -93,6 +93,49 @@
         ) (old.patches or [ ]);
       });
 
+      # Ghostty - GPU-accelerated terminal emulator (https://ghostty.org)
+      # Linux: built from source via the upstream flake
+      # macOS: pre-built app bundle from official release files (no Xcode CLI tools needed)
+      ghostty-bin =
+        if prev.stdenv.hostPlatform.isLinux then
+          inputs.ghostty.packages.${prev.stdenv.hostPlatform.system}.default
+        else
+          prev.stdenv.mkDerivation rec {
+            pname = "ghostty-bin";
+            version = "1.2.3";
+
+            src = prev.fetchurl {
+              url = "https://release.files.ghostty.org/${version}/Ghostty.dmg";
+              hash = "sha256-817pHxFuKAJ6ufje9FCYx1dbRLQH/4g6Lc0phcSDIGs=";
+            };
+
+            nativeBuildInputs = [ prev._7zz ];
+
+            sourceRoot = "Ghostty.app";
+
+            unpackPhase = ''
+              7zz x "$src" -snld
+            '';
+
+            installPhase = ''
+              runHook preInstall
+              mkdir -p $out/Applications
+              cp -r . $out/Applications/Ghostty.app
+              runHook postInstall
+            '';
+
+            meta = {
+              description = "Fast, feature-rich, and cross-platform terminal emulator";
+              homepage = "https://ghostty.org";
+              license = lib.licenses.mit;
+              mainProgram = "ghostty";
+              platforms = [
+                "aarch64-darwin"
+                "x86_64-darwin"
+              ];
+            };
+          };
+
       # Handy - offline speech-to-text (https://github.com/cjpais/Handy)
       # Linux: built from source via the upstream flake
       # macOS: pre-built app bundle from GitHub releases

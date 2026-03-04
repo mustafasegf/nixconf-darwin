@@ -16,8 +16,6 @@
 
   homebrew = {
     enable = true;
-    casks = [
-      "ghostty" # can't build from flake on macOS
-    ];
+    casks = [ "wacom-tablet" ];
   };
 }

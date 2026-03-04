@@ -5,6 +5,12 @@
     systemd-manager-tui
   ];
 
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep-since 4d --keep 3";
+  };
+
   services.netdata.enable = true;
   services.ucodenix.enable = true;
 

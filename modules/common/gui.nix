@@ -13,6 +13,5 @@
     discord
     wireshark
     handy
-    ghostty-bin
   ];
 }

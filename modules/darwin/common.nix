@@ -16,6 +16,9 @@
 
   homebrew = {
     enable = true;
-    casks = [ "wacom-tablet" ];
+    casks = [
+      "ghostty"
+      "wacom-tablet"
+    ];
   };
 }

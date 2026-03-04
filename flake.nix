@@ -220,6 +220,7 @@
                 ./machines/Mustafa-Assagaf.nix
 
                 {
+                  home-manager.backupFileExtension = "hm-bak";
                   home-manager.extraSpecialArgs = { inherit inputs; };
                   home-manager.users.${macUserName} = {
                     imports = [
@@ -246,6 +247,7 @@
                 ./machines/mustafa-mac.nix
 
                 {
+                  home-manager.backupFileExtension = "hm-bak";
                   home-manager.extraSpecialArgs = { inherit inputs; };
                   home-manager.users.${myUserName} = {
                     imports = [

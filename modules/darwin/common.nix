@@ -12,6 +12,7 @@
     nixfmt
     moonlight-qt
     winbox4
+    nh
   ];
 
   homebrew = {

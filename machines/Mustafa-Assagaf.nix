@@ -20,5 +20,6 @@
 
   users.users."mustafa.assagaf".home = "/users/mustafa.assagaf";
 
+  system.primaryUser = "mustafa.assagaf";
   system.stateVersion = 4;
 }

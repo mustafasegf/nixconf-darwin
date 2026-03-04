@@ -24,5 +24,6 @@
 
   users.users."mustafa".home = "/Users/mustafa";
 
+  system.primaryUser = "mustafa";
   system.stateVersion = 4;
 }

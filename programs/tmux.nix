@@ -5,6 +5,25 @@
   ...
 }:
 {
+  catppuccin.tmux.extraConfig = ''
+    set -g @catppuccin_window_status_style "custom"
+    set -g @catppuccin_window_left_separator ""
+    set -g @catppuccin_window_middle_separator ""
+    set -g @catppuccin_window_right_separator ""
+    set -g @catppuccin_window_number " #I "
+    set -g @catppuccin_window_current_number " #I "
+    set -g @catppuccin_window_text " #{pane_current_command} "
+    set -g @catppuccin_window_current_text " #{pane_current_command} "
+    set -g @catppuccin_window_flags "icon"
+    set -g @catppuccin_status_left_separator ""
+    set -g @catppuccin_status_right_separator ""
+    set -g @catppuccin_status_connect_separator "no"
+    set -g @catppuccin_session_icon " #S "
+    set -g @catppuccin_session_color "#{?client_prefix,#{E:@thm_yellow},#{E:@thm_green}}"
+    set -g @catppuccin_session_text ""
+    set -g @catppuccin_directory_icon ""
+    set -g @catppuccin_directory_text " #{b:pane_current_path} "
+  '';
 
   programs.tmux = {
     enable = true;
@@ -90,8 +109,10 @@
       bind -r C-l resize-pane -R 5
 
       set -g mouse on
-      # don't rename windows automatically
-      set -g allow-rename off
+
+      set -g window-status-separator ""
+      set -g status-left "#{E:@catppuccin_status_session} "
+      set -g status-right "#{E:@catppuccin_status_directory}"
 
       # for server
       #Variables

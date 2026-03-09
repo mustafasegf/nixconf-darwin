@@ -124,6 +124,7 @@
   programs.ghostty = {
     enable = true;
     package = null;
+    systemd.enable = false;
     settings = {
       macos-option-as-alt = true;
       theme = "catppuccin-mocha";

@@ -27,6 +27,16 @@ nix flake update <input-name>        # e.g. nix flake update ghostty
 
 There is no CI/CD, Makefile, justfile, or test suite. Validation is done by building/switching.
 
+**IMPORTANT:** After making any changes to `.nix` files, always run the build to validate before
+considering the task complete:
+
+```bash
+nix run .#activate
+```
+
+This will build and deploy the configuration. It catches evaluation errors, failed assertions, and
+build failures. Never skip this step.
+
 ## Formatter
 
 All `.nix` files use **nixfmt** (RFC-style, not nixfmt-classic). Format before committing:

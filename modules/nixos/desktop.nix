@@ -333,6 +333,7 @@
     gpm
     chntpw
     smem
+    xdg-utils
     xdg-user-dirs
     libcamera
     libarchive

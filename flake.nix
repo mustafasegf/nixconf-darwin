@@ -26,6 +26,8 @@
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -210,6 +212,27 @@
                   };
 
                   home-manager.users."budak" = {
+                    imports = [
+                      ./home/common
+                      inputs.catppuccin.homeModules.catppuccin
+                    ];
+                    home.stateVersion = "24.05";
+                  };
+                }
+              ];
+            };
+
+            greencloud = self.nixos-unified.lib.mkLinuxSystem { home-manager = true; } {
+              nixpkgs.hostPlatform = "x86_64-linux";
+              imports = [
+                ./modules/common
+                ./machines/greencloud.nix
+                inputs.disko.nixosModules.disko
+                inputs.sops-nix.nixosModules.sops
+
+                {
+                  home-manager.extraSpecialArgs = { inherit inputs; };
+                  home-manager.users.${myUserName} = {
                     imports = [
                       ./home/common
                       inputs.catppuccin.homeModules.catppuccin

@@ -6,6 +6,7 @@
   programs.nix-index-database.comma.enable = true;
 
   environment.systemPackages = with pkgs; [
+    awscli2
     hexfiend
     keycastr
     cyberduck

@@ -411,7 +411,7 @@
     home-manager
     openrgb
     tor-browser
-    qbittorrent
+    # qbittorrent
     seahorse
     cloudflare-warp
     spotify

@@ -16,6 +16,7 @@
       slack
       discord
       wireshark
+      qbittorrent
       handy
     ]
     ++ lib.optionals pkgs.stdenv.isLinux [

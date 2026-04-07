@@ -74,6 +74,7 @@ in
       # export WAKATIME_HOME="$XDG_CONFIG_HOME/wakatime"
       # export ZSH_WAKATIME_BIN="$WAKATIME_HOME/.wakatime/wakatime-cli"
 
+      export PATH=$PATH:$HOME/.local/bin
       export PATH=$PATH:$CARGO_HOME/bin
       export PATH=$PATH:$RUSTUP_HOME:~/.rustup/toolchains/${RUSTC_VERSION}-${rustArch}/bin/
       export PATH=$PATH:$GOPATH/bin
@@ -323,6 +324,22 @@ in
         smem -t -k -c pss -P "$@"
       }
 
+      sshf() {
+        local host
+        if [ -n "$1" ]; then
+          host=$(grep -E "^Host " ~/.ssh/config \
+            | awk '{print $2}' \
+            | grep -v '\*' \
+            | fzf --filter="$1" | head -1)
+        else
+          host=$(grep -E "^Host " ~/.ssh/config \
+            | awk '{print $2}' \
+            | grep -v '\*' \
+            | fzf --prompt="SSH> " --height=40% --border)
+        fi
+        [ -n "$host" ] && print -z "ssh $host"
+      }
+
       ${lib.optionalString pkgs.stdenv.isLinux ''
         function cmw() {
           cargo watch -x "mommy $@"
@@ -422,7 +439,7 @@ in
 
     shellAliases = {
       cat = "bat";
-      grep = "rg";
+      # grep = "rg";
       c = "clear";
 
       l = "ls -Alh";

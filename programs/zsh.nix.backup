@@ -346,10 +346,45 @@
       }
 
       kpfz() {
-        query=$1
-        shift
-        pod=$(kubectl get pod --no-headers -o custom-columns=":metadata.name" | fzf --filter="$query" --select-1 --exit-0)
-        [ -n "$pod" ] && kubectl port-forward "$pod" "$@"
+        local query=$1
+        local resource port_args pod svc_port local_port
+
+        if [ -n "$query" ]; then
+          shift
+          resource=$(
+            (
+              kubectl get pod --no-headers -o custom-columns=":metadata.name" | sed 's/^/pod\//'
+              kubectl get svc --no-headers -o custom-columns=":metadata.name" | sed 's/^/svc\//'
+            ) | fzf --filter="$query" --select-1 --exit-0
+          )
+        else
+          resource=$(
+            (
+              kubectl get pod --no-headers -o custom-columns=":metadata.name" | sed 's/^/pod\//'
+              kubectl get svc --no-headers -o custom-columns=":metadata.name" | sed 's/^/svc\//'
+            ) | fzf --prompt="K8s> " --height=40% --border
+          )
+        fi
+
+        [ -z "$resource" ] && return
+
+        local name=${resource#*/}
+        local kind=${resource%%/*}
+
+        if [ "$kind" = "svc" ]; then
+          svc_port=$(kubectl get svc "$name" -o jsonpath='{.spec.ports[0].port}')
+        else
+          svc_port=$(kubectl get pod "$name" -o jsonpath='{.spec.containers[0].ports[0].containerPort}')
+        fi
+
+        if [ -n "$1" ]; then
+          port_args="$@"
+        elif [ -n "$svc_port" ]; then
+          local_port=$([ "$svc_port" = "80" ] && echo "3000" || echo "$svc_port")
+          port_args="$local_port:$svc_port"
+        fi
+
+        print -z "kubectl port-forward $resource $port_args"
       }
 
       # Initialize zinit for fast plugin loading with turbo mode

@@ -96,6 +96,8 @@
       # Handy - offline speech-to-text (https://github.com/cjpais/Handy)
       # Linux: built from source via the upstream flake
       # macOS: pre-built app bundle from GitHub releases
+      ghidra-mcp = prev.callPackage ../../pkgs/ghidra-mcp { };
+
       handy =
         if prev.stdenv.hostPlatform.isLinux then
           inputs.handy.packages.${prev.stdenv.hostPlatform.system}.handy

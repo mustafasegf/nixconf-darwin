@@ -75,17 +75,57 @@
       user = {
         name = "Mustafa Zaki Assagaf";
         email = "mustafa.segf@gmail.com";
+        signingKey = "~/.ssh/id_ed25519";
       };
+      commit = {
+        gpgSign = true;
+        verbose = true;
+      };
+      tag.gpgSign = true;
+      gpg.format = "ssh";
+      column.ui = "auto";
+      branch.sort = "-committerdate";
+      tag.sort = "version:refname";
+      diff = {
+        algorithm = "histogram";
+        colorMoved = "plain";
+        mnemonicPrefix = true;
+        renames = true;
+      };
+      push = {
+        default = "simple";
+        autoSetupRemote = true;
+        followTags = true;
+      };
+      fetch = {
+        prune = true;
+        pruneTags = true;
+        all = true;
+      };
+      rerere = {
+        enabled = true;
+        autoUpdate = true;
+      };
+      rebase = {
+        autoSquash = true;
+        autoStash = true;
+        updateRefs = true;
+      };
+      help.autocorrect = "prompt";
       core.editor = "nvim";
       init.defaultBranch = "master";
-      pull.rebase = false;
+      merge.conflictStyle = "zdiff3";
+      pull.rebase = true;
       pull.ff = true;
       url."ssh://git@source.golabs.io/".insteadOf = "https://source.golabs.io/";
     };
     includes = [
       {
         condition = "gitdir:~/work/aiand/";
-        contents.user.email = "mustafa@aiand.com";
+        contents = {
+          user.email = "mustafa@aiand.com";
+          user.signingKey = "~/.ssh/id_ed25519_aiand";
+        };
       }
     ];
   };

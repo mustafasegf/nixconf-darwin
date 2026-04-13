@@ -40,6 +40,7 @@
     nix-index
 
     python3
+    vault
     # wakatime-cli
 
     inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default

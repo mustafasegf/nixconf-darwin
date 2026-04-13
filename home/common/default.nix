@@ -125,6 +125,7 @@
         contents = {
           user.email = "mustafa@aiand.com";
           user.signingKey = "~/.ssh/id_ed25519_aiand";
+          url."git@github.com-aiand:".insteadOf = "git@github.com:";
         };
       }
     ];

@@ -602,6 +602,11 @@
     client.enable = true;
   };
 
+  services.mullvad-vpn = {
+    enable = true;
+    package = pkgs.mullvad-vpn;
+  };
+
   # Web UI: https://localhost:47990
   # Ports: TCP 47984-47990, UDP 47998-48010
   services.sunshine = {

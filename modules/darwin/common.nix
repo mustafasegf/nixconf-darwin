@@ -21,6 +21,7 @@
     casks = [
       "ghostty"
       "wacom-tablet"
+      "mullvadvpn"
     ];
   };
 }

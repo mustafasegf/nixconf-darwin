@@ -82,6 +82,12 @@
       pull.ff = true;
       url."ssh://git@source.golabs.io/".insteadOf = "https://source.golabs.io/";
     };
+    includes = [
+      {
+        condition = "gitdir:~/work/aiand/";
+        contents.user.email = "mustafa@aiand.com";
+      }
+    ];
   };
 
   programs.lsd = {

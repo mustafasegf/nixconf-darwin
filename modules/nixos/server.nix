@@ -57,7 +57,7 @@
     graalvmPackages.graalvm-ce
     caddy
     bun
-    nodePackages.nodejs
+    nodejs
     (python312.withPackages (ps: [
       ps.pip
     ]))

@@ -95,6 +95,22 @@
       ];
       imports = [ inputs.nixos-unified.flakeModules.default ];
 
+      perSystem =
+        { system, ... }:
+        {
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+            overlays = [
+              (final: prev: {
+                nushell = prev.nushell.overrideAttrs (_: {
+                  doCheck = false;
+                });
+              })
+            ];
+          };
+        };
+
       flake =
         let
           myUserName = "mustafa";

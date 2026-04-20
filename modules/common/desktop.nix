@@ -34,9 +34,8 @@
 
         bun
         rustup
-        nodePackages.nodejs
-        nodePackages.npm
-        nodePackages.pnpm
+        nodejs
+        pnpm
 
         cargo-watch
         cargo-expand
@@ -87,7 +86,6 @@
         air
         cloc
         gdu
-        neofetch
         hyfetch
         fastfetch
         uwufetch
@@ -111,27 +109,27 @@
         black
         stylua
         shfmt
-        nodePackages.prettier
+        prettier
         cmake-format
 
         pyright
-        nodePackages.typescript-language-server
+        typescript-language-server
         tflint
-        nodePackages.vscode-langservers-extracted
-        nodePackages_latest."@tailwindcss/language-server"
+        vscode-langservers-extracted
+        tailwindcss-language-server
         taplo
-        nodePackages.graphql-language-service-cli
+        graphql-language-service-cli
         sqls
-        nodePackages.svelte-language-server
-        nodePackages."@astrojs/language-server"
+        svelte-language-server
+        astro-language-server
         emmet-ls
         lua-language-server
-        nodePackages.bash-language-server
-        nodePackages.diagnostic-languageserver
+        bash-language-server
+        diagnostic-languageserver
         nixd
         nixfmt
         texlab
-        nodePackages.intelephense
+        intelephense
         cmake-language-server
         quick-lint-js
 
@@ -166,8 +164,7 @@
         protoc-gen-rust
 
         yarn
-        nodePackages.sass
-        nodePackages.vercel
+        sass
         dive
         inetutils
         rar

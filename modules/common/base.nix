@@ -43,6 +43,11 @@
     vault
     # wakatime-cli
 
-    inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default
+    (inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+      postPatch = (old.postPatch or "") + ''
+        substituteInPlace packages/opencode/script/build.ts \
+          --replace-fail 'external: ["node-gyp"]' 'external: ["node-gyp", "prettier", "prettier/plugins/babel", "prettier/plugins/estree"]'
+      '';
+    }))
   ];
 }

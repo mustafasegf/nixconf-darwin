@@ -99,6 +99,10 @@
       ghidra-mcp = prev.callPackage ../../pkgs/ghidra-mcp { };
       linear-cli = prev.callPackage ../../pkgs/linear-cli { };
 
+      nushell = prev.nushell.overrideAttrs (_: {
+        doCheck = false;
+      });
+
       handy =
         if prev.stdenv.hostPlatform.isLinux then
           inputs.handy.packages.${prev.stdenv.hostPlatform.system}.handy

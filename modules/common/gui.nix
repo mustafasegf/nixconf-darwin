@@ -25,5 +25,7 @@
     ]
     ++ lib.optionals pkgs.stdenv.isLinux [
       inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.default
+      vlc
+      mpv
     ];
 }

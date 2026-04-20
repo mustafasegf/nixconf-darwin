@@ -97,6 +97,7 @@
       # Linux: built from source via the upstream flake
       # macOS: pre-built app bundle from GitHub releases
       ghidra-mcp = prev.callPackage ../../pkgs/ghidra-mcp { };
+      linear-cli = prev.callPackage ../../pkgs/linear-cli { };
 
       handy =
         if prev.stdenv.hostPlatform.isLinux then

@@ -182,6 +182,7 @@
         glab
         devenv
         tailscale
+        linear-cli
       ]
       ++ lib.optionals config.custom.enableXcode [
         xcodes

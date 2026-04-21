@@ -162,25 +162,25 @@
     icu
     fuse3
 
-    xorg.libX11
-    xorg.libXext
-    xorg.libXrender
-    xorg.libXrandr
-    xorg.libXfixes
-    xorg.libXcursor
-    xorg.libXi
-    xorg.libxcb
-    xorg.libXtst
-    xorg.libXScrnSaver
-    xorg.libXinerama
-    xorg.libXdmcp
-    xorg.libXau
+    libx11
+    libxext
+    libxrender
+    libxrandr
+    libxfixes
+    libxcursor
+    libxi
+    libxcb
+    libxtst
+    libxscrnsaver
+    libxinerama
+    libxdmcp
+    libxau
 
-    xorg.xcbutil
-    xorg.xcbutilimage
-    xorg.xcbutilkeysyms
-    xorg.xcbutilrenderutil
-    xorg.xcbutilwm
+    xcbutil
+    xcbutilimage
+    xcbutilkeysyms
+    xcbutilrenderutil
+    xcbutilwm
 
     libxkbcommon
     libxkbcommon_x11
@@ -243,7 +243,7 @@
     djvu2pdf
     djvulibre
     ghostscript
-    gImageReader
+    gimagereader
     waifu2x-converter-cpp
 
     kdePackages.kate
@@ -343,9 +343,9 @@
     clang-tools
     gdb
     lldb
-    llvmPackages_latest.llvm
-    llvmPackages_latest.bintools
-    llvmPackages_latest.lld
+    llvmPackages_22.llvm
+    llvmPackages_22.bintools
+    llvmPackages_22.lld
     gnumake
     cmake
     sqlite
@@ -382,13 +382,13 @@
     libguestfs
     gvisor
 
-    xorg.xkbcomp
-    xorg.xkbutils
-    xorg.xmodmap
-    xorg.xinput
-    xorg.libX11
-    xorg.libXft
-    xorg.libXinerama
+    xkbcomp
+    xkbutils
+    xmodmap
+    xinput
+    libx11
+    libxft
+    libxinerama
 
     postgresql
     redis
@@ -522,7 +522,7 @@
           '';
         in
         ''
-          sleep 5 && ${pkgs.xorg.xmodmap}/bin/xmodmap ${functionkey}
+          sleep 5 && ${pkgs.xmodmap}/bin/xmodmap ${functionkey}
           gnome-keyring-daemon --start -d --components=pkcs11,secrets,ssh
           xsetwacom --set "HUION Huion Tablet stylus" Area 0 0 48768 15240 || true
         '';
@@ -791,6 +791,6 @@
   systemd.services.warp-svc.enable = true;
   systemd.packages = with pkgs; [ cloudflare-warp ];
 
-  documentation.man.generateCaches = true;
+  documentation.man.cache.enable = true;
   documentation.dev.enable = true;
 }

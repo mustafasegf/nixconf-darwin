@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   environment.systemPackages = with pkgs; [
@@ -13,6 +18,10 @@
 
   services.netdata.enable = true;
   services.ucodenix.enable = true;
+
+  boot.kernelParams = lib.optionals config.hardware.cpu.amd.updateMicrocode [
+    "microcode.amd_sha_check=off"
+  ];
 
   services.zerotierone = {
     enable = true;

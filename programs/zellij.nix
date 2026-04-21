@@ -6,7 +6,9 @@
   ...
 }:
 let
-  zjstatusWasm = "${inputs.zjstatus.packages.${pkgs.system}.default}/bin/zjstatus.wasm";
+  zjstatusWasm = "${
+    inputs.zjstatus.packages.${pkgs.stdenv.hostPlatform.system}.default
+  }/bin/zjstatus.wasm";
 in
 {
   programs.zellij = {

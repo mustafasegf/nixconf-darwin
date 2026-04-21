@@ -58,6 +58,7 @@
   programs.zsh.enable = true;
 
   nixpkgs.config = {
+    allowAliases = false;
     allowUnfree = true;
     allowUnsupportedSystem = true;
     allowBroken = true;

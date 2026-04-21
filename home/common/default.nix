@@ -71,6 +71,7 @@
 
   programs.git = {
     enable = true;
+    signing.format = "ssh";
     settings = {
       user = {
         name = "Mustafa Zaki Assagaf";
@@ -178,7 +179,10 @@
     };
   };
   programs.lazygit.enable = true;
-  programs.yazi.enable = true;
+  programs.yazi = {
+    enable = true;
+    shellWrapperName = "yy";
+  };
   programs.k9s.enable = true;
   programs.eza = {
     enable = true;

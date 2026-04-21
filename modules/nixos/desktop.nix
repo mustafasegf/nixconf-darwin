@@ -296,7 +296,7 @@
     winbox4
 
     qpwgraph
-    helvum
+    crosspipe
     wireplumber
     qjackctl
 
@@ -425,7 +425,6 @@
     html-tidy
     wdiff
     dwdiff
-    measureme
     open-watcom-bin
     cargo-mommy
 

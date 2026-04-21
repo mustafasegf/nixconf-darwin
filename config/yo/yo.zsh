@@ -12,11 +12,11 @@
 #   yo status                # show auth status
 #
 # Config: ~/.config/yo/config (key=value, sourced as zsh)
-#   YO_PROVIDER  - opencode (default), anthropic, openai, groq, ollama, custom
+#   YO_PROVIDER  - opencode (default), anthropic, openai, groq, ollama, custom, or any provider name with YO_API_URL
 #   YO_MODEL     - model name (each provider has a sensible default)
-#   YO_API_KEY   - API key (falls back to ~/.local/share/opencode/auth.json)
-#   YO_API_URL   - custom API endpoint (only needed for "custom" provider)
-#   YO_API_TYPE  - openai or anthropic (only needed for "custom" provider)
+#   YO_API_KEY   - API key (falls back to ~/.local/share/opencode/auth.json when the provider name exists there)
+#   YO_API_URL   - API endpoint for custom or unlisted providers
+#   YO_API_TYPE  - openai or anthropic (for custom or unlisted providers)
 #   YO_VARIANT   - model variant/reasoning effort (opencode backend only)
 
 # --- Load zsh/datetime for EPOCHREALTIME ---
@@ -198,14 +198,22 @@ _yo_curl_openai() {
   local rc=$?
   [[ $rc -ne 0 ]] && return 1
 
+  # Some providers (e.g. kimi-k2.5 via aiand) emit bare control chars inside JSON string
+  # values, which jq rejects. Responses are compact single-line JSON, so any raw LF/CR/TAB
+  # is inside a string — escape them before parsing. Must pipe with printf, not echo
+  # (zsh's echo re-interprets \n back into a literal newline).
+  raw=${raw//$'\n'/\\n}
+  raw=${raw//$'\r'/\\r}
+  raw=${raw//$'\t'/\\t}
+
   local err
-  err=$(echo "$raw" | jq -r '.error.message // empty' 2>/dev/null)
+  err=$(printf '%s' "$raw" | jq -r '.error.message // empty' 2>/dev/null)
   if [[ -n "$err" ]]; then
     echo "API error: $err" >&2
     return 1
   fi
 
-  echo "$raw" | jq -r '.choices[0].message.content // empty' 2>/dev/null
+  printf '%s' "$raw" | jq -r '.choices[0].message.content // empty' 2>/dev/null
 }
 
 # --- curl: Anthropic API (handles both API key and OAuth) ---
@@ -236,8 +244,12 @@ _yo_curl_anthropic() {
   local rc=$?
   [[ $rc -ne 0 ]] && return 1
 
+  raw=${raw//$'\n'/\\n}
+  raw=${raw//$'\r'/\\r}
+  raw=${raw//$'\t'/\\t}
+
   local err
-  err=$(echo "$raw" | jq -r '.error.message // empty' 2>/dev/null)
+  err=$(printf '%s' "$raw" | jq -r '.error.message // empty' 2>/dev/null)
   if [[ -n "$err" ]]; then
     echo "API error: $err" >&2
     _yo_log "Anthropic API error: $err"
@@ -245,7 +257,7 @@ _yo_curl_anthropic() {
   fi
 
   # Handle potential thinking blocks in response - extract only text
-  echo "$raw" | jq -r '[.content[] | select(.type == "text") | .text] | join("\n") // empty' 2>/dev/null
+  printf '%s' "$raw" | jq -r '[.content[] | select(.type == "text") | .text] | join("\n") // empty' 2>/dev/null
 }
 
 # =====================================================================
@@ -364,11 +376,13 @@ _yo_logout() {
 _yo_status() {
   echo "Config: $_yo_config"
   if [[ -f "$_yo_config" ]]; then
-    local YO_PROVIDER YO_MODEL YO_API_KEY
+    local YO_PROVIDER YO_MODEL YO_API_KEY api_key_status
     source "$_yo_config"
+    api_key_status="<from auth.json>"
+    [[ -n "$YO_API_KEY" ]] && api_key_status="set (explicit)"
     echo "  provider: ${YO_PROVIDER:-opencode}"
     echo "  model:    ${YO_MODEL:-<default>}"
-    echo "  api_key:  ${YO_API_KEY:+set (explicit)}${YO_API_KEY:-<from auth.json>}"
+    echo "  api_key:  $api_key_status"
   else
     echo "  (no config file)"
   fi
@@ -417,6 +431,7 @@ yo() {
     echo "" >&2
     echo "Commands: yo login | yo logout | yo status | yo-config" >&2
     echo "Providers: opencode (default), anthropic, openai, groq, ollama, xai, deepseek, gemini, custom" >&2
+    echo "  Or use any provider name with YO_API_URL and auth.json key lookup" >&2
     return 1
   fi
 
@@ -484,18 +499,16 @@ User request: ${query}"
     # Load preset or custom
     if typeset -f "_yo_preset_${YO_PROVIDER}" &>/dev/null; then
       "_yo_preset_${YO_PROVIDER}"
-    elif [[ "$YO_PROVIDER" == "custom" ]]; then
+    elif [[ -n "$YO_API_URL" ]]; then
       _url="${YO_API_URL}"
       _api_type="${YO_API_TYPE:-openai}"
       _default_model=""
       _auth_name=""
-      if [[ -z "$_url" ]]; then
-        echo "Error: YO_API_URL is required for custom provider" >&2
-        return 1
-      fi
+      [[ "$YO_PROVIDER" != "custom" ]] && _auth_name="$YO_PROVIDER"
     else
       echo "Error: unknown provider '$YO_PROVIDER'" >&2
       echo "Available: opencode, anthropic, openai, groq, ollama, xai, deepseek, gemini, custom" >&2
+      echo "  Or set YO_API_URL to use '$YO_PROVIDER' as a named custom provider" >&2
       return 1
     fi
 
@@ -516,7 +529,11 @@ User request: ${query}"
       fi
     fi
 
-    _yo_log "url=$_url api_type=$_api_type model=$model key_source=${YO_API_KEY:+config}${YO_API_KEY:-auth.json}"
+    local key_source="auth.json"
+    [[ -n "$YO_API_KEY" ]] && key_source="config"
+    [[ -z "$YO_API_KEY" && -z "$_auth_name" ]] && key_source="none"
+
+    _yo_log "url=$_url api_type=$_api_type model=$model key_source=$key_source"
 
     echo -n "[$YO_PROVIDER/$model] thinking..." >&2
 
@@ -578,6 +595,7 @@ yo-config() {
 # yo.zsh configuration
 #
 # Provider: opencode (default), anthropic, openai, groq, ollama, xai, deepseek, gemini, custom
+# Or any provider name with YO_API_URL, which will also try auth.json using that provider name
 YO_PROVIDER=opencode
 
 # Model name (each provider has a sensible default if unset)
@@ -595,7 +613,9 @@ YO_PROVIDER=opencode
 # For Anthropic OAuth (Claude Pro/Max), run: yo login
 # YO_API_KEY=
 
-# For "custom" provider only:
+# For custom or unlisted providers:
+# Example:
+# YO_PROVIDER=aiand
 # YO_API_URL=https://your-api.example.com/v1/chat/completions
 # YO_API_TYPE=openai   # openai or anthropic
 

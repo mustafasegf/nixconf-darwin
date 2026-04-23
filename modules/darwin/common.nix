@@ -28,6 +28,7 @@
       "bitwarden"
       "openvpn-connect"
       "scroll-reverser"
+      "krisp"
     ];
   };
 }

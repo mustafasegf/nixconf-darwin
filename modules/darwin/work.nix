@@ -10,6 +10,7 @@
     "karabiner-elements"
     "notion-mail"
     "notion-calendar"
+    "linear-linear"
   ];
 
   system.activationScripts.postActivation.text = ''

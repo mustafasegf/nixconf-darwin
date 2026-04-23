@@ -6,6 +6,12 @@
 
   system.keyboard.enableKeyMapping = true;
 
+  homebrew.casks = [
+    "karabiner-elements"
+    "notion-mail"
+    "notion-calendar"
+  ];
+
   system.activationScripts.postActivation.text = ''
     # Disable Spotlight indexing
     sudo mdutil -a -i off 2>/dev/null || true

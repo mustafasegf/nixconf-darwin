@@ -113,8 +113,7 @@
 
       flake =
         let
-          myUserName = "mustafa";
-          macUserName = "mustafa.assagaf";
+          username = "mustafa";
         in
         {
           nixosConfigurations = {
@@ -178,7 +177,7 @@
                         ;
                     };
                     home-manager.backupFileExtension = "hm-bak";
-                    home-manager.users.${myUserName} = {
+                    home-manager.users.${username} = {
                       imports = [
                         ./home/common
                         ./home/linux
@@ -202,7 +201,7 @@
 
                 {
                   home-manager.extraSpecialArgs = { inherit inputs; };
-                  home-manager.users.${myUserName} = {
+                  home-manager.users.${username} = {
                     imports = [
                       ./home/common
                       inputs.catppuccin.homeModules.catppuccin
@@ -223,7 +222,7 @@
           };
 
           darwinConfigurations = {
-            Mustafa-Assagaf = self.nixos-unified.lib.mkMacosSystem { home-manager = true; } {
+            mustafa-work = self.nixos-unified.lib.mkMacosSystem { home-manager = true; } {
               nixpkgs.hostPlatform = "aarch64-darwin";
               _module.args = { inherit inputs; };
               imports = [
@@ -233,12 +232,12 @@
                 ./modules/darwin/common.nix
                 inputs.nix-homebrew.darwinModules.nix-homebrew
                 inputs.nix-index-database.darwinModules.nix-index
-                ./machines/Mustafa-Assagaf.nix
+                ./machines/mustafa-work.nix
 
                 {
                   home-manager.backupFileExtension = "hm-bak";
                   home-manager.extraSpecialArgs = { inherit inputs; };
-                  home-manager.users.${macUserName} = {
+                  home-manager.users.${username} = {
                     imports = [
                       ./home/common
                       ./home/darwin
@@ -265,7 +264,7 @@
                 {
                   home-manager.backupFileExtension = "hm-bak";
                   home-manager.extraSpecialArgs = { inherit inputs; };
-                  home-manager.users.${myUserName} = {
+                  home-manager.users.${username} = {
                     imports = [
                       ./home/common
                       ./home/darwin

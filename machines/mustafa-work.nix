@@ -8,7 +8,7 @@
   nix-homebrew = {
     enable = true;
     enableRosetta = true;
-    user = "mustafa.assagaf";
+    user = "mustafa";
 
     taps = {
       "homebrew/homebrew-core" = inputs.homebrew-core;
@@ -18,8 +18,8 @@
     mutableTaps = false;
   };
 
-  users.users."mustafa.assagaf".home = "/users/mustafa.assagaf";
+  users.users."mustafa".home = "/users/mustafa";
 
-  system.primaryUser = "mustafa.assagaf";
+  system.primaryUser = "mustafa";
   system.stateVersion = 4;
 }

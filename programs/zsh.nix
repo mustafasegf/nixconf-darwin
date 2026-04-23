@@ -325,17 +325,38 @@ in
       }
 
       sshf() {
-        local host
+        local -a files queue seen
+        local f pat p line
+        queue=(~/.ssh/config)
+        while (( ''${#queue} > 0 )); do
+          f=''${queue[1]}
+          queue=(''${queue[2,-1]})
+          [[ -f $f ]] || continue
+          [[ -n ''${seen[(r)$f]} ]] && continue
+          seen+=($f)
+          files+=($f)
+          while IFS= read -r line; do
+            if [[ "$line" =~ '^[[:space:]]*[Ii]nclude[[:space:]]+(.+)$' ]]; then
+              for pat in ''${(z)match[1]}; do
+                [[ $pat != /* && $pat != ~* ]] && pat="$HOME/.ssh/$pat"
+                for p in ''${~pat}(N); do
+                  queue+=($p)
+                done
+              done
+            fi
+          done < $f
+        done
+
+        local hosts host
+        hosts=$(cat $files 2>/dev/null \
+          | grep -E '^[[:space:]]*Host ' \
+          | awk '{for (i=2; i<=NF; i++) print $i}' \
+          | grep -v '\*' \
+          | awk '!seen[tolower($0)]++')
         if [ -n "$1" ]; then
-          host=$(grep -E "^Host " ~/.ssh/config \
-            | awk '{print $2}' \
-            | grep -v '\*' \
-            | fzf --filter="$1" | head -1)
+          host=$(print -r -- "$hosts" | fzf -i --filter="$1" | head -1)
         else
-          host=$(grep -E "^Host " ~/.ssh/config \
-            | awk '{print $2}' \
-            | grep -v '\*' \
-            | fzf --prompt="SSH> " --height=40% --border)
+          host=$(print -r -- "$hosts" | fzf -i --prompt="SSH> " --height=40% --border)
         fi
         [ -n "$host" ] && print -z "ssh $host"
       }

@@ -17,6 +17,7 @@
     ripgrep
     jq
     yq-go
+    yaml-language-server
     file
     rmw
     colordiff

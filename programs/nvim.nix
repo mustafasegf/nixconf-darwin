@@ -239,10 +239,6 @@
           optional = true;
         }
         {
-          plugin = registers-nvim;
-          optional = true;
-        }
-        {
           plugin = auto-session;
           optional = true;
         }

@@ -30,14 +30,4 @@ return {
       { "<leader>z", "<cmd>MaximizerToggle<CR>", desc = "Maximize window" },
     },
   },
-  {
-    "registers.nvim",
-    keys = {
-      { '"', mode = { "n", "v" }, desc = "Show registers" },
-      { "<C-r>", mode = "i", desc = "Show registers in insert" },
-    },
-    after = function()
-      require("registers").setup()
-    end,
-  },
 }

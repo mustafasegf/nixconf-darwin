@@ -2,6 +2,7 @@
 
 {
   imports = [
+    inputs.sops-nix.homeManagerModules.sops
     ../../modules/common/sops.nix
     ../../programs/btop.nix
     ../../programs/kitty.nix

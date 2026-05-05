@@ -6,6 +6,10 @@
   programs.nix-index-database.comma.enable = true;
   nix.enable = false;
 
+  environment.etc."nix/nix.custom.conf".text = ''
+    extra-trusted-users = mustafa
+  '';
+
   environment.systemPackages = with pkgs; [
     awscli2
     hexfiend

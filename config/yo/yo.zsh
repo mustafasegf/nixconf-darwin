@@ -566,12 +566,24 @@ User request: ${query}"
     fi
   fi
 
-  # Parse response: CMD: prefix means command, otherwise it's an answer
-  local first_line="${response%%$'\n'*}"
+  # Parse response: CMD: prefix means command, otherwise it's an answer.
+  # Models sometimes prepend a blank line or wrap the line in a ```sh fence;
+  # strip both before checking the prefix.
+  local stripped="${response#"${response%%[![:space:]]*}"}"
+  if [[ "$stripped" == '```'* ]]; then
+    stripped="${stripped#*$'\n'}"
+    stripped="${stripped#"${stripped%%[![:space:]]*}"}"
+  fi
+  local first_line="${stripped%%$'\n'*}"
+  first_line="${first_line%\`}"
+  first_line="${first_line#\`}"
 
   if [[ "$first_line" == CMD:* ]]; then
     local cmd="${first_line#CMD:}"
     cmd="${cmd#"${cmd%%[![:space:]]*}"}"
+    cmd="${cmd%"${cmd##*[![:space:]]}"}"
+    cmd="${cmd#\`}"
+    cmd="${cmd%\`}"
     if [[ -n "$cmd" ]]; then
       _yo_log "result=CMD cmd=$cmd"
       print -z "$cmd"

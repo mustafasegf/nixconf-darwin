@@ -224,6 +224,7 @@
 
             greencloud = self.nixos-unified.lib.mkLinuxSystem { home-manager = true; } {
               nixpkgs.hostPlatform = "x86_64-linux";
+              _module.args = { inherit inputs; };
               imports = [
                 ./modules/common
                 ./machines/greencloud.nix
@@ -232,7 +233,7 @@
 
                 {
                   home-manager.extraSpecialArgs = { inherit inputs; };
-                  home-manager.users.${myUserName} = {
+                  home-manager.users.${username} = {
                     imports = [
                       ./home/common
                       inputs.catppuccin.homeModules.catppuccin

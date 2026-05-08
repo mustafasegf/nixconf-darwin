@@ -139,8 +139,6 @@
   programs.zsh.enable = true;
   programs.command-not-found.enable = false;
 
-  nix.settings.substituters = lib.mkForce [ "https://cache.nixos.org" ];
-
   # musl dynamic linker for unpatched musl binaries (e.g. bun-installed CLIs)
   systemd.tmpfiles.rules = [
     "L+ /lib/ld-musl-x86_64.so.1 - - - - ${pkgs.musl}/lib/ld-musl-x86_64.so.1"
@@ -262,10 +260,8 @@
     telegram-desktop
     google-chrome
     firefox
-    bitwarden-desktop
     bitwarden-cli
     discord-ptb
-    vesktop
     weechat
     kdePackages.konversation
 
@@ -275,7 +271,6 @@
     wine64
     winetricks
     prismlauncher
-    tetrio-desktop
     pcsx2
     bottles
     godot_4
@@ -397,7 +392,6 @@
     onedrive
     android-studio
     rpi-imager
-    bruno
     # alacritty - moved to HM for catppuccin theming
     deskreen
     rescuetime
@@ -449,10 +443,13 @@
     ]))
   ];
 
-  services.dbus.packages = with pkgs; [
-    dconf
-    gnome-keyring
-  ];
+  services.dbus = {
+    implementation = "broker";
+    packages = with pkgs; [
+      dconf
+      gnome-keyring
+    ];
+  };
 
   services.hardware.openrgb = {
     enable = true;
@@ -477,7 +474,10 @@
   services.autorandr.enable = true;
   services.udisks2.enable = true;
   services.printing.enable = true;
-  services.blueman.enable = true;
+  services.blueman = {
+    enable = true;
+    withApplet = false;
+  };
   services.picom.enable = false;
   services.tumbler.enable = true;
   services.gvfs.enable = true;

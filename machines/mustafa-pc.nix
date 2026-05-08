@@ -14,7 +14,7 @@
     ../modules/nixos/desktop.nix
   ];
 
-  nix.settings.cores = 14;
+  nix.settings.cores = 2;
 
   custom.enableXcode = false;
 
@@ -176,7 +176,8 @@
 
   nixpkgs.config.permittedInsecurePackages = [
     "beekeeper-studio-5.5.3"
-    "ventoy-1.1.10"
+    "ventoy-1.1.12"
+    "openssl-1.1.1w"
   ];
 
   system.stateVersion = "22.11";

@@ -46,11 +46,14 @@
       "mustafa.assagaf"
       "mustafa"
     ];
+    max-jobs = 1;
     substituters = [
       "https://ghostty.cachix.org"
+      "https://devenv.cachix.org"
     ];
     trusted-public-keys = [
       "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
+      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
     ];
     fallback = true;
   };
@@ -111,6 +114,16 @@
 
       nushell = prev.nushell.overrideAttrs (_: {
         doCheck = false;
+      });
+
+      # test017-syncreplication-refresh is flaky in this nixpkgs rev and blocks FHS apps.
+      openldap = prev.openldap.overrideAttrs (_: {
+        doCheck = false;
+      });
+
+      # This package can spawn several memory-heavy cc1plus processes and get SIGKILLed.
+      krita-plugin-gmic = prev.krita-plugin-gmic.overrideAttrs (_: {
+        enableParallelBuilding = false;
       });
 
       handy =

@@ -49,8 +49,6 @@
       path = "${config.home.homeDirectory}/.config/nix/nix.conf";
       content = ''
         access-tokens = github.com=${config.sops.placeholder.github_token}
-        extra-substituters = https://devenv.cachix.org
-        extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
       '';
     };
   };

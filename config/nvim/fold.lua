@@ -3,7 +3,11 @@ return {
   event = { "BufReadPost", "BufNewFile" },
   after = function()
     require("ufo").setup({
-      provider_selector = function()
+      provider_selector = function(_, _, buftype)
+        if buftype ~= "" then
+          return ""
+        end
+
         return { "treesitter", "indent" }
       end,
     })

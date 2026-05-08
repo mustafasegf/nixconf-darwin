@@ -64,6 +64,23 @@
             )
           );
         };
+        promiseAsyncForUfo = pkgs.vimPlugins.promise-async.overrideAttrs (old: {
+          postInstall = (old.postInstall or "") + ''
+            mkdir -p $out/lua/promise-async
+            cp $out/lua/async.lua $out/lua/promise-async/async.lua
+          '';
+        });
+        nvimUfo = pkgs.vimPlugins.nvim-ufo.overrideAttrs (old: {
+          dependencies = [ promiseAsyncForUfo ];
+          postPatch = (old.postPatch or "") + ''
+            substituteInPlace lua/ufo/fold/init.lua \
+              --replace "require('async')" "require('promise-async.async')"
+            substituteInPlace lua/ufo/preview/init.lua \
+              --replace "require('async')" "require('promise-async.async')"
+            substituteInPlace lua/ufo/provider/lsp/nvim.lua \
+              --replace "require('async')" "require('promise-async.async')"
+          '';
+        });
 
       in
       with pkgs.vimPlugins;
@@ -211,9 +228,9 @@
           plugin = neoscroll-nvim;
           optional = true;
         }
-        promise-async
+        promiseAsyncForUfo
         {
-          plugin = nvim-ufo;
+          plugin = nvimUfo;
           optional = true;
         }
         {

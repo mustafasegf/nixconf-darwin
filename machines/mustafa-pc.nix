@@ -109,6 +109,8 @@
     powerOnBoot = true;
   };
 
+  programs.librepods.enable = true;
+
   systemd.services.bluetooth-rfkill-unblock = {
     description = "Unblock Bluetooth soft-kill";
     wantedBy = [ "bluetooth.service" ];
@@ -158,6 +160,7 @@
       "libvirtd"
       "render"
       "adbusers"
+      "librepods"
     ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNEKM6YnhuLcLfy5FkCt+rX1M10vMS00zynI6tsta1s mustafa.segf@gmail.com"

@@ -195,7 +195,7 @@
     copyq
     # dunst - moved to HM for catppuccin theming
     find-cursor
-    flameshot
+    ppkgs.flameshot
     killall
     libnotify
     nitrogen

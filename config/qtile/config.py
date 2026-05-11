@@ -187,7 +187,7 @@ keys = [
         ["shift"],
         "Print",
         lazy.spawn(
-            f"scrot -s '{home}/Pictures/screenshot/Screenshot_%F_%H-%M-%S.png' -u -e 'copyq copy image/png - < $f'"
+            f"scrot -s '{home}/Pictures/screenshot/Screenshot_%F_%H-%M-%S.png' -e 'copyq copy image/png - < $f'"
         ),
     ),
     Key([mod, "shift"], "p", lazy.spawn("bwmenu")),

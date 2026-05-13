@@ -33,6 +33,7 @@
       "openvpn-connect"
       "scroll-reverser"
       "krisp"
+      "discord"
     ];
   };
 }

@@ -7,6 +7,15 @@
   ...
 }:
 
+let
+  catppuccinGtkTheme = {
+    name = "catppuccin-mocha-mauve-standard";
+    package = pkgs.catppuccin-gtk.override {
+      variant = "mocha";
+      accents = [ "mauve" ];
+    };
+  };
+in
 {
   imports = [
     ../../programs/rofi.nix
@@ -72,7 +81,25 @@
     ];
   };
 
-  gtk.enable = true;
+  gtk = {
+    enable = true;
+    theme = catppuccinGtkTheme;
+    gtk4.theme = catppuccinGtkTheme;
+  };
+
+  home.sessionVariables.GTK_THEME = catppuccinGtkTheme.name;
+  systemd.user.sessionVariables.GTK_THEME = catppuccinGtkTheme.name;
+
+  qt = {
+    enable = true;
+    platformTheme.name = "lxqt";
+    style.name = "kvantum";
+  };
+
+  catppuccin.kvantum = {
+    enable = true;
+    accent = "mauve";
+  };
 
   xdg.configFile = {
     "lxqt/lxqt.conf".source = ../../config/catppuccin/lxqt/lxqt.conf;

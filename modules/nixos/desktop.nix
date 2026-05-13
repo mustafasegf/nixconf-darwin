@@ -35,7 +35,7 @@
   qt = {
     enable = true;
     platformTheme = "lxqt";
-    style = "adwaita-dark";
+    style = "kvantum";
   };
 
   xdg = {
@@ -43,7 +43,10 @@
     portal = {
       enable = true;
       xdgOpenUsePortal = true;
-      lxqt.styles = with pkgs; [ libsForQt5.qtstyleplugin-kvantum ];
+      lxqt.styles = with pkgs; [
+        libsForQt5.qtstyleplugin-kvantum
+        qt6Packages.qtstyleplugin-kvantum
+      ];
       config.common.default = "*";
       lxqt.enable = true;
       extraPortals = with pkgs; [
@@ -297,6 +300,7 @@
 
     libsForQt5.qt5ct
     libsForQt5.qtstyleplugin-kvantum
+    qt6Packages.qtstyleplugin-kvantum
     lxqt.lxqt-qtplugin
     lxqt.lxqt-config
     lxappearance

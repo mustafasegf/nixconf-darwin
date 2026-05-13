@@ -35,6 +35,8 @@
       "krisp"
       "discord"
       "notion"
+      "orbstack"
+      "obs"
     ];
   };
 }

@@ -36,6 +36,7 @@
         rustup
         nodejs
         pnpm
+        playwriter
 
         cargo-watch
         cargo-expand

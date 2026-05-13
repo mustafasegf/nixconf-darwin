@@ -34,6 +34,7 @@
       "scroll-reverser"
       "krisp"
       "discord"
+      "notion"
     ];
   };
 }

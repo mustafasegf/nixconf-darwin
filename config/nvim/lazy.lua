@@ -43,6 +43,7 @@ local plugins = {
   "indentline",
   "editing",
   "session",
+  "typst",
 }
 
 for _, mod in ipairs(plugins) do

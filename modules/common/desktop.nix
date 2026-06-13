@@ -130,6 +130,8 @@
         nixd
         nixfmt
         texlab
+        tinymist
+        websocat
         intelephense
         cmake-language-server
         quick-lint-js

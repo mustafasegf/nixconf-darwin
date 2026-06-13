@@ -104,6 +104,7 @@ return {
       "intelephense",
       "cmake",
       "diagnosticls",
+      "tinymist",
     }
 
     for _, server in ipairs(servers) do

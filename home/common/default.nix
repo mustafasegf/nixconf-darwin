@@ -23,6 +23,7 @@
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
+    config.global.hide_env_diff = true;
   };
 
   programs.bat = {
@@ -177,6 +178,7 @@
     settings = {
       macos-option-as-alt = true;
       theme = "catppuccin-mocha";
+      font-size = 16;
     };
   };
   programs.lazygit.enable = true;

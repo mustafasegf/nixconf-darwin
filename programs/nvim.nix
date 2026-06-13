@@ -52,6 +52,7 @@
           "indentline"
           "editing"
           "session"
+          "typst"
         ];
         pluginSpecs = pkgs.vimUtils.buildVimPlugin {
           name = "plugin-specs";
@@ -191,6 +192,10 @@
         }))
         {
           plugin = markdown-preview-nvim;
+          optional = true;
+        }
+        {
+          plugin = typst-preview-nvim;
           optional = true;
         }
         {

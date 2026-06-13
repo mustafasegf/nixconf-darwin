@@ -50,10 +50,12 @@
     substituters = [
       "https://ghostty.cachix.org"
       "https://devenv.cachix.org"
+      "https://claude-code.cachix.org"
     ];
     trusted-public-keys = [
       "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+      "claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk="
     ];
     fallback = true;
   };

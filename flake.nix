@@ -84,6 +84,7 @@
     handy.inputs.nixpkgs.follows = "nixpkgs";
     ghostty.url = "github:ghostty-org/ghostty";
     opencode.url = "github:anomalyco/opencode";
+    claude-code.url = "github:sadjow/claude-code-nix";
   };
 
   outputs =

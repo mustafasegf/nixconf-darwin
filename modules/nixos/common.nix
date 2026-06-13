@@ -2,12 +2,14 @@
   pkgs,
   lib,
   config,
+  inputs,
   ...
 }:
 
 {
   environment.systemPackages = with pkgs; [
     systemd-manager-tui
+    inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   programs.nh = {

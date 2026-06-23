@@ -50,5 +50,7 @@
           --replace-fail 'external: ["node-gyp"]' 'external: ["node-gyp", "prettier", "prettier/plugins/babel", "prettier/plugins/estree"]'
       '';
     }))
+
+    inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

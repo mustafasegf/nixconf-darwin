@@ -85,6 +85,8 @@
     ghostty.url = "github:ghostty-org/ghostty";
     opencode.url = "github:anomalyco/opencode";
     claude-code.url = "github:sadjow/claude-code-nix";
+    herdr.url = "github:ogulcancelik/herdr";
+    herdr.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =

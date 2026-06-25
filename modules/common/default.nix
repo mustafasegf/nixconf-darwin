@@ -99,6 +99,23 @@
         ) (old.patches or [ ]);
       });
 
+      # Bump to 0.44.0 for the `ast-grep outline` subcommand, which is not
+      # yet available in the pinned nixpkgs (still on 0.43.0).
+      ast-grep = prev.ast-grep.overrideAttrs (old: rec {
+        version = "0.44.0";
+        src = prev.fetchFromGitHub {
+          owner = "ast-grep";
+          repo = "ast-grep";
+          tag = version;
+          hash = "sha256-KTVyG2z2Vx4mLmkiwou4X04Z6qzpQxmwRCtcmG4euVA=";
+        };
+        cargoDeps = prev.rustPlatform.fetchCargoVendor {
+          inherit src;
+          name = "${old.pname}-${version}";
+          hash = "sha256-slFovLzLaK6DlTF/LKI74PUWXi9xkpy9hC9WWGmypcM=";
+        };
+      });
+
       # Handy - offline speech-to-text (https://github.com/cjpais/Handy)
       # Linux: built from source via the upstream flake
       # macOS: pre-built app bundle from GitHub releases

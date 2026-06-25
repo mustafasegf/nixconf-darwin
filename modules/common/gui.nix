@@ -11,6 +11,7 @@
     [
       iterm2
       kitty
+      obsidian
       postman
       dbeaver-bin
       slack

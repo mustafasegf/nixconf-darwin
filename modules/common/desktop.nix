@@ -114,6 +114,7 @@
         cmake-format
 
         pyright
+        ruff
         typescript-language-server
         tflint
         vscode-langservers-extracted

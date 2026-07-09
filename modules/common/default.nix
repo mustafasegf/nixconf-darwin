@@ -122,6 +122,7 @@
       ghidra-mcp = prev.callPackage ../../pkgs/ghidra-mcp { };
       linear-cli = prev.callPackage ../../pkgs/linear-cli { };
       playwriter = prev.callPackage ../../pkgs/playwriter { };
+      oh-my-pi = prev.callPackage ../../pkgs/oh-my-pi { };
 
       # ffmpeg-full deps whose test suites get SIGKILLed in the macOS nix
       # sandbox (OOM-style kills under memory pressure); skip checks.

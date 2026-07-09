@@ -52,5 +52,6 @@
     }))
 
     inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
+    oh-my-pi
   ];
 }

@@ -172,23 +172,25 @@
                   inputs.catppuccin.nixosModules.catppuccin
 
                   {
-                    home-manager.extraSpecialArgs = {
-                      inherit
-                        inputs
-                        upkgs
-                        ppkgs
-                        staging-pkgs
-                        mpkgs
-                        ;
-                    };
-                    home-manager.backupFileExtension = "hm-bak";
-                    home-manager.users.${username} = {
-                      imports = [
-                        ./home/common
-                        ./home/linux
-                        inputs.catppuccin.homeModules.catppuccin
-                      ];
-                      home.stateVersion = "24.05";
+                    home-manager = {
+                      extraSpecialArgs = {
+                        inherit
+                          inputs
+                          upkgs
+                          ppkgs
+                          staging-pkgs
+                          mpkgs
+                          ;
+                      };
+                      backupFileExtension = "hm-bak";
+                      users.${username} = {
+                        imports = [
+                          ./home/common
+                          ./home/linux
+                          inputs.catppuccin.homeModules.catppuccin
+                        ];
+                        home.stateVersion = "24.05";
+                      };
                     };
                   }
                 ];
@@ -205,21 +207,22 @@
                 inputs.sops-nix.nixosModules.sops
 
                 {
-                  home-manager.extraSpecialArgs = { inherit inputs; };
-                  home-manager.users.${username} = {
-                    imports = [
-                      ./home/common
-                      inputs.catppuccin.homeModules.catppuccin
-                    ];
-                    home.stateVersion = "24.05";
-                  };
-
-                  home-manager.users."budak" = {
-                    imports = [
-                      ./home/common
-                      inputs.catppuccin.homeModules.catppuccin
-                    ];
-                    home.stateVersion = "24.05";
+                  home-manager = {
+                    extraSpecialArgs = { inherit inputs; };
+                    users.${username} = {
+                      imports = [
+                        ./home/common
+                        inputs.catppuccin.homeModules.catppuccin
+                      ];
+                      home.stateVersion = "24.05";
+                    };
+                    users."budak" = {
+                      imports = [
+                        ./home/common
+                        inputs.catppuccin.homeModules.catppuccin
+                      ];
+                      home.stateVersion = "24.05";
+                    };
                   };
                 }
               ];
@@ -262,15 +265,17 @@
                 ./machines/mustafa-work.nix
 
                 {
-                  home-manager.backupFileExtension = "hm-bak";
-                  home-manager.extraSpecialArgs = { inherit inputs; };
-                  home-manager.users.${username} = {
-                    imports = [
-                      ./home/common
-                      ./home/darwin
-                      inputs.catppuccin.homeModules.catppuccin
-                    ];
-                    home.stateVersion = "24.05";
+                  home-manager = {
+                    backupFileExtension = "hm-bak";
+                    extraSpecialArgs = { inherit inputs; };
+                    users.${username} = {
+                      imports = [
+                        ./home/common
+                        ./home/darwin
+                        inputs.catppuccin.homeModules.catppuccin
+                      ];
+                      home.stateVersion = "24.05";
+                    };
                   };
                 }
               ];
@@ -289,15 +294,17 @@
                 ./machines/mustafa-mac.nix
 
                 {
-                  home-manager.backupFileExtension = "hm-bak";
-                  home-manager.extraSpecialArgs = { inherit inputs; };
-                  home-manager.users.${username} = {
-                    imports = [
-                      ./home/common
-                      ./home/darwin
-                      inputs.catppuccin.homeModules.catppuccin
-                    ];
-                    home.stateVersion = "24.05";
+                  home-manager = {
+                    backupFileExtension = "hm-bak";
+                    extraSpecialArgs = { inherit inputs; };
+                    users.${username} = {
+                      imports = [
+                        ./home/common
+                        ./home/darwin
+                        inputs.catppuccin.homeModules.catppuccin
+                      ];
+                      home.stateVersion = "24.05";
+                    };
                   };
                 }
               ];

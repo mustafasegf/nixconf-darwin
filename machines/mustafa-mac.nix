@@ -18,9 +18,11 @@
     mutableTaps = false;
   };
 
-  networking.hostName = "mustafa-mac";
-  networking.computerName = "mustafa-mac";
-  networking.localHostName = "mustafa-mac";
+  networking = {
+    hostName = "mustafa-mac";
+    computerName = "mustafa-mac";
+    localHostName = "mustafa-mac";
+  };
 
   users.users."mustafa".home = "/Users/mustafa";
 

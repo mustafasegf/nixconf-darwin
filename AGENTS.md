@@ -1,7 +1,7 @@
 # AGENTS.md — Coding Agent Guidelines for nixconf-darwin
 
-NixOS + nix-darwin personal configuration flake. Manages 4 hosts: `mustafa-pc` (Linux desktop),
-`minipc` (Linux server), `Mustafa-Assagaf` (work Mac), `mustafa-mac` (personal Mac).
+NixOS + nix-darwin personal configuration flake. Manages 5 hosts: `mustafa-pc` (Linux desktop),
+`minipc` (Linux server), `greencloud` (Linux server), `mustafa-work` (work Mac), `mustafa-mac` (personal Mac).
 
 ## Build / Deploy Commands
 
@@ -12,7 +12,7 @@ sudo nixos-rebuild switch --flake .#minipc
 sudo nixos-rebuild test --flake .#mustafa-pc   # test without making permanent
 
 # Darwin rebuild (macOS)
-darwin-rebuild switch --flake .#Mustafa-Assagaf
+darwin-rebuild switch --flake .#mustafa-work
 darwin-rebuild switch --flake .#mustafa-mac
 
 # Check the flake evaluates correctly (no full build)
@@ -136,7 +136,7 @@ why a package is disabled, why `follows` is skipped). Never add:
 - Module description comments
 
 ### Naming Conventions
-- **Files:** lowercase kebab-case (`base.nix`, `gui.nix`). Machine files match hostname exactly (`Mustafa-Assagaf.nix`).
+- **Files:** lowercase kebab-case (`base.nix`, `gui.nix`). Machine files match hostname exactly (`mustafa-work.nix`).
 - **Variables:** camelCase (`myUserName`, `platformPaths`). SCREAMING_SNAKE for constants (`RUSTC_VERSION`).
 - **Flake inputs:** kebab-case. Vim plugin inputs prefixed `vimPlugins_` (processed by `lib/mkFlake2VimPlugin.nix`).
 - **Custom options:** namespaced under `custom.*` (e.g., `custom.enableXcode`).

@@ -62,8 +62,13 @@
     options = "--delete-older-than 3d";
   };
 
-  networking.hostName = "greencloud";
-  networking.useDHCP = lib.mkDefault true;
+  networking = {
+    hostName = "greencloud";
+    useDHCP = lib.mkDefault true;
+    firewall.allowedTCPPorts = [
+      6443
+    ];
+  };
 
   services.k3s = {
     enable = true;
@@ -74,10 +79,6 @@
   };
 
   virtualisation.docker.enable = true;
-
-  networking.firewall.allowedTCPPorts = [
-    6443
-  ];
 
   services.openssh = {
     enable = true;

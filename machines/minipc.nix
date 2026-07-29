@@ -15,41 +15,44 @@
     max-jobs = "auto";
   };
 
-  boot.initrd.availableKernelModules = [
-    "ehci_pci"
-    "nvme"
-    "xhci_pci"
-    "ahci"
-    "usb_storage"
-    "usbhid"
-    "sd_mod"
-  ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelParams = [ "processor.max_cstate=1" ];
-  boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [ ];
-
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub.efiSupport = true;
-  boot.loader.grub.device = "nodev";
-
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/0ed1f3c0-c49c-4ff6-bdbe-267bc24a997e";
-    fsType = "ext4";
-  };
-
-  fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/c85c9b61-643c-4c2e-addc-bbb937d64e16";
-    fsType = "ext4";
-  };
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/2A6D-642D";
-    fsType = "vfat";
-    options = [
-      "fmask=0077"
-      "dmask=0077"
+  boot = {
+    initrd.availableKernelModules = [
+      "ehci_pci"
+      "nvme"
+      "xhci_pci"
+      "ahci"
+      "usb_storage"
+      "usbhid"
+      "sd_mod"
     ];
+    initrd.kernelModules = [ ];
+    kernelParams = [ "processor.max_cstate=1" ];
+    kernelModules = [ "kvm-amd" ];
+    extraModulePackages = [ ];
+    loader = {
+      efi.canTouchEfiVariables = true;
+      grub.efiSupport = true;
+      grub.device = "nodev";
+    };
+  };
+
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-uuid/0ed1f3c0-c49c-4ff6-bdbe-267bc24a997e";
+      fsType = "ext4";
+    };
+    "/home" = {
+      device = "/dev/disk/by-uuid/c85c9b61-643c-4c2e-addc-bbb937d64e16";
+      fsType = "ext4";
+    };
+    "/boot" = {
+      device = "/dev/disk/by-uuid/2A6D-642D";
+      fsType = "vfat";
+      options = [
+        "fmask=0077"
+        "dmask=0077"
+      ];
+    };
   };
 
   swapDevices = [ ];

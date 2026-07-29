@@ -55,55 +55,465 @@
     };
   };
 
-  environment.pathsToLink = [ "/share/nix-direnv" ];
+  environment = {
+    pathsToLink = [ "/share/nix-direnv" ];
+    variables = {
+      SUDO_EDITOR = "nvim";
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+      PAGER = "less";
+      BROWSER = "google-chrome-stable";
+      QT_QPA_PLATFORMTHEME = "lxqt";
+      GTK_USE_PORTAL = "1";
+      MANPAGER = "nvim +Man!";
+      TERMINAL = "kitty";
+      GDK_SCALE = "1";
+    };
+    extraInit = ''
+      unset -v SSH_ASKPASS
+    '';
+    etc = {
+      "X11/xorg.conf.d/10-tablet.conf".source = pkgs.writeText "10-tablet.conf" ''
+        Section "InputClass"
+        Identifier "Tablet"
+        Driver "wacom"
+        MatchDevicePath "/dev/input/event*"
+        MatchUSBID "256c:006d"
+        EndSection
+      '';
+      "xdg/qtile/floating_window_snapping.py".source = ../../config/qtile/floating_window_snapping.py;
+      "xdg/qtile/scripts/powermenu.sh" = {
+        source = ../../config/scripts/powermenu.sh;
+        mode = "0755";
+      };
+      "xdg/qtile/scripts/brightness.sh" = {
+        source = ../../config/scripts/brightness.sh;
+        mode = "0755";
+      };
+      "xdg/qtile/scripts/volume.sh" = {
+        source = ../../config/scripts/volume.sh;
+        mode = "0755";
+      };
+      "xdg/qtile/scripts/runspt" = {
+        source = ../../config/scripts/runspt;
+        mode = "0755";
+      };
+      "ld-musl-x86_64.path".text = lib.concatStringsSep "\n" [
+        "${pkgs.pkgsMusl.stdenv.cc.cc.lib}/lib"
+      ];
+    };
+    systemPackages = with pkgs; [
+      arandr
+      copyq
+      # dunst - moved to HM for catppuccin theming
+      find-cursor
+      ppkgs.flameshot
+      killall
+      libnotify
+      nitrogen
+      pavucontrol
+      ncpamixer
+      pulseaudioFull
+      alsa-utils
+      screenkey
+      xclip
+      xsel
+      xcolor
+      scrot
 
-  environment.variables = {
-    SUDO_EDITOR = "nvim";
-    EDITOR = "nvim";
-    VISUAL = "nvim";
-    PAGER = "less";
-    BROWSER = "google-chrome-stable";
-    QT_QPA_PLATFORMTHEME = "lxqt";
-    GTK_USE_PORTAL = "1";
-    MANPAGER = "nvim +Man!";
-    TERMINAL = "kitty";
-    GDK_SCALE = "1";
+      file-roller
+      kdePackages.ark
+      kdePackages.filelight
+
+      mesa-demos
+      ffmpeg-full
+      ffmpegthumbnailer
+      vlc
+      # mpv - moved to HM for catppuccin theming
+      pinta
+      krita
+      blender
+      gimp-with-plugins
+      handbrake
+      kdePackages.kdenlive
+      imagemagick
+      poppler-utils
+      yt-dlp
+      cheese
+      webcamoid
+      kdePackages.kamoso
+      # mangohud - moved to HM for catppuccin theming
+      radeontop
+      nvtopPackages.amd
+      aseprite
+      tiled
+      d2
+      ascii-image-converter
+      mediainfo
+      djvu2pdf
+      djvulibre
+      ghostscript
+      gimagereader
+      waifu2x-converter-cpp
+
+      kdePackages.kate
+      gedit
+
+      libreoffice
+      kdePackages.okular
+      xournalpp
+      qalculate-qt
+      kdePackages.kcalc
+      calibre
+      thunderbird
+      pspp
+
+      zoom-us
+      telegram-desktop
+      google-chrome
+      firefox
+      bitwarden-cli
+      discord-ptb
+      weechat
+      kdePackages.konversation
+
+      steam
+      lutris
+      wine
+      wine64
+      winetricks
+      prismlauncher
+      pcsx2
+      bottles
+      godot_4
+      godot3
+      # _86Box-with-roms  # build failure in Qt UI (86Box 5.3)
+      dosbox
+      sidequest
+
+      bind
+      nmap
+      httpie
+      inxi
+      awscli2
+      sunshine
+      radare2
+      imhex
+      winbox
+      winbox4
+
+      qpwgraph
+      crosspipe
+      wireplumber
+      qjackctl
+
+      libsForQt5.qt5ct
+      libsForQt5.qtstyleplugin-kvantum
+      qt6Packages.qtstyleplugin-kvantum
+      lxqt.lxqt-qtplugin
+      lxqt.lxqt-config
+      lxappearance
+      papirus-icon-theme
+      catppuccin-gtk
+
+      input-remapper
+      pciutils
+      usbutils
+      fwupd
+      psmisc
+      lsof
+      dos2unix
+      solaar
+      logitech-udev-rules
+      powertop
+      dmidecode
+      inotify-tools
+      smartmontools
+      nvme-cli
+      pmutils
+      wol
+      dragon-drop
+      toilet
+      most
+      libsecret
+      usermount
+      devmem2
+      gpm
+      chntpw
+      smem
+      xdg-utils
+      xdg-user-dirs
+      libcamera
+      libarchive
+
+      appimage-run
+      clang
+      clang-tools
+      gdb
+      lldb
+      llvmPackages_22.llvm
+      llvmPackages_22.bintools
+      llvmPackages_22.lld
+      gnumake
+      cmake
+      sqlite
+      openssl
+      musl
+      nasm
+      statix
+      poetry
+      pandoc
+      texlive.combined.scheme-full
+      vulkan-tools
+      clinfo
+      SDL2
+      SDL2_ttf
+      SDL2_net
+      SDL2_gfx
+      SDL2_sound
+      SDL2_mixer
+      SDL2_image
+      virt-manager
+      docker
+      distrobox
+      zlib.out
+      xorriso
+      grub2
+      glade
+      gtk3
+      gtk4
+      gfortran
+      gdal
+      prefetch-npm-deps
+      nix-prefetch-scripts
+      nixpacks
+      libguestfs
+      gvisor
+
+      xkbcomp
+      xkbutils
+      xmodmap
+      xinput
+      libx11
+      libxft
+      libxinerama
+
+      postgresql
+      redis
+
+      beekeeper-studio
+      onedrive
+      android-studio
+      rpi-imager
+      # alacritty - moved to HM for catppuccin theming
+      deskreen
+      rescuetime
+      pomodoro
+      ventoy
+      phoronix-test-suite
+      termscp
+      revanced-cli
+      exercism
+
+      home-manager
+      openrgb
+      tor-browser
+      # qbittorrent
+      seahorse
+      cloudflare-warp
+      spotify
+      parsec-bin
+      chafa
+      fim
+      license-cli
+      bunyan-rs
+      gf
+      reveal-md
+      html-tidy
+      wdiff
+      dwdiff
+      open-watcom-bin
+      cargo-mommy
+
+      (python3.withPackages (ps: [
+        ps.jupyterlab
+        ps.notebook
+        ps.jupyter-console
+        ps.ipykernel
+        ps.pandas
+        ps.scikit-learn
+        ps.matplotlib
+        ps.numpy
+        ps.scipy
+        ps.pip
+        ps.statsmodels
+        ps.opencv4
+        ps.selenium
+        ps.scikit-image
+        ps.onnxruntime
+        ps.pillow
+        ps.tkinter
+      ]))
+    ];
   };
 
-  environment.extraInit = ''
-    unset -v SSH_ASKPASS
-  '';
+  services = {
+    envfs.enable = true;
+    dbus = {
+      implementation = "broker";
+      packages = with pkgs; [
+        dconf
+        gnome-keyring
+      ];
+    };
+    hardware.openrgb = {
+      enable = true;
+      motherboard = "amd";
+    };
+    autorandr.enable = true;
+    udisks2.enable = true;
+    printing.enable = true;
+    blueman = {
+      enable = true;
+      withApplet = false;
+    };
+    picom.enable = false;
+    tumbler.enable = true;
+    gvfs.enable = true;
+    flatpak.enable = true;
+    gnome.gnome-keyring.enable = true;
+    displayManager.defaultSession = "qtile";
+    displayManager.autoLogin = {
+      enable = true;
+      user = "mustafa";
+    };
+    xserver = {
+      enable = true;
+      digimend.enable = false;
+      wacom.enable = true;
+      videoDrivers = [ "modesetting" ];
 
-  environment.etc."X11/xorg.conf.d/10-tablet.conf".source = pkgs.writeText "10-tablet.conf" ''
-    Section "InputClass"
-    Identifier "Tablet"
-    Driver "wacom"
-    MatchDevicePath "/dev/input/event*"
-    MatchUSBID "256c:006d"
-    EndSection
-  '';
+      autorun = true;
+      displayManager = {
+        lightdm = {
+          enable = true;
+          greeter.enable = true;
+        };
 
-  environment.etc."xdg/qtile/floating_window_snapping.py".source =
-    ../../config/qtile/floating_window_snapping.py;
+        sessionCommands =
+          let
+            functionkey = pkgs.writeText "xkb-layout" ''
+              keycode 191 = F13 F13 F13
+              keycode 192 = F14 F14 F14
+              keycode 193 = F15 F15 F15
+              keycode 194 = F16 F16 F16
+              keycode 195 = F17 F17 F17
+              keycode 196 = F18 F18 F18
+              keycode 197 = F19 F19 F19
+              keycode 198 = F20 F20 F20
+              keycode 199 = F21 F21 F21
+              keycode 200 = F22 F22 F22
+              keycode 201 = F23 F23 F23
+              keycode 202 = F24 F24 F24
+            '';
+          in
+          ''
+            sleep 5 && ${pkgs.xmodmap}/bin/xmodmap ${functionkey}
+            gnome-keyring-daemon --start -d --components=pkcs11,secrets,ssh
+            xsetwacom --set "HUION Huion Tablet stylus" Area 0 0 48768 15240 || true
+          '';
+      };
 
-  environment.etc."xdg/qtile/scripts/powermenu.sh" = {
-    source = ../../config/scripts/powermenu.sh;
-    mode = "0755";
-  };
-  environment.etc."xdg/qtile/scripts/brightness.sh" = {
-    source = ../../config/scripts/brightness.sh;
-    mode = "0755";
-  };
-  environment.etc."xdg/qtile/scripts/volume.sh" = {
-    source = ../../config/scripts/volume.sh;
-    mode = "0755";
-  };
-  environment.etc."xdg/qtile/scripts/runspt" = {
-    source = ../../config/scripts/runspt;
-    mode = "0755";
-  };
+      windowManager.qtile = {
+        enable = true;
+        configFile = ../../config/qtile/config.py;
+      };
+    };
+    pipewire = {
+      enable = true;
+      wireplumber.enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      jack.enable = true;
 
-  services.envfs.enable = true;
+      # Audio output priority: WH-1000XM5 > HDMI (Beyond TV) > DP > AUX
+      # Audio input priority:  Easy Effects > FIFINE K678 > WH-1000XM5 > AUX
+      wireplumber.extraConfig."50-audio-priority" = {
+        "monitor.alsa.rules" = [
+          {
+            matches = [ { "node.name" = "alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1"; } ];
+            actions.update-props = {
+              "priority.driver" = 1500;
+              "priority.session" = 1500;
+            };
+          }
+          {
+            matches = [ { "node.name" = "alsa_output.pci-0000_03_00.1.hdmi-stereo"; } ];
+            actions.update-props = {
+              "priority.driver" = 1000;
+              "priority.session" = 1000;
+            };
+          }
+          {
+            matches = [ { "node.name" = "alsa_output.pci-0000_7f_00.6.analog-stereo"; } ];
+            actions.update-props = {
+              "priority.driver" = 500;
+              "priority.session" = 500;
+            };
+          }
+          {
+            matches = [
+              {
+                "node.name" = "alsa_input.usb-FIFINE_Microphones_FIFINE_K678_Microphone_REV1.0-00.analog-stereo";
+              }
+            ];
+            actions.update-props = {
+              "priority.driver" = 1800;
+              "priority.session" = 1800;
+            };
+          }
+          {
+            matches = [ { "node.name" = "alsa_input.pci-0000_7f_00.6.analog-stereo"; } ];
+            actions.update-props = {
+              "priority.driver" = 500;
+              "priority.session" = 500;
+            };
+          }
+        ];
+        # Bluetooth loopback nodes get hardcoded priority.session = 2010 in
+        # WirePlumber's bluez.lua script, which cannot be overridden by rules.
+        # BT headphone priority is inherently highest when connected, and
+        # disappears when disconnected - triggering automatic fallback.
+      };
+    };
+    openssh.enable = true;
+    tor = {
+      enable = true;
+      client.enable = true;
+    };
+    mullvad-vpn = {
+      enable = true;
+      package = pkgs.mullvad-vpn;
+    };
+    sunshine = {
+      enable = true;
+      autoStart = true;
+      capSysAdmin = true;
+      openFirewall = true;
+      settings = {
+        origin_web_ui_allowed = "wan";
+      };
+    };
+    udev.extraRules = ''
+      KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"
+    '';
+    openvpn.servers = {
+      uihpc = {
+        config = "config /home/mustafa/openvpn/hpc12.ovpn ";
+      };
+    };
+  };
 
   nixpkgs.overlays = [
     (final: prev: {
@@ -130,670 +540,248 @@
     })
   ];
 
-  programs.wireshark.enable = true;
-  programs.thunar.enable = true;
-  programs.thunar.plugins = with pkgs; [
-    thunar-volman
-    thunar-archive-plugin
-    thunar-media-tags-plugin
-  ];
-  programs.noisetorch.enable = true;
-  programs.dconf.enable = true;
-  programs.zsh.enable = true;
-  programs.command-not-found.enable = false;
+  programs = {
+    wireshark.enable = true;
+    thunar.enable = true;
+    thunar.plugins = with pkgs; [
+      thunar-volman
+      thunar-archive-plugin
+      thunar-media-tags-plugin
+    ];
+    noisetorch.enable = true;
+    dconf.enable = true;
+    zsh.enable = true;
+    command-not-found.enable = false;
+    nix-ld.dev.enable = true;
+    nix-ld.libraries = with pkgs; [
+      stdenv.cc.cc
+      zlib
+      openssl
+      curl
+      nss
+      nspr
+      expat
+      icu
+      fuse3
 
-  # musl dynamic linker for unpatched musl binaries (e.g. bun-installed CLIs)
-  systemd.tmpfiles.rules = [
-    "L+ /lib/ld-musl-x86_64.so.1 - - - - ${pkgs.musl}/lib/ld-musl-x86_64.so.1"
-  ];
-  environment.etc."ld-musl-x86_64.path".text = lib.concatStringsSep "\n" [
-    "${pkgs.pkgsMusl.stdenv.cc.cc.lib}/lib"
-  ];
+      libx11
+      libxext
+      libxrender
+      libxrandr
+      libxfixes
+      libxcursor
+      libxi
+      libxcb
+      libxtst
+      libxscrnsaver
+      libxinerama
+      libxdmcp
+      libxau
 
-  # nix-ld for running unpatched glibc binaries
-  programs.nix-ld.dev.enable = true;
-  programs.nix-ld.libraries = with pkgs; [
-    stdenv.cc.cc
-    zlib
-    openssl
-    curl
-    nss
-    nspr
-    expat
-    icu
-    fuse3
+      xcbutil
+      xcbutilimage
+      xcbutilkeysyms
+      xcbutilrenderutil
+      xcbutilwm
 
-    libx11
-    libxext
-    libxrender
-    libxrandr
-    libxfixes
-    libxcursor
-    libxi
-    libxcb
-    libxtst
-    libxscrnsaver
-    libxinerama
-    libxdmcp
-    libxau
+      libxkbcommon
+      libxkbcommon_x11
 
-    xcbutil
-    xcbutilimage
-    xcbutilkeysyms
-    xcbutilrenderutil
-    xcbutilwm
+      freetype
+      fontconfig
 
-    libxkbcommon
-    libxkbcommon_x11
-
-    freetype
-    fontconfig
-
-    libglvnd
-    mesa
-  ];
-
-  environment.systemPackages = with pkgs; [
-    arandr
-    copyq
-    # dunst - moved to HM for catppuccin theming
-    find-cursor
-    ppkgs.flameshot
-    killall
-    libnotify
-    nitrogen
-    pavucontrol
-    ncpamixer
-    pulseaudioFull
-    alsa-utils
-    screenkey
-    xclip
-    xsel
-    xcolor
-    scrot
-
-    file-roller
-    kdePackages.ark
-    kdePackages.filelight
-
-    mesa-demos
-    ffmpeg-full
-    ffmpegthumbnailer
-    vlc
-    # mpv - moved to HM for catppuccin theming
-    pinta
-    krita
-    blender
-    gimp-with-plugins
-    handbrake
-    kdePackages.kdenlive
-    imagemagick
-    poppler-utils
-    yt-dlp
-    cheese
-    webcamoid
-    kdePackages.kamoso
-    # mangohud - moved to HM for catppuccin theming
-    radeontop
-    nvtopPackages.amd
-    aseprite
-    tiled
-    d2
-    ascii-image-converter
-    mediainfo
-    djvu2pdf
-    djvulibre
-    ghostscript
-    gimagereader
-    waifu2x-converter-cpp
-
-    kdePackages.kate
-    gedit
-
-    libreoffice
-    kdePackages.okular
-    xournalpp
-    qalculate-qt
-    kdePackages.kcalc
-    calibre
-    thunderbird
-    pspp
-
-    zoom-us
-    telegram-desktop
-    google-chrome
-    firefox
-    bitwarden-cli
-    discord-ptb
-    weechat
-    kdePackages.konversation
-
-    steam
-    lutris
-    wine
-    wine64
-    winetricks
-    prismlauncher
-    pcsx2
-    bottles
-    godot_4
-    godot3
-    # _86Box-with-roms  # build failure in Qt UI (86Box 5.3)
-    dosbox
-    sidequest
-
-    bind
-    nmap
-    httpie
-    inxi
-    awscli2
-    sunshine
-    radare2
-    imhex
-    winbox
-    winbox4
-
-    qpwgraph
-    crosspipe
-    wireplumber
-    qjackctl
-
-    libsForQt5.qt5ct
-    libsForQt5.qtstyleplugin-kvantum
-    qt6Packages.qtstyleplugin-kvantum
-    lxqt.lxqt-qtplugin
-    lxqt.lxqt-config
-    lxappearance
-    papirus-icon-theme
-    catppuccin-gtk
-
-    input-remapper
-    pciutils
-    usbutils
-    fwupd
-    psmisc
-    lsof
-    dos2unix
-    solaar
-    logitech-udev-rules
-    powertop
-    dmidecode
-    inotify-tools
-    smartmontools
-    nvme-cli
-    pmutils
-    wol
-    dragon-drop
-    toilet
-    most
-    libsecret
-    usermount
-    devmem2
-    gpm
-    chntpw
-    smem
-    xdg-utils
-    xdg-user-dirs
-    libcamera
-    libarchive
-
-    appimage-run
-    clang
-    clang-tools
-    gdb
-    lldb
-    llvmPackages_22.llvm
-    llvmPackages_22.bintools
-    llvmPackages_22.lld
-    gnumake
-    cmake
-    sqlite
-    openssl
-    musl
-    nasm
-    statix
-    poetry
-    pandoc
-    texlive.combined.scheme-full
-    vulkan-tools
-    clinfo
-    SDL2
-    SDL2_ttf
-    SDL2_net
-    SDL2_gfx
-    SDL2_sound
-    SDL2_mixer
-    SDL2_image
-    virt-manager
-    docker
-    distrobox
-    zlib.out
-    xorriso
-    grub2
-    glade
-    gtk3
-    gtk4
-    gfortran
-    gdal
-    prefetch-npm-deps
-    nix-prefetch-scripts
-    nixpacks
-    libguestfs
-    gvisor
-
-    xkbcomp
-    xkbutils
-    xmodmap
-    xinput
-    libx11
-    libxft
-    libxinerama
-
-    postgresql
-    redis
-
-    beekeeper-studio
-    onedrive
-    android-studio
-    rpi-imager
-    # alacritty - moved to HM for catppuccin theming
-    deskreen
-    rescuetime
-    pomodoro
-    ventoy
-    phoronix-test-suite
-    termscp
-    revanced-cli
-    exercism
-
-    home-manager
-    openrgb
-    tor-browser
-    # qbittorrent
-    seahorse
-    cloudflare-warp
-    spotify
-    parsec-bin
-    chafa
-    fim
-    license-cli
-    bunyan-rs
-    gf
-    reveal-md
-    html-tidy
-    wdiff
-    dwdiff
-    open-watcom-bin
-    cargo-mommy
-
-    (python3.withPackages (ps: [
-      ps.jupyterlab
-      ps.notebook
-      ps.jupyter-console
-      ps.ipykernel
-      ps.pandas
-      ps.scikit-learn
-      ps.matplotlib
-      ps.numpy
-      ps.scipy
-      ps.pip
-      ps.statsmodels
-      ps.opencv4
-      ps.selenium
-      ps.scikit-image
-      ps.onnxruntime
-      ps.pillow
-      ps.tkinter
-    ]))
-  ];
-
-  services.dbus = {
-    implementation = "broker";
-    packages = with pkgs; [
-      dconf
-      gnome-keyring
+      libglvnd
+      mesa
     ];
   };
 
-  services.hardware.openrgb = {
-    enable = true;
-    motherboard = "amd";
-  };
-
-  systemd.services.openrgb-profile = {
-    description = "Set OpenRGB profile to off";
-    after = [ "openrgb.service" ];
-    wants = [ "openrgb.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
-      ExecStart = "${pkgs.openrgb}/bin/openrgb -p off";
-      Restart = "on-failure";
-      RestartSec = 5;
-      RemainAfterExit = true;
-    };
-  };
-
-  services.autorandr.enable = true;
-  services.udisks2.enable = true;
-  services.printing.enable = true;
-  services.blueman = {
-    enable = true;
-    withApplet = false;
-  };
-  services.picom.enable = false;
-  services.tumbler.enable = true;
-  services.gvfs.enable = true;
-  services.flatpak.enable = true;
-  services.gnome.gnome-keyring.enable = true;
-
-  services.displayManager.defaultSession = "qtile";
-
-  services.displayManager.autoLogin = {
-    enable = true;
-    user = "mustafa";
-  };
-
-  services.xserver = {
-    enable = true;
-    digimend.enable = false;
-    wacom.enable = true;
-    videoDrivers = [ "modesetting" ];
-
-    autorun = true;
-    displayManager = {
-      lightdm = {
-        enable = true;
-        greeter.enable = true;
+  # musl dynamic linker for unpatched musl binaries (e.g. bun-installed CLIs)
+  systemd = {
+    tmpfiles.rules = [
+      "L+ /lib/ld-musl-x86_64.so.1 - - - - ${pkgs.musl}/lib/ld-musl-x86_64.so.1"
+    ];
+    services = {
+      openrgb-profile = {
+        description = "Set OpenRGB profile to off";
+        after = [ "openrgb.service" ];
+        wants = [ "openrgb.service" ];
+        wantedBy = [ "multi-user.target" ];
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
+          ExecStart = "${pkgs.openrgb}/bin/openrgb -p off";
+          Restart = "on-failure";
+          RestartSec = 5;
+          RemainAfterExit = true;
+        };
       };
-
-      sessionCommands =
-        let
-          functionkey = pkgs.writeText "xkb-layout" ''
-            keycode 191 = F13 F13 F13
-            keycode 192 = F14 F14 F14
-            keycode 193 = F15 F15 F15
-            keycode 194 = F16 F16 F16
-            keycode 195 = F17 F17 F17
-            keycode 196 = F18 F18 F18
-            keycode 197 = F19 F19 F19
-            keycode 198 = F20 F20 F20
-            keycode 199 = F21 F21 F21
-            keycode 200 = F22 F22 F22
-            keycode 201 = F23 F23 F23
-            keycode 202 = F24 F24 F24
-          '';
-        in
-        ''
-          sleep 5 && ${pkgs.xmodmap}/bin/xmodmap ${functionkey}
-          gnome-keyring-daemon --start -d --components=pkcs11,secrets,ssh
-          xsetwacom --set "HUION Huion Tablet stylus" Area 0 0 48768 15240 || true
+      docker = {
+        after = [
+          "graphical.target"
+          "tailscale-autoconnect.service"
+        ];
+        wants = [ "tailscale-autoconnect.service" ];
+        wantedBy = lib.mkForce [ "graphical.target" ];
+      };
+      NetworkManager-wait-online.enable = false;
+      pcscd.enable = false;
+      tailscale-autoconnect = {
+        description = "Automatic connection to Tailscale";
+        after = [
+          "network-pre.target"
+          "tailscale.service"
+          "graphical.target"
+        ];
+        wants = [
+          "network-pre.target"
+          "tailscale.service"
+        ];
+        wantedBy = [ "graphical.target" ];
+        serviceConfig.Type = "oneshot";
+        script = with pkgs; ''
+          sleep 2
+          status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
+          if [ $status = "Running" ]; then
+            exit 0
+          fi
+          ${tailscale}/bin/tailscale up
         '';
+      };
+      "libvirt-nosleep@" = {
+        enable = true;
+        description = ''Preventing sleep while libvirt domain "%i" is running'';
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = ''${pkgs.systemd}/bin/systemd-inhibit --what=sleep --why=" Libvirt domain \"%i\" is running" --who=%U --mode=block sleep infinity'';
+        };
+      };
+      libvirtd = {
+        enable = true;
+        path =
+          let
+            env = pkgs.buildEnv {
+              name = "qemu-hook-env";
+              paths = with pkgs; [
+                bash
+                libvirt
+                kmod
+                systemd
+                ripgrep
+                sd
+                pciutils
+                procps
+                gawk
+              ];
+            };
+          in
+          [ env ];
+      };
+      warp-svc.enable = true;
     };
-
-    windowManager.qtile = {
-      enable = true;
-      configFile = ../../config/qtile/config.py;
+    sockets.pcscd.enable = false;
+    user.services.polkit-gnome-authentication-agent-1 = {
+      description = "polkit-gnome-authentication-agent-1";
+      wantedBy = [ "graphical-session.target" ];
+      wants = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+        Restart = "on-failure";
+        RestartSec = 1;
+        TimeoutStopSec = 10;
+      };
     };
+    packages = with pkgs; [ cloudflare-warp ];
   };
 
-  security.rtkit.enable = true;
+  # nix-ld for running unpatched glibc binaries
 
-  services.pipewire = {
-    enable = true;
-    wireplumber.enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-
-    # Audio output priority: WH-1000XM5 > HDMI (Beyond TV) > DP > AUX
-    # Audio input priority:  Easy Effects > FIFINE K678 > WH-1000XM5 > AUX
-    wireplumber.extraConfig."50-audio-priority" = {
-      "monitor.alsa.rules" = [
+  security = {
+    rtkit.enable = true;
+    sudo.extraRules = [
+      {
+        users = [ "mustafa" ];
+        commands = [
+          {
+            command = "${pkgs.systemd}/bin/halt";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.systemd}/bin/reboot";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.systemd}/bin/poweroff";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "${pkgs.systemd}/bin/shutdown";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
+    polkit.extraConfig = ''
+      polkit.addRule(function(action, subject) {
+        if (
+          subject.isInGroup("users")
+            && (
+              action.id == "org.freedesktop.login1.reboot" ||
+              action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
+              action.id == "org.freedesktop.login1.power-off" ||
+              action.id == "org.freedesktop.login1.power-off-multiple-sessions" ||
+              action.id == "org.freedesktop.login1.set-reboot-parameter" ||
+              action.id == "org.freedesktop.login1.set-reboot-to-firmware-setup" ||
+              action.id == "org.freedesktop.login1.set-reboot-to-boot-loader-menu" ||
+              action.id == "org.freedesktop.login1.set-reboot-to-boot-loader-entry"
+            )
+          )
         {
-          matches = [ { "node.name" = "alsa_output.pci-0000_03_00.1.hdmi-stereo-extra1"; } ];
-          actions.update-props = {
-            "priority.driver" = 1500;
-            "priority.session" = 1500;
-          };
+          return polkit.Result.YES;
         }
-        {
-          matches = [ { "node.name" = "alsa_output.pci-0000_03_00.1.hdmi-stereo"; } ];
-          actions.update-props = {
-            "priority.driver" = 1000;
-            "priority.session" = 1000;
-          };
-        }
-        {
-          matches = [ { "node.name" = "alsa_output.pci-0000_7f_00.6.analog-stereo"; } ];
-          actions.update-props = {
-            "priority.driver" = 500;
-            "priority.session" = 500;
-          };
-        }
-        {
-          matches = [
-            {
-              "node.name" = "alsa_input.usb-FIFINE_Microphones_FIFINE_K678_Microphone_REV1.0-00.analog-stereo";
-            }
-          ];
-          actions.update-props = {
-            "priority.driver" = 1800;
-            "priority.session" = 1800;
-          };
-        }
-        {
-          matches = [ { "node.name" = "alsa_input.pci-0000_7f_00.6.analog-stereo"; } ];
-          actions.update-props = {
-            "priority.driver" = 500;
-            "priority.session" = 500;
-          };
-        }
-      ];
-      # Bluetooth loopback nodes get hardcoded priority.session = 2010 in
-      # WirePlumber's bluez.lua script, which cannot be overridden by rules.
-      # BT headphone priority is inherently highest when connected, and
-      # disappears when disconnected - triggering automatic fallback.
-    };
-  };
-
-  services.openssh.enable = true;
-  services.tor = {
-    enable = true;
-    client.enable = true;
-  };
-
-  services.mullvad-vpn = {
-    enable = true;
-    package = pkgs.mullvad-vpn;
+      })
+    '';
   };
 
   # Web UI: https://localhost:47990
   # Ports: TCP 47984-47990, UDP 47998-48010
-  services.sunshine = {
-    enable = true;
-    autoStart = true;
-    capSysAdmin = true;
-    openFirewall = true;
-    settings = {
-      origin_web_ui_allowed = "wan";
+
+  virtualisation = {
+    docker = {
+      enable = true;
+      daemon.settings = {
+        debug = true;
+        metrics-addr = "0.0.0.0:9323";
+        default-address-pools = [
+          {
+            base = "172.17.0.0/12";
+            size = 24;
+          }
+          {
+            base = "192.168.0.0/16";
+            size = 24;
+          }
+        ];
+      };
     };
-  };
-
-  services.udev.extraRules = ''
-    KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"
-  '';
-
-  services.openvpn.servers = {
-    uihpc = {
-      config = "config /home/mustafa/openvpn/hpc12.ovpn ";
+    virtualbox.host = {
+      enable = false;
+      enableExtensionPack = true;
     };
-  };
-
-  security.sudo.extraRules = [
-    {
-      users = [ "mustafa" ];
-      commands = [
-        {
-          command = "${pkgs.systemd}/bin/halt";
-          options = [ "NOPASSWD" ];
-        }
-        {
-          command = "${pkgs.systemd}/bin/reboot";
-          options = [ "NOPASSWD" ];
-        }
-        {
-          command = "${pkgs.systemd}/bin/poweroff";
-          options = [ "NOPASSWD" ];
-        }
-        {
-          command = "${pkgs.systemd}/bin/shutdown";
-          options = [ "NOPASSWD" ];
-        }
-      ];
-    }
-  ];
-
-  security.polkit.extraConfig = ''
-    polkit.addRule(function(action, subject) {
-      if (
-        subject.isInGroup("users")
-          && (
-            action.id == "org.freedesktop.login1.reboot" ||
-            action.id == "org.freedesktop.login1.reboot-multiple-sessions" ||
-            action.id == "org.freedesktop.login1.power-off" ||
-            action.id == "org.freedesktop.login1.power-off-multiple-sessions" ||
-            action.id == "org.freedesktop.login1.set-reboot-parameter" ||
-            action.id == "org.freedesktop.login1.set-reboot-to-firmware-setup" ||
-            action.id == "org.freedesktop.login1.set-reboot-to-boot-loader-menu" ||
-            action.id == "org.freedesktop.login1.set-reboot-to-boot-loader-entry"
-          )
-        )
-      {
-        return polkit.Result.YES;
-      }
-    })
-  '';
-
-  virtualisation.docker = {
-    enable = true;
-    daemon.settings = {
-      debug = true;
-      metrics-addr = "0.0.0.0:9323";
-      default-address-pools = [
-        {
-          base = "172.17.0.0/12";
-          size = 24;
-        }
-        {
-          base = "192.168.0.0/16";
-          size = 24;
-        }
-      ];
+    libvirtd = {
+      enable = true;
+      onBoot = "ignore";
+      onShutdown = "shutdown";
+      qemu.runAsRoot = true;
     };
   };
 
   # Defer Docker startup to after GUI and Tailscale
-  systemd.services.docker = {
-    after = [
-      "graphical.target"
-      "tailscale-autoconnect.service"
-    ];
-    wants = [ "tailscale-autoconnect.service" ];
-    wantedBy = lib.mkForce [ "graphical.target" ];
-  };
-
-  virtualisation.virtualbox.host = {
-    enable = false;
-    enableExtensionPack = true;
-  };
-
-  virtualisation.libvirtd = {
-    enable = true;
-    onBoot = "ignore";
-    onShutdown = "shutdown";
-    qemu.runAsRoot = true;
-  };
 
   users.extraGroups.vboxusers.members = [ "mustafa" ];
 
-  systemd.services.NetworkManager-wait-online.enable = false;
-  systemd.services.pcscd.enable = false;
-  systemd.sockets.pcscd.enable = false;
-
-  systemd.user.services.polkit-gnome-authentication-agent-1 = {
-    description = "polkit-gnome-authentication-agent-1";
-    wantedBy = [ "graphical-session.target" ];
-    wants = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-      Restart = "on-failure";
-      RestartSec = 1;
-      TimeoutStopSec = 10;
-    };
-  };
-
-  systemd.services.tailscale-autoconnect = {
-    description = "Automatic connection to Tailscale";
-    after = [
-      "network-pre.target"
-      "tailscale.service"
-      "graphical.target"
-    ];
-    wants = [
-      "network-pre.target"
-      "tailscale.service"
-    ];
-    wantedBy = [ "graphical.target" ];
-    serviceConfig.Type = "oneshot";
-    script = with pkgs; ''
-      sleep 2
-      status="$(${tailscale}/bin/tailscale status -json | ${jq}/bin/jq -r .BackendState)"
-      if [ $status = "Running" ]; then
-        exit 0
-      fi
-      ${tailscale}/bin/tailscale up
-    '';
-  };
-
   # Prevent sleep while libvirt VMs are running
-  systemd.services."libvirt-nosleep@" = {
-    enable = true;
-    description = ''Preventing sleep while libvirt domain "%i" is running'';
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = ''${pkgs.systemd}/bin/systemd-inhibit --what=sleep --why=" Libvirt domain \"%i\" is running" --who=%U --mode=block sleep infinity'';
-    };
-  };
-
-  systemd.services.libvirtd = {
-    enable = true;
-    path =
-      let
-        env = pkgs.buildEnv {
-          name = "qemu-hook-env";
-          paths = with pkgs; [
-            bash
-            libvirt
-            kmod
-            systemd
-            ripgrep
-            sd
-            pciutils
-            procps
-            gawk
-          ];
-        };
-      in
-      [ env ];
-  };
-
-  systemd.services.warp-svc.enable = true;
-  systemd.packages = with pkgs; [ cloudflare-warp ];
 
   documentation.man.cache.enable = true;
   documentation.dev.enable = true;

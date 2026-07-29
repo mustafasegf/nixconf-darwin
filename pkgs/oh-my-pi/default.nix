@@ -6,16 +6,16 @@
 }:
 
 let
-  version = "16.3.15";
+  version = "17.0.1";
 
   sources = {
     "aarch64-darwin" = {
       asset = "omp-darwin-arm64";
-      hash = "sha256-23JFq8Ta6DlgXB2KiSq70V4bQiq6i0i1NUvSCcSbHJ4=";
+      hash = "sha256-73v/zOUjOlogosd77hfgpY7uTYaoysxed9BaPO6VTPg=";
     };
     "x86_64-linux" = {
       asset = "omp-linux-x64";
-      hash = "sha256-iWdOqufYi050IdCIntxOXyY2slkaFAXXGK7ZqLlrXUU=";
+      hash = "sha256-QnqHQ7C073AcxKDGa/HwuRzsBigOjfYilKEU4H+zghU=";
     };
   };
 

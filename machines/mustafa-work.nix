@@ -18,6 +18,12 @@
     mutableTaps = false;
   };
 
+  networking = {
+    hostName = "mustafa-work";
+    computerName = "mustafa-work";
+    localHostName = "mustafa-work";
+  };
+
   users.users."mustafa".home = "/users/mustafa";
 
   system.primaryUser = "mustafa";

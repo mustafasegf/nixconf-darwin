@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   imports = [
@@ -196,4 +201,15 @@
     EDITOR = "nvim";
     VISUAL = "nvim";
   };
+
+  home.activation.herdrIntegrations =
+    let
+      herdr = inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    in
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      [ -d "$HOME/.pi/agent" ] && run mkdir -p "$HOME/.pi/agent/extensions"
+      for agent in pi omp codex claude; do
+        run ${herdr}/bin/herdr integration install "$agent" || true
+      done
+    '';
 }

@@ -121,6 +121,7 @@
       # macOS: pre-built app bundle from GitHub releases
       ghidra-mcp = prev.callPackage ../../pkgs/ghidra-mcp { };
       linear-cli = prev.callPackage ../../pkgs/linear-cli { };
+      slackcli = prev.callPackage ../../pkgs/slackcli { };
       playwriter = prev.callPackage ../../pkgs/playwriter { };
       oh-my-pi = prev.callPackage ../../pkgs/oh-my-pi { };
 

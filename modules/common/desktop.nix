@@ -184,9 +184,7 @@
         devenv
         tailscale
         linear-cli
-        (writeShellScriptBin "slack-cli" ''
-          exec ${pkgs.slack-cli}/bin/slack "$@"
-        '')
+        slackcli
       ]
       ++ lib.optionals config.custom.enableXcode [
         xcodes

@@ -211,5 +211,6 @@
       for agent in pi omp codex claude; do
         run ${herdr}/bin/herdr integration install "$agent" || true
       done
+      run ${herdr}/bin/herdr plugin install qu8n/herdr-automatic-rename --yes || true
     '';
 }

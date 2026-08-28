@@ -252,6 +252,10 @@ in
       source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
       unset -v SSH_ASKPASS
 
+      for _f in ''${HOME}/.config/herdr/plugins/github/herdr-automatic-rename-*/shell/hook.zsh(N); do
+        source $_f; break
+      done
+
       if [[ -n "$SSH_CONNECTION" ]] && [[ -z "$TMUX" ]]; then
         echo "Run 'ta' to attach to tmux"
       fi

@@ -373,10 +373,7 @@
     autorandr.enable = true;
     udisks2.enable = true;
     printing.enable = true;
-    blueman = {
-      enable = true;
-      withApplet = false;
-    };
+    blueman.enable = true;
     picom.enable = false;
     tumbler.enable = true;
     gvfs.enable = true;

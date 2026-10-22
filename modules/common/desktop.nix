@@ -53,7 +53,7 @@
         zig
         deno
         gleam
-        erlang
+        beamPackages.erlang
         ghc
         cabal-install
         # dotnet-sdk  # requires Swift build on macOS
@@ -94,7 +94,6 @@
         nix-output-monitor
         glow
         gum
-        tmate
         mods
         mold
         geckodriver

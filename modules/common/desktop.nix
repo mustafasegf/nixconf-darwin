@@ -190,6 +190,8 @@
         xcodes
       ];
 
+    programs._1password.enable = true;
+
     home-manager.sharedModules = [
       {
         home.file = {

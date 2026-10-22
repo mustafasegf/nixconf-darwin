@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   system = {
@@ -22,5 +22,9 @@
     "notion-mail"
     "notion-calendar"
     "linear-linear"
+    "tailscale-app"
   ];
+
+  # The Tailscale GUI app ships its own network extension, which conflicts with nix-darwin's tailscaled
+  services.tailscale.enable = lib.mkForce false;
 }

@@ -184,9 +184,19 @@
         tailscale
         linear-cli
         slackcli
+        outline-cli
       ]
       ++ lib.optionals config.custom.enableXcode [
         xcodes
       ];
+
+    home-manager.sharedModules = [
+      {
+        home.file = {
+          ".claude/skills/outline-cli".source = "${pkgs.outline-cli}/share/outline-cli/skills/outline-cli";
+          ".agents/skills/outline-cli".source = "${pkgs.outline-cli}/share/outline-cli/skills/outline-cli";
+        };
+      }
+    ];
   };
 }

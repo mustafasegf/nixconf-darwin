@@ -22,10 +22,10 @@
         pkgs.ghidra-mcp
       ]))
     ]
-    ++ lib.optionals pkgs.stdenv.isDarwin [
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [
       handy
     ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.default
       vlc
       mpv

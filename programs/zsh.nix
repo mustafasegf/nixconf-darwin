@@ -7,20 +7,23 @@
 
 let
   rustArch =
-    if pkgs.stdenv.isLinux then
-      if pkgs.stdenv.isAarch64 then "aarch64-unknown-linux-gnu" else "x86_64-unknown-linux-gnu"
-    else if pkgs.stdenv.isDarwin then
-      if pkgs.stdenv.isAarch64 then "aarch64-apple-darwin" else "x86_64-apple-darwin"
+    if pkgs.stdenv.hostPlatform.isLinux then
+      if pkgs.stdenv.hostPlatform.isAarch64 then
+        "aarch64-unknown-linux-gnu"
+      else
+        "x86_64-unknown-linux-gnu"
+    else if pkgs.stdenv.hostPlatform.isDarwin then
+      if pkgs.stdenv.hostPlatform.isAarch64 then "aarch64-apple-darwin" else "x86_64-apple-darwin"
     else
       throw "Unsupported platform";
 
-  platformPaths = lib.optionalString pkgs.stdenv.isDarwin ''
+  platformPaths = lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
     export PATH=$PATH:/opt/homebrew/bin:~/Library/Python/3.9/bin
     export PATH=$PATH:~/.cache/.bun/bin
     export LIBRARY_PATH=$LIBRARY_PATH:${pkgs.libiconv}/lib
   '';
 
-  linuxEnv = lib.optionalString pkgs.stdenv.isLinux ''
+  linuxEnv = lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
     CARGO_MOMMYS_LITTLE="boy/baby"
   '';
 
@@ -365,7 +368,7 @@ in
         [ -n "$host" ] && print -z "ssh $host"
       }
 
-      ${lib.optionalString pkgs.stdenv.isLinux ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
         function cmw() {
           cargo watch -x "mommy $@"
         }
@@ -375,7 +378,7 @@ in
         }
       ''}
 
-      ${lib.optionalString pkgs.stdenv.isDarwin ''
+      ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
         function frfr() {
           original_dir="$(pwd)"
           original_dir_name="$(basename "$original_dir")"
@@ -449,7 +452,7 @@ in
         agkozak/zsh-z
 
 
-      # ${lib.optionalString pkgs.stdenv.isLinux ''
+      # ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
         #   zinit wait lucid for \
         #     sobolevn/wakatime-zsh-plugin
         # ''}
@@ -487,7 +490,7 @@ in
       "...." = "cd ../../..";
       "....." = "cd ../../../..";
     }
-    // lib.optionalAttrs pkgs.stdenv.isLinux {
+    // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
       car = "cargo";
       cm = "cargo mommy";
       cmr = "cargo mommy run";
@@ -496,7 +499,7 @@ in
       cmbr = "cargo mommy build --release";
       cma = "cargo mommy add";
     }
-    // lib.optionalAttrs pkgs.stdenv.isDarwin {
+    // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
       k = "kubectl";
       kl = "kubectl logs";
       klf = "kubectl logs -f";

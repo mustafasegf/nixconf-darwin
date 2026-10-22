@@ -99,6 +99,32 @@
         ) (old.patches or [ ]);
       });
 
+      # nixpkgs ships xcodes 1.6.2, whose Apple ID login has been broken since
+      # Apple changed their auth endpoint (XcodesOrg/xcodes#447). 2.x fixes it,
+      # but bumping the source build would require regenerating the swiftpm2nix
+      # lockfile, so use the signed prebuilt release binary instead.
+      xcodes = prev.stdenvNoCC.mkDerivation (finalAttrs: {
+        pname = "xcodes";
+        version = "2.1.0";
+        src = prev.fetchzip {
+          url = "https://github.com/XcodesOrg/xcodes/releases/download/${finalAttrs.version}/xcodes.zip";
+          hash = "sha256-yffHopseb030I95h0aTwlTk5Qbsmz5AB7ZjHnrX2wD4=";
+          stripRoot = false;
+        };
+        nativeBuildInputs = [ prev.makeWrapper ];
+        dontBuild = true;
+        installPhase = ''
+          runHook preInstall
+          install -D $src/xcodes $out/bin/xcodes
+          wrapProgram $out/bin/xcodes \
+            --prefix PATH : ${prev.lib.makeBinPath [ prev.aria2 ]}
+          runHook postInstall
+        '';
+        meta = prev.xcodes.meta // {
+          sourceProvenance = [ prev.lib.sourceTypes.binaryNativeCode ];
+        };
+      });
+
       # Bump to 0.44.0 for the `ast-grep outline` subcommand, which is not
       # yet available in the pinned nixpkgs (still on 0.43.0).
       ast-grep = prev.ast-grep.overrideAttrs (old: rec {

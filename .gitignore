@@ -1,3 +1,4 @@
 actions-runner-linux-x64-*.tar.gz
 actions-runner/
 runner-dockerfile
+__pycache__/

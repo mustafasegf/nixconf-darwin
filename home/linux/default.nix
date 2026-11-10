@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   upkgs ? pkgs,
   ppkgs ? pkgs,
@@ -8,6 +9,8 @@
 }:
 
 let
+  flakeDir = "${config.home.homeDirectory}/project/nixconf-darwin";
+
   catppuccinGtkTheme = {
     name = "catppuccin-mocha-mauve-standard";
     package = pkgs.catppuccin-gtk.override {
@@ -107,6 +110,18 @@ in
       "lxqt/lxqt.conf".source = ../../config/catppuccin/lxqt/lxqt.conf;
       "lxqt/session.conf".source = ../../config/catppuccin/lxqt/session.conf;
       "rofi/config.rasi".source = ../../config/rofi/config.rasi;
+
+      "qtile/config.py".source = config.lib.file.mkOutOfStoreSymlink "${flakeDir}/config/qtile/config.py";
+      "qtile/floating_window_snapping.py".source =
+        config.lib.file.mkOutOfStoreSymlink "${flakeDir}/config/qtile/floating_window_snapping.py";
+      "qtile/scripts/powermenu.sh".source =
+        config.lib.file.mkOutOfStoreSymlink "${flakeDir}/config/scripts/powermenu.sh";
+      "qtile/scripts/brightness.sh".source =
+        config.lib.file.mkOutOfStoreSymlink "${flakeDir}/config/scripts/brightness.sh";
+      "qtile/scripts/volume.sh".source =
+        config.lib.file.mkOutOfStoreSymlink "${flakeDir}/config/scripts/volume.sh";
+      "qtile/scripts/runspt".source =
+        config.lib.file.mkOutOfStoreSymlink "${flakeDir}/config/scripts/runspt";
     };
     desktopEntries.ocr = {
       name = "OCR image";

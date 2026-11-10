@@ -12,6 +12,7 @@
 {
   imports = [
     ../modules/nixos/desktop.nix
+    ../modules/nixos/fingerprint.nix
   ];
 
   nix.settings.cores = 2;
@@ -43,6 +44,8 @@
     ];
     kernelParams = [
       "amd_iommu=on"
+      "iommu=pt"
+      "video=efifb:off"
       "processor.max_cstate=1"
     ];
     extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback.out ];
@@ -84,22 +87,19 @@
       device = "/dev/disk/by-uuid/C51D-9D51";
       fsType = "vfat";
     };
-    "/win" = {
-      device = "/dev/disk/by-uuid/92BEF8A5BEF88351";
-      fsType = "ntfs-3g";
-      options = [
-        "rw"
-        "uid=1000"
-      ];
-    };
   };
 
   swapDevices = [
     {
       device = "/swapfile";
-      size = 8 * 1024;
+      size = 32 * 1024;
     }
   ];
+
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware = {

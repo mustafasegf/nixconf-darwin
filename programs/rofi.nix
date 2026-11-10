@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  ppkgs ? pkgs,
   libs,
   ...
 }:
@@ -10,7 +11,7 @@
       plugins = [
         rofi-calc
         rofi-emoji
-        rofi-pass
+        ppkgs.rofi-pass
         rofi-systemd
       ];
     })

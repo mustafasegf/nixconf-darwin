@@ -269,7 +269,7 @@ layouts = [
 
 widget_defaults = dict(
     font="sans",
-    fontsize=12,
+    fontsize=16,
     padding=3,
 )
 extension_defaults = widget_defaults.copy()
@@ -318,18 +318,18 @@ def init_widget_screen_vertical():
 
 screens = [
     # Screen(),
-    Screen(top=bar.Bar(init_widget_list(), background="#0000004f", opacity=1, size=30)),
+    Screen(top=bar.Bar(init_widget_list(), background="#0000004f", opacity=1, size=36)),
     Screen(
         top=bar.Bar(
-            init_widget_screen_vertical(), background="#0000004f", opacity=1, size=30
+            init_widget_screen_vertical(), background="#0000004f", opacity=1, size=36
         )
     ),
     Screen(
         top=bar.Bar(
-            init_widget_screen_vertical(), background="#0000004f", opacity=1, size=30
+            init_widget_screen_vertical(), background="#0000004f", opacity=1, size=36
         )
     ),
-    # Screen(top=bar.Bar(init_widget_screen_vertical(), background="#0000004f", opacity=1, size=30)),
+    # Screen(top=bar.Bar(init_widget_screen_vertical(), background="#0000004f", opacity=1, size=36)),
 ]
 
 # Drag floating layouts.

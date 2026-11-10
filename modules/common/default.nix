@@ -67,10 +67,25 @@
     allowUnfree = true;
     allowUnsupportedSystem = true;
     allowBroken = true;
+    allowInsecurePredicate =
+      pkg:
+      builtins.elem (lib.getName pkg) [
+        "sidequest"
+        "beekeeper-studio"
+        "ventoy"
+      ];
   };
 
   nixpkgs.overlays = [
     (final: prev: {
+      # obs-source-switcher uses the now-deprecated obs_properties_add_button and
+      # builds with -Werror; GCC 16 + newer OBS turns the deprecation into an error.
+      obs-studio-plugins = prev.obs-studio-plugins // {
+        obs-source-switcher = prev.obs-studio-plugins.obs-source-switcher.overrideAttrs (o: {
+          NIX_CFLAGS_COMPILE = (o.NIX_CFLAGS_COMPILE or "") + " -Wno-error";
+        });
+      };
+
       # Use jdrouhard's patched mosh fork:
       # - OSC 52 clipboard support for tmux (PR #1104)
       # - SSH agent forwarding (PR #1297)
@@ -169,6 +184,7 @@
       outline-cli = prev.callPackage ../../pkgs/outline-cli { };
       playwriter = prev.callPackage ../../pkgs/playwriter { };
       oh-my-pi = prev.callPackage ../../pkgs/oh-my-pi { };
+      bootvine = prev.callPackage ../../pkgs/bootvine { };
 
       # ffmpeg-full deps whose test suites get SIGKILLed in the macOS nix
       # sandbox (OOM-style kills under memory pressure); skip checks.

@@ -19,6 +19,7 @@
 
   catppuccin = {
     enable = true;
+    autoEnable = true;
     flavor = "mocha";
   };
 
@@ -48,8 +49,10 @@
         enableZshIntegration = true;
         defaultOptions = [ "--layout=reverse --inline-info --height=90%" ];
         defaultCommand = cmd;
-        fileWidgetCommand = "${cmd} --type f";
-        changeDirWidgetCommand = "${cmd} --type d";
+        fileWidget.command = "${cmd} --type f";
+        changeDirWidget.command = "${cmd} --type d";
+        # Let atuin own Ctrl-R; disable fzf's history widget to avoid the clash.
+        historyWidget.command = "";
       };
     starship = {
       enable = true;

@@ -2,12 +2,152 @@
   config,
   lib,
   pkgs,
+  inputs,
   upkgs ? pkgs,
   ppkgs ? pkgs,
   staging-pkgs ? pkgs,
   mpkgs ? pkgs,
   ...
 }:
+
+let
+  vfioDomain = "win11";
+
+  gpuPassthroughHook = pkgs.writeShellScript "qemu-hook-vfio" ''
+    set -x
+    export PATH=${
+      lib.makeBinPath [
+        pkgs.systemd
+        pkgs.kmod
+        pkgs.coreutils
+        pkgs.gnugrep
+        pkgs.util-linux
+      ]
+    }:$PATH
+
+    GUEST="$1"
+    OP="$2"
+    [ "$GUEST" = "${vfioDomain}" ] || exit 0
+
+    STATE_DIR="/run/libvirt/vfio-$GUEST"
+    mkdir -p "$STATE_DIR"
+
+    stop_display_manager() {
+      if systemctl is-active --quiet display-manager.service; then
+        echo display-manager > "$STATE_DIR/display-manager"
+        systemctl stop display-manager.service || true
+        systemctl isolate multi-user.target || true
+      else
+        echo display-manager > "$STATE_DIR/display-manager"
+      fi
+
+      while systemctl is-active --quiet display-manager.service; do
+        sleep 1
+      done
+    }
+
+    start_display_manager() {
+      if [ -s "$STATE_DIR/display-manager" ]; then
+        while read -r service; do
+          systemctl start "$service.service" || true
+        done < "$STATE_DIR/display-manager"
+      else
+        systemctl start display-manager.service || true
+      fi
+    }
+
+    unbind_consoles() {
+      : > "$STATE_DIR/bound-consoles"
+      for vtcon in /sys/class/vtconsole/vtcon*; do
+        [ -e "$vtcon/name" ] || continue
+        if grep -q "frame buffer" "$vtcon/name" 2>/dev/null; then
+          echo 0 > "$vtcon/bind" || true
+          vtconName="$(basename "$vtcon")"
+          echo "''${vtconName#vtcon}" >> "$STATE_DIR/bound-consoles"
+        fi
+      done
+    }
+
+    rebind_consoles() {
+      [ -s "$STATE_DIR/bound-consoles" ] || return 0
+      while read -r console; do
+        vtcon="/sys/class/vtconsole/vtcon$console"
+        [ -e "$vtcon/name" ] || continue
+        if grep -q "frame buffer" "$vtcon/name" 2>/dev/null; then
+          echo 1 > "$vtcon/bind" || true
+        fi
+      done < "$STATE_DIR/bound-consoles"
+    }
+
+    unbind_framebuffers() {
+      if [ -e /sys/bus/platform/drivers/efi-framebuffer/efi-framebuffer.0 ]; then
+        echo efi-framebuffer.0 > /sys/bus/platform/drivers/efi-framebuffer/unbind || true
+      fi
+      if [ -e /sys/bus/platform/drivers/simple-framebuffer/simple-framebuffer.0 ]; then
+        echo simple-framebuffer.0 > /sys/bus/platform/drivers/simple-framebuffer/unbind || true
+      fi
+    }
+
+    save_cpu_governors() {
+      : > "$STATE_DIR/cpu-governors"
+      for governor in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+        [ -w "$governor" ] || continue
+        printf '%s %s\n' "$governor" "$(cat "$governor")" >> "$STATE_DIR/cpu-governors"
+        echo performance > "$governor" || true
+      done
+    }
+
+    restore_cpu_governors() {
+      [ -s "$STATE_DIR/cpu-governors" ] || return 0
+      while read -r governor value; do
+        [ -w "$governor" ] || continue
+        echo "$value" > "$governor" || true
+      done < "$STATE_DIR/cpu-governors"
+    }
+
+    sleep_reset() {
+      if grep -qw mem /sys/power/state 2>/dev/null; then
+        rtcwake -m mem -s 3 || true
+      fi
+    }
+
+    case "$OP" in
+      prepare)
+        systemctl start libvirt-nosleep@"$GUEST" || true
+        save_cpu_governors
+        stop_display_manager
+        sleep 1
+        unbind_consoles
+        unbind_framebuffers
+        sleep 1
+        modprobe -r drm_kms_helper || true
+        modprobe -r amdgpu || true
+        modprobe -r radeon || true
+        modprobe -r drm || true
+        modprobe vfio || true
+        modprobe vfio_pci || true
+        modprobe vfio_iommu_type1 || true
+        sleep_reset
+        ;;
+
+      release)
+        sleep_reset
+        modprobe -r vfio_pci || true
+        modprobe -r vfio_iommu_type1 || true
+        modprobe -r vfio || true
+        modprobe drm || true
+        modprobe amdgpu || true
+        modprobe radeon || true
+        modprobe drm_kms_helper || true
+        start_display_manager
+        rebind_consoles
+        restore_cpu_governors
+        systemctl stop libvirt-nosleep@"$GUEST" || true
+        rm -rf "$STATE_DIR"
+        ;;
+    esac
+  '';
+in
 
 {
   time.timeZone = "Asia/Jakarta";
@@ -25,6 +165,7 @@
     LC_TIME = "id_ID.utf8";
   };
 
+  catppuccin.autoEnable = true;
   catppuccin.tty.enable = true;
 
   console = {
@@ -104,13 +245,14 @@
     };
     systemPackages = with pkgs; [
       arandr
+      bootvine
       copyq
       # dunst - moved to HM for catppuccin theming
       find-cursor
       ppkgs.flameshot
       killall
       libnotify
-      nitrogen
+      ppkgs.nitrogen
       pavucontrol
       ncpamixer
       pulseaudioFull
@@ -150,11 +292,11 @@
       d2
       ascii-image-converter
       mediainfo
-      djvu2pdf
+      ppkgs.djvu2pdf
       djvulibre
       ghostscript
       gimagereader
-      waifu2x-converter-cpp
+      ppkgs.waifu2x-converter-cpp
 
       kdePackages.kate
       gedit
@@ -237,7 +379,7 @@
       most
       libsecret
       usermount
-      devmem2
+      ppkgs.devmem2
       gpm
       chntpw
       smem
@@ -263,7 +405,7 @@
       statix
       poetry
       pandoc
-      texlive.combined.scheme-full
+      texliveFull
       vulkan-tools
       clinfo
       SDL2
@@ -432,7 +574,6 @@
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
-      jack.enable = true;
 
       # Audio output priority: WH-1000XM5 > HDMI (Beyond TV) > DP > AUX
       # Audio input priority:  Easy Effects > FIFINE K678 > WH-1000XM5 > AUX
@@ -491,10 +632,20 @@
     };
     mullvad-vpn = {
       enable = true;
-      package = pkgs.mullvad-vpn;
+      gui.enable = true;
     };
     sunshine = {
+      enable = false;
+      autoStart = false;
+      capSysAdmin = true;
+      openFirewall = false;
+      settings = {
+        origin_web_ui_allowed = "wan";
+      };
+    };
+    apollo = {
       enable = true;
+      package = inputs.apollo.packages.${pkgs.stdenv.hostPlatform.system}.default;
       autoStart = true;
       capSysAdmin = true;
       openFirewall = true;
@@ -517,23 +668,6 @@
       # Workaround: shaderc linking is broken in this nixpkgs rev (ffmpeg 8.x)
       # https://github.com/NixOS/nixpkgs/pull/477464
       ffmpeg-full = prev.ffmpeg-full.override { withShaderc = false; };
-
-      # Workaround: unbreak-hardcoded-tables.patch (written for ffmpeg 8.x) removes the
-      # av_malloc stub from tableprint_vlc.h, but ffmpeg 7.x still uses av_malloc in vlc.c.
-      handbrake = prev.handbrake.override {
-        ffmpeg_7-full = prev.ffmpeg_7-full // {
-          override =
-            args:
-            (prev.ffmpeg_7-full.override args).overrideAttrs (old: {
-              postPatch = (old.postPatch or "") + ''
-                if grep -q 'av_mallocz(s) NULL' libavcodec/tableprint_vlc.h 2>/dev/null && \
-                   ! grep -q 'av_malloc(s) NULL' libavcodec/tableprint_vlc.h 2>/dev/null; then
-                  sed -i '/define av_mallocz(s) NULL/a #define av_malloc(s) NULL' libavcodec/tableprint_vlc.h
-                fi
-              '';
-            });
-        };
-      };
     })
   ];
 
@@ -575,14 +709,13 @@
       libxdmcp
       libxau
 
-      xcbutil
-      xcbutilimage
-      xcbutilkeysyms
-      xcbutilrenderutil
-      xcbutilwm
+      libxcb-util
+      libxcb-image
+      libxcb-keysyms
+      libxcb-render-util
+      libxcb-wm
 
       libxkbcommon
-      libxkbcommon_x11
 
       freetype
       fontconfig
@@ -603,6 +736,7 @@
         after = [ "openrgb.service" ];
         wants = [ "openrgb.service" ];
         wantedBy = [ "multi-user.target" ];
+        environment.HOME = "/home/mustafa";
         serviceConfig = {
           Type = "oneshot";
           ExecStartPre = "${pkgs.coreutils}/bin/sleep 10";
@@ -771,6 +905,7 @@
       onBoot = "ignore";
       onShutdown = "shutdown";
       qemu.runAsRoot = true;
+      hooks.qemu.${vfioDomain} = gpuPassthroughHook;
     };
   };
 

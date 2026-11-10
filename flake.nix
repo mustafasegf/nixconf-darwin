@@ -83,10 +83,12 @@
     handy.url = "github:cjpais/Handy";
     handy.inputs.nixpkgs.follows = "nixpkgs";
     ghostty.url = "github:ghostty-org/ghostty";
-    opencode.url = "github:anomalyco/opencode";
+    # Pinned: newer revs ship a stale node_modules FOD hash (upstream bug).
+    opencode.url = "github:anomalyco/opencode/248bfbe1117da1e7cc23bd41273188318afec3a5";
     claude-code.url = "github:sadjow/claude-code-nix";
     herdr.url = "github:ogulcancelik/herdr";
     herdr.inputs.nixpkgs.follows = "nixpkgs";
+    apollo.url = "github:nil-andreas/apollo-flake";
   };
 
   outputs =
@@ -170,6 +172,7 @@
                   inputs.nix-ld.nixosModules.nix-ld
                   inputs.minegrub-theme.nixosModules.default
                   inputs.catppuccin.nixosModules.catppuccin
+                  inputs.apollo.nixosModules.${system}.default
 
                   {
                     home-manager = {

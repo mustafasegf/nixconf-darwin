@@ -70,7 +70,7 @@ def show_keybindings(qtile):
 
 mod = "mod4"
 # terminal = guess_terminal()
-terminal = "kitty"
+terminal = "ghostty"
 browser = "google-chrome-stable"
 home = os.path.expanduser("~")
 config_dir = os.path.dirname(os.path.abspath(__file__))
@@ -82,7 +82,7 @@ keys = [
     Key(
         [mod],
         "d",
-        lazy.spawn("rofi -modi drun -show drun -term kitty"),
+        lazy.spawn("rofi -modi drun -show drun -term ghostty"),
         desc="launch app launcher",
     ),
     Key([mod], "slash", show_keybindings, desc="show keybinding cheat sheet"),
@@ -96,9 +96,9 @@ keys = [
         desc="Shutdown Qtile",
     ),
     Key(["mod1", "shift"], "q", lazy.shutdown()),
-    Key([mod], "o", lazy.spawn("kitty lf"), desc="launch lf"),
+    Key([mod], "o", lazy.spawn("ghostty -e lf"), desc="launch lf"),
     Key([mod, "shift"], "o", lazy.spawn("thunar"), desc="launch lf"),
-    Key([mod], "u", lazy.spawn(f"kitty {script_dir}/runspt"), desc="launch spt"),
+    Key([mod], "u", lazy.spawn(f"ghostty -e {script_dir}/runspt"), desc="launch spt"),
     Key(
         [mod],
         "w",
@@ -112,12 +112,12 @@ keys = [
         [mod, "shift"],
         "d",
         lazy.spawn(
-            "rofi -modi drun -show window -linepadding 4 -columns 2 -padding 50 -hide-scrollbar -terminal kitty -show-icons"
+            "rofi -modi drun -show window -linepadding 4 -columns 2 -padding 50 -hide-scrollbar -terminal ghostty -show-icons"
         ),
         desc="launch browser",
     ),
     Key([mod], "p", lazy.spawn("discord"), desc="launch discord"),
-    Key([mod], "t", lazy.spawn("kitty btop"), desc="launch btop"),
+    Key([mod], "t", lazy.spawn("ghostty -e btop"), desc="launch btop"),
     # Switch between windows
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),

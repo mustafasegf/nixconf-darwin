@@ -23,16 +23,12 @@ buildGhidraExtension {
     sed -i '/repositories {/,/}/d' build.gradle
     sed -i "/testImplementation/d" build.gradle
 
-    # Gradle 9.x toolchain detection can't find/provision a JDK 21 install in the
-    # sandbox; drop the pin so it uses the JDK buildGhidraExtension already runs on.
     sed -i '/toolchain {/,/}/d' build.gradle
 
     # Fix API compatibility with Ghidra 12.0.4 (LoadResults.save signature changed)
     sed -i 's/loadResults\.save(project, /loadResults.save(/g' \
       src/main/java/com/xebyte/core/ProgramScriptService.java
 
-    # Ghidra's DataTypeManager.remove(DataType, TaskMonitor) overload now takes a
-    # List<DataType>; use the single-argument remove(DataType) instead.
     sed -i 's/dtm\.remove(dataType, null)/dtm.remove(dataType)/g' \
       src/main/java/com/xebyte/core/DataTypeService.java
   '';

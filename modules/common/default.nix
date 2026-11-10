@@ -78,8 +78,6 @@
 
   nixpkgs.overlays = [
     (final: prev: {
-      # obs-source-switcher uses the now-deprecated obs_properties_add_button and
-      # builds with -Werror; GCC 16 + newer OBS turns the deprecation into an error.
       obs-studio-plugins = prev.obs-studio-plugins // {
         obs-source-switcher = prev.obs-studio-plugins.obs-source-switcher.overrideAttrs (o: {
           NIX_CFLAGS_COMPILE = (o.NIX_CFLAGS_COMPILE or "") + " -Wno-error";

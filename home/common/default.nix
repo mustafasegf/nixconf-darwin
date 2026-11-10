@@ -51,7 +51,6 @@
         defaultCommand = cmd;
         fileWidget.command = "${cmd} --type f";
         changeDirWidget.command = "${cmd} --type d";
-        # Let atuin own Ctrl-R; disable fzf's history widget to avoid the clash.
         historyWidget.command = "";
       };
     starship = {

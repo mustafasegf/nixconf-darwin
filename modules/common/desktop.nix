@@ -139,10 +139,7 @@
         gcc
         # gdb  # build fails on modern macOS with clang
         k6
-        # Disabled: semgrep 1.180.0 is broken in current nixpkgs — patchelf 0.19.2
-        # crashes on semgrep-core, and it imports mcp.server.fastmcp which nixpkgs'
-        # mcp 2.3.0 removed (renamed to MCPServer). Re-enable once upstream catches up.
-        # semgrep
+        # semgrep  # broken in current nixpkgs (patchelf 0.19.2 + mcp 2.x)
         tig
 
         scc

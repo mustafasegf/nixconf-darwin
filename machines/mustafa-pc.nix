@@ -16,7 +16,10 @@
     ../modules/nixos/homelab.nix
   ];
 
-  nix.settings.cores = 2;
+  nix.settings = {
+    cores = 2;
+    max-jobs = 1;
+  };
 
   custom.enableXcode = false;
 

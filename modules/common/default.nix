@@ -46,18 +46,21 @@
       "mustafa.assagaf"
       "mustafa"
     ];
-    max-jobs = 1;
     substituters = [
       "https://ghostty.cachix.org"
       "https://devenv.cachix.org"
       "https://claude-code.cachix.org"
+      "https://cache.mus.sh/mus"
     ];
     trusted-public-keys = [
       "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk="
+      "mus:wnXW/yQqlss0+qAD3D1cjHcLs0y/UroAoM58lw9vTpw="
     ];
     fallback = true;
+    # cache.mus.sh is served from mustafa-pc, so don't stall builds when it's offline
+    connect-timeout = 5;
   };
 
   programs.zsh.enable = true;

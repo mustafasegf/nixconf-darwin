@@ -1,6 +1,8 @@
 { pkgs, lib, ... }:
 
 {
+  nix.settings.max-jobs = 1;
+
   system = {
     defaults.finder.AppleShowAllExtensions = true;
     defaults.finder.FXEnableExtensionChangeWarning = false;

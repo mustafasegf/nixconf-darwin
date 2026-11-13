@@ -653,6 +653,18 @@ in
         origin_web_ui_allowed = "wan";
       };
     };
+    # apollo-flake still sets the obsolete avahi publish options, which trigger warnings when non-null
+    avahi = {
+      publish = {
+        enable = lib.mkForce null;
+        userServices = lib.mkForce null;
+      };
+      settings.publish = {
+        disable-publishing = false;
+        disable-user-service-publishing = false;
+        publish-addresses = true;
+      };
+    };
     udev.extraRules = ''
       KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"
     '';

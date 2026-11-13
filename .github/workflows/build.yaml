@@ -1,0 +1,47 @@
+---
+{
+  name: "build",
+  "on": {
+    push: {
+      branches: [
+        "master",
+      ],
+    },
+    workflow_dispatch: {},
+  },
+  concurrency: {
+    group: "build-${{ github.ref }}",
+    cancel-in-progress: true,
+  },
+  jobs: {
+    linux: {
+      runs-on: [
+        "self-hosted",
+        "nix",
+      ],
+      steps: [{
+        uses: "actions/checkout@v4",
+      }, {
+        name: "Check KYAML formatting",
+        run: "nix run .#nixosConfigurations.mustafa-pc.pkgs.kyamlfmt -- -o kyaml -d .github/workflows/*.yaml",
+      }, {
+        name: "Build Linux hosts",
+        run: "\
+           nix build --print-build-logs --out-link result \\\n\
+           .#nixosConfigurations.mustafa-pc.config.system.build.toplevel \\\n\
+           .#nixosConfigurations.minipc.config.system.build.toplevel \\\n\
+           .#nixosConfigurations.greencloud.config.system.build.toplevel\n\
+          ",
+      }, {
+        name: "Push to cache",
+        env: {
+          ATTIC_TOKEN: "${{ secrets.ATTIC_TOKEN }}",
+        },
+        run: "\
+           attic login local http://127.0.0.1:8080 \"$ATTIC_TOKEN\"\n\
+           attic push local:mus result*\n\
+          ",
+      }],
+    },
+  },
+}

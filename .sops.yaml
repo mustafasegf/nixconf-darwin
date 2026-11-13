@@ -1,7 +1,13 @@
 keys:
   - &mustafa age1lfhm9yth5recdtjrndrf266t3e5ejhprmdn9ssf7nhcxy4d77cjq3px0a6
+  - &mustafa-pc age1nfrmhyuw7ux5yjswxlnd4wptvs02n9msfq7taxl47v35mjuxp9gseq47ea
 
 creation_rules:
+  - path_regex: secrets/mustafa-pc\.yaml$
+    key_groups:
+      - age:
+          - *mustafa
+          - *mustafa-pc
   - path_regex: secrets/.*\.yaml$
     key_groups:
       - age:

@@ -1,0 +1,59 @@
+---
+{
+  name: "update-flake",
+  "on": {
+    schedule: [{
+      cron: "0 19 * * 0",
+    }],
+    workflow_dispatch: {},
+  },
+  concurrency: {
+    group: "update-flake",
+    cancel-in-progress: false,
+  },
+  permissions: {
+    contents: "write",
+  },
+  jobs: {
+    update: {
+      runs-on: [
+        "self-hosted",
+        "nix",
+      ],
+      steps: [{
+        uses: "actions/checkout@v4",
+      }, {
+        name: "Update flake inputs",
+        run: "\
+           git config user.name \"github-actions[bot]\"\n\
+           git config user.email \"41898282+github-actions[bot]@users.noreply.github.com\"\n\
+           nix flake update --commit-lock-file\n\
+          ",
+      }, {
+        name: "Build Linux hosts",
+        run: "\
+           nix build --print-build-logs --out-link result \\\n\
+           .#nixosConfigurations.mustafa-pc.config.system.build.toplevel \\\n\
+           .#nixosConfigurations.minipc.config.system.build.toplevel \\\n\
+           .#nixosConfigurations.greencloud.config.system.build.toplevel\n\
+          ",
+      }, {
+        name: "Push to cache",
+        env: {
+          ATTIC_TOKEN: "${{ secrets.ATTIC_TOKEN }}",
+        },
+        run: "\
+           attic login local http://127.0.0.1:8080 \"$ATTIC_TOKEN\"\n\
+           attic push local:mus result*\n\
+          ",
+      }, {
+        name: "Push lock update to master",
+        run: "git push origin HEAD:master",
+      }, {
+        name: "Push failed update for manual fixing",
+        if: "failure()",
+        run: "git push --force origin HEAD:flake-update",
+      }],
+    },
+  },
+}

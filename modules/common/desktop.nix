@@ -78,6 +78,7 @@
         teleport
         kubectx
         kubernetes-helm
+        kyamlfmt
         google-cloud-sdk
 
         libiconv

@@ -183,6 +183,7 @@
       playwriter = prev.callPackage ../../pkgs/playwriter { };
       oh-my-pi = prev.callPackage ../../pkgs/oh-my-pi { };
       bootvine = prev.callPackage ../../pkgs/bootvine { };
+      kyamlfmt = prev.callPackage ../../pkgs/kyamlfmt { };
 
       # ffmpeg-full deps whose test suites get SIGKILLed in the macOS nix
       # sandbox (OOM-style kills under memory pressure); skip checks.

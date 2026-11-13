@@ -13,6 +13,7 @@
   imports = [
     ../modules/nixos/desktop.nix
     ../modules/nixos/fingerprint.nix
+    ../modules/nixos/homelab.nix
   ];
 
   nix.settings.cores = 2;

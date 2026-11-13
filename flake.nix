@@ -173,6 +173,7 @@
                   inputs.minegrub-theme.nixosModules.default
                   inputs.catppuccin.nixosModules.catppuccin
                   inputs.apollo.nixosModules.${system}.default
+                  inputs.sops-nix.nixosModules.sops
 
                   {
                     home-manager = {

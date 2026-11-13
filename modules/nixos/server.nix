@@ -56,6 +56,9 @@
 
   virtualisation.docker.enable = true;
 
+  # python312's doc output fails to build with current sphinx/docutils, and a headless server doesn't need docs
+  documentation.doc.enable = false;
+
   programs.nix-ld.dev.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     stdenv.cc.cc

@@ -185,6 +185,24 @@
       bootvine = prev.callPackage ../../pkgs/bootvine { };
       kyamlfmt = prev.callPackage ../../pkgs/kyamlfmt { };
 
+      # nixpkgs lags upstream (5.0.0); 6.x needs qtsvg and qtwebchannel and builds tests by default
+      whatsie = prev.whatsie.overrideAttrs (old: rec {
+        version = "6.2.0";
+        src = prev.fetchFromGitHub {
+          owner = "keshavbhatt";
+          repo = "whatsie";
+          tag = "v${version}";
+          hash = "sha256-08kJolKPSzKslsUonbwUccpHuThLUCelgqfR8pksnoE=";
+        };
+        buildInputs = old.buildInputs ++ [
+          prev.qt6.qtsvg
+          prev.qt6.qtwebchannel
+        ];
+        cmakeFlags = (old.cmakeFlags or [ ]) ++ [
+          (prev.lib.cmakeBool "WHATSIE_BUILD_TESTS" false)
+        ];
+      });
+
       # ffmpeg-full deps whose test suites get SIGKILLed in the macOS nix
       # sandbox (OOM-style kills under memory pressure); skip checks.
       kvazaar = prev.kvazaar.overrideAttrs (_: {

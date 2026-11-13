@@ -312,6 +312,7 @@ in
 
       zoom-us
       telegram-desktop
+      whatsie
       google-chrome
       firefox
       bitwarden-cli

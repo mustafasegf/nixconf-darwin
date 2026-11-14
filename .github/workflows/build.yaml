@@ -28,9 +28,9 @@
         name: "Build Linux hosts",
         run: "\
            nix build --print-build-logs --out-link result \\\n\
-           .#nixosConfigurations.mustafa-pc.config.system.build.toplevel \\\n\
-           .#nixosConfigurations.minipc.config.system.build.toplevel \\\n\
-           .#nixosConfigurations.greencloud.config.system.build.toplevel\n\
+          \  .#nixosConfigurations.mustafa-pc.config.system.build.toplevel \\\n\
+          \  .#nixosConfigurations.minipc.config.system.build.toplevel \\\n\
+          \  .#nixosConfigurations.greencloud.config.system.build.toplevel\n\
           ",
       }, {
         name: "Push to cache",
@@ -42,6 +42,45 @@
            attic push local:mus result*\n\
           ",
       }],
+    },
+    darwin: {
+      runs-on: "macos-15",
+      steps: [
+        {
+          uses: "actions/checkout@v5",
+        },
+        {
+          uses: "cachix/install-nix-action@v31",
+          with: {
+            extra_nix_config: "\
+               extra-substituters = https://ghostty.cachix.org https://devenv.cachix.org https://claude-code.cachix.org https://cache.mus.sh/mus\n\
+               extra-trusted-public-keys = ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk= mus:wnXW/yQqlss0+qAD3D1cjHcLs0y/UroAoM58lw9vTpw=\n\
+              ",
+          },
+        },
+        {
+          name: "Build macOS hosts",
+          run: "\
+             nix build --print-build-logs --out-link result \\\n\
+            \  .#darwinConfigurations.mustafa-mac.config.system.build.toplevel \\\n\
+            \  .#darwinConfigurations.mustafa-work.config.system.build.toplevel\n\
+            ",
+        },
+        # cache.mus.sh sits behind Cloudflare, which rejects uploads over 100 MB, so a few large paths may not push
+        {
+          name: "Push to cache",
+          continue-on-error: true,
+          env: {
+            ATTIC_TOKEN: "${{ secrets.ATTIC_TOKEN }}",
+          },
+          run: "\
+             nix shell .#darwinConfigurations.mustafa-mac.pkgs.attic-client -c sh -c '\n\
+            \  attic login remote https://cache.mus.sh \"$ATTIC_TOKEN\"\n\
+            \  attic push remote:mus result*\n\
+             '\n\
+            ",
+        },
+      ],
     },
   },
 }

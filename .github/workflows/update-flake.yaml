@@ -15,7 +15,7 @@
     contents: "write",
   },
   jobs: {
-    update: {
+    lock: {
       runs-on: [
         "self-hosted",
         "nix",
@@ -28,14 +28,28 @@
            git config user.name \"github-actions[bot]\"\n\
            git config user.email \"41898282+github-actions[bot]@users.noreply.github.com\"\n\
            nix flake update --commit-lock-file\n\
+           git push --force origin HEAD:flake-update\n\
           ",
+      }],
+    },
+    linux: {
+      needs: "lock",
+      runs-on: [
+        "self-hosted",
+        "nix",
+      ],
+      steps: [{
+        uses: "actions/checkout@v5",
+        with: {
+          ref: "flake-update",
+        },
       }, {
         name: "Build Linux hosts",
         run: "\
            nix build --print-build-logs --out-link result \\\n\
-           .#nixosConfigurations.mustafa-pc.config.system.build.toplevel \\\n\
-           .#nixosConfigurations.minipc.config.system.build.toplevel \\\n\
-           .#nixosConfigurations.greencloud.config.system.build.toplevel\n\
+          \  .#nixosConfigurations.mustafa-pc.config.system.build.toplevel \\\n\
+          \  .#nixosConfigurations.minipc.config.system.build.toplevel \\\n\
+          \  .#nixosConfigurations.greencloud.config.system.build.toplevel\n\
           ",
       }, {
         name: "Push to cache",
@@ -46,13 +60,59 @@
            attic login local http://127.0.0.1:8080 \"$ATTIC_TOKEN\"\n\
            attic push local:mus result*\n\
           ",
+      }],
+    },
+    darwin: {
+      needs: "lock",
+      runs-on: "macos-15",
+      steps: [{
+        uses: "actions/checkout@v5",
+        with: {
+          ref: "flake-update",
+        },
+      }, {
+        uses: "cachix/install-nix-action@v31",
+        with: {
+          extra_nix_config: "\
+             extra-substituters = https://ghostty.cachix.org https://devenv.cachix.org https://claude-code.cachix.org https://cache.mus.sh/mus\n\
+             extra-trusted-public-keys = ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk= mus:wnXW/yQqlss0+qAD3D1cjHcLs0y/UroAoM58lw9vTpw=\n\
+            ",
+        },
+      }, {
+        name: "Build macOS hosts",
+        run: "\
+           nix build --print-build-logs --out-link result \\\n\
+          \  .#darwinConfigurations.mustafa-mac.config.system.build.toplevel \\\n\
+          \  .#darwinConfigurations.mustafa-work.config.system.build.toplevel\n\
+          ",
+      }, {
+        name: "Push to cache",
+        continue-on-error: true,
+        env: {
+          ATTIC_TOKEN: "${{ secrets.ATTIC_TOKEN }}",
+        },
+        run: "\
+           nix shell .#darwinConfigurations.mustafa-mac.pkgs.attic-client -c sh -c '\n\
+          \  attic login remote https://cache.mus.sh \"$ATTIC_TOKEN\"\n\
+          \  attic push remote:mus result*\n\
+           '\n\
+          ",
+      }],
+    },
+    merge: {
+      needs: [
+        "linux",
+        "darwin",
+      ],
+      runs-on: "ubuntu-latest",
+      steps: [{
+        uses: "actions/checkout@v5",
+        with: {
+          ref: "flake-update",
+        },
       }, {
         name: "Push lock update to master",
         run: "git push origin HEAD:master",
-      }, {
-        name: "Push failed update for manual fixing",
-        if: "failure()",
-        run: "git push --force origin HEAD:flake-update",
       }],
     },
   },

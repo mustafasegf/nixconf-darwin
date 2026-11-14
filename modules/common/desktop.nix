@@ -96,7 +96,6 @@
         glow
         gum
         mods
-        mold
         geckodriver
         go-swag
         autoconf
@@ -186,6 +185,9 @@
         linear-cli
         slackcli
         outline-cli
+      ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+        mold
       ]
       ++ lib.optionals config.custom.enableXcode [
         xcodes

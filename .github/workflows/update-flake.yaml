@@ -141,7 +141,7 @@
       }, {
         name: "Build macOS hosts",
         run: "\
-           nix build --print-build-logs --out-link result \\\n\
+           nix build --print-build-logs --keep-going --out-link result \\\n\
           \  .#darwinConfigurations.mustafa-mac.config.system.build.toplevel \\\n\
           \  .#darwinConfigurations.mustafa-work.config.system.build.toplevel\n\
           ",

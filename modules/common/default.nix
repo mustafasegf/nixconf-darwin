@@ -147,18 +147,6 @@
         buildInputs = prev.lib.remove prev.libserdes old.buildInputs;
       });
 
-      # Current Qt deprecates Q_OS_MAC as an error on macOS, and qBittorrent
-      # still uses it, so rename it to Q_OS_MACOS.
-      qbittorrent =
-        if prev.stdenv.hostPlatform.isDarwin then
-          prev.qbittorrent.overrideAttrs (old: {
-            postPatch = (old.postPatch or "") + ''
-              grep -rlw Q_OS_MAC src | xargs sed -i 's/\bQ_OS_MAC\b/Q_OS_MACOS/g'
-            '';
-          })
-        else
-          prev.qbittorrent;
-
       # Bump to 0.44.0 for the `ast-grep outline` subcommand, which is not
       # yet available in the pinned nixpkgs (still on 0.43.0).
       ast-grep = prev.ast-grep.overrideAttrs (old: rec {

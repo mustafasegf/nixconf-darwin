@@ -203,6 +203,15 @@
         doCheck = false;
       });
 
+      # fate-seek-hls fails on darwin in ffmpeg 9.0.2; ffmpeg-full is already rebuilt there because of the overrides above.
+      ffmpeg-full =
+        if prev.stdenv.hostPlatform.isDarwin then
+          prev.ffmpeg-full.overrideAttrs (_: {
+            doCheck = false;
+          })
+        else
+          prev.ffmpeg-full;
+
       nushell = prev.nushell.overrideAttrs (_: {
         doCheck = false;
       });

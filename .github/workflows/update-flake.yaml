@@ -13,7 +13,6 @@
   },
   permissions: {
     contents: "write",
-    issues: "write",
   },
   jobs: {
     update: {
@@ -54,24 +53,6 @@
         name: "Push failed update for manual fixing",
         if: "failure()",
         run: "git push --force origin HEAD:flake-update",
-      }, {
-        name: "Open issue on failure",
-        if: "failure()",
-        uses: "actions/github-script@v8",
-        with: {
-          script: "\
-             const title = 'Weekly flake update failed';\n\
-             const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;\n\
-             const body = `Run: ${run}\\nBranch with the attempted update: \\`flake-update\\``;\n\
-             const { data: open } = await github.rest.issues.listForRepo({ ...context.repo, state: 'open', creator: 'github-actions[bot]' });\n\
-             const existing = open.find(i => i.title === title);\n\
-             if (existing) {\n\
-            \  await github.rest.issues.createComment({ ...context.repo, issue_number: existing.number, body });\n\
-             } else {\n\
-            \  await github.rest.issues.create({ ...context.repo, title, body, assignees: [context.repo.owner] });\n\
-             }\n\
-            ",
-        },
       }],
     },
   },

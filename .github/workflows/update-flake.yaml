@@ -5,7 +5,15 @@
     schedule: [{
       cron: "0 19 * * 0",
     }],
-    workflow_dispatch: {},
+    workflow_dispatch: {
+      inputs: {
+        force_hosted: {
+          description: "Build Linux on a GitHub-hosted runner even if mustafa-pc is up",
+          type: "boolean",
+          default: false,
+        },
+      },
+    },
   },
   concurrency: {
     group: "update-flake",
@@ -15,13 +23,36 @@
     contents: "write",
   },
   jobs: {
+    runner: {
+      runs-on: "ubuntu-latest",
+      outputs: {
+        hosted: "${{ steps.check.outputs.hosted }}",
+        labels: "${{ steps.check.outputs.labels }}",
+      },
+      steps: [{
+        id: "check",
+        env: {
+          FORCE_HOSTED: "${{ inputs.force_hosted }}",
+        },
+        run: "\
+           if [ \"$FORCE_HOSTED\" != \"true\" ] && curl -sf --max-time 10 https://cache.mus.sh/mus/nix-cache-info >/dev/null; then\n\
+          \  echo 'hosted=false' >> \"$GITHUB_OUTPUT\"\n\
+          \  echo 'labels=[\"self-hosted\",\"nix\"]' >> \"$GITHUB_OUTPUT\"\n\
+           else\n\
+          \  echo 'hosted=true' >> \"$GITHUB_OUTPUT\"\n\
+          \  echo 'labels=\"ubuntu-latest\"' >> \"$GITHUB_OUTPUT\"\n\
+           fi\n\
+          ",
+      }],
+    },
     lock: {
-      runs-on: [
-        "self-hosted",
-        "nix",
-      ],
+      needs: "runner",
+      runs-on: "${{ fromJSON(needs.runner.outputs.labels) }}",
       steps: [{
         uses: "actions/checkout@v5",
+      }, {
+        if: "needs.runner.outputs.hosted == 'true'",
+        uses: "cachix/install-nix-action@v31",
       }, {
         name: "Update flake inputs",
         run: "\
@@ -33,15 +64,31 @@
       }],
     },
     linux: {
-      needs: "lock",
-      runs-on: [
-        "self-hosted",
-        "nix",
+      needs: [
+        "runner",
+        "lock",
       ],
+      runs-on: "${{ fromJSON(needs.runner.outputs.labels) }}",
       steps: [{
         uses: "actions/checkout@v5",
         with: {
           ref: "flake-update",
+        },
+      }, {
+        if: "needs.runner.outputs.hosted == 'true'",
+        uses: "jlumbroso/free-disk-space@v1.3.1",
+        with: {
+          tool-cache: true,
+        },
+      }, {
+        if: "needs.runner.outputs.hosted == 'true'",
+        uses: "cachix/install-nix-action@v31",
+        with: {
+          extra_nix_config: "\
+             extra-substituters = https://ghostty.cachix.org https://devenv.cachix.org https://claude-code.cachix.org https://cache.mus.sh/mus\n\
+             extra-trusted-public-keys = ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk= mus:wnXW/yQqlss0+qAD3D1cjHcLs0y/UroAoM58lw9vTpw=\n\
+             connect-timeout = 5\n\
+            ",
         },
       }, {
         name: "Build Linux hosts",
@@ -53,6 +100,7 @@
           ",
       }, {
         name: "Push to cache",
+        if: "needs.runner.outputs.hosted != 'true'",
         env: {
           ATTIC_TOKEN: "${{ secrets.ATTIC_TOKEN }}",
         },
@@ -71,11 +119,23 @@
           ref: "flake-update",
         },
       }, {
+        name: "Free disk space",
+        run: "\
+           df -h /\n\
+           xcrun simctl delete all || true\n\
+           sudo xcrun simctl runtime delete all || true\n\
+           keep=\"$(xcode-select -p | sed 's#/Contents/Developer##')\"\n\
+           find /Applications -maxdepth 1 -name 'Xcode*.app' ! -path \"$keep\" -exec sudo rm -rf {} +\n\
+           sudo rm -rf ~/Library/Android ~/hostedtoolcache /Users/runner/hostedtoolcache ~/.dotnet /usr/local/share/dotnet /Library/Developer/CoreSimulator/Profiles/Runtimes || true\n\
+           df -h /\n\
+          ",
+      }, {
         uses: "cachix/install-nix-action@v31",
         with: {
           extra_nix_config: "\
              extra-substituters = https://ghostty.cachix.org https://devenv.cachix.org https://claude-code.cachix.org https://cache.mus.sh/mus\n\
              extra-trusted-public-keys = ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk= mus:wnXW/yQqlss0+qAD3D1cjHcLs0y/UroAoM58lw9vTpw=\n\
+             connect-timeout = 5\n\
             ",
         },
       }, {

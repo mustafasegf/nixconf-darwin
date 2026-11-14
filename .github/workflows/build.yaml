@@ -7,20 +7,64 @@
         "master",
       ],
     },
-    workflow_dispatch: {},
+    workflow_dispatch: {
+      inputs: {
+        force_hosted: {
+          description: "Build Linux on a GitHub-hosted runner even if mustafa-pc is up",
+          type: "boolean",
+          default: false,
+        },
+      },
+    },
   },
   concurrency: {
-    group: "build-${{ github.ref }}",
+    group: "build-${{ github.ref }}-${{ inputs.force_hosted }}",
     cancel-in-progress: true,
   },
   jobs: {
+    runner: {
+      runs-on: "ubuntu-latest",
+      outputs: {
+        hosted: "${{ steps.check.outputs.hosted }}",
+        labels: "${{ steps.check.outputs.labels }}",
+      },
+      steps: [{
+        id: "check",
+        env: {
+          FORCE_HOSTED: "${{ inputs.force_hosted }}",
+        },
+        run: "\
+           if [ \"$FORCE_HOSTED\" != \"true\" ] && curl -sf --max-time 10 https://cache.mus.sh/mus/nix-cache-info >/dev/null; then\n\
+          \  echo 'hosted=false' >> \"$GITHUB_OUTPUT\"\n\
+          \  echo 'labels=[\"self-hosted\",\"nix\"]' >> \"$GITHUB_OUTPUT\"\n\
+           else\n\
+          \  echo 'hosted=true' >> \"$GITHUB_OUTPUT\"\n\
+          \  echo 'labels=\"ubuntu-latest\"' >> \"$GITHUB_OUTPUT\"\n\
+           fi\n\
+          ",
+      }],
+    },
     linux: {
-      runs-on: [
-        "self-hosted",
-        "nix",
-      ],
+      needs: "runner",
+      runs-on: "${{ fromJSON(needs.runner.outputs.labels) }}",
       steps: [{
         uses: "actions/checkout@v5",
+      }, {
+        if: "needs.runner.outputs.hosted == 'true'",
+        uses: "jlumbroso/free-disk-space@v1.3.1",
+        with: {
+          tool-cache: true,
+        },
+      }, {
+        if: "needs.runner.outputs.hosted == 'true'",
+        uses: "cachix/install-nix-action@v31",
+        with: {
+          extra_nix_config: "\
+             extra-substituters = https://ghostty.cachix.org https://devenv.cachix.org https://claude-code.cachix.org https://cache.mus.sh/mus\n\
+             extra-trusted-public-keys = ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk= mus:wnXW/yQqlss0+qAD3D1cjHcLs0y/UroAoM58lw9vTpw=\n\
+             connect-timeout = 5\n\
+            ",
+        },
       }, {
         name: "Check KYAML formatting",
         run: "nix run .#nixosConfigurations.mustafa-pc.pkgs.kyamlfmt -- -o kyaml -d .github/workflows/*.yaml",
@@ -34,6 +78,7 @@
           ",
       }, {
         name: "Push to cache",
+        if: "needs.runner.outputs.hosted != 'true'",
         env: {
           ATTIC_TOKEN: "${{ secrets.ATTIC_TOKEN }}",
         },
@@ -45,42 +90,48 @@
     },
     darwin: {
       runs-on: "macos-15",
-      steps: [
-        {
-          uses: "actions/checkout@v5",
-        },
-        {
-          uses: "cachix/install-nix-action@v31",
-          with: {
-            extra_nix_config: "\
-               extra-substituters = https://ghostty.cachix.org https://devenv.cachix.org https://claude-code.cachix.org https://cache.mus.sh/mus\n\
-               extra-trusted-public-keys = ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk= mus:wnXW/yQqlss0+qAD3D1cjHcLs0y/UroAoM58lw9vTpw=\n\
-              ",
-          },
-        },
-        {
-          name: "Build macOS hosts",
-          run: "\
-             nix build --print-build-logs --out-link result \\\n\
-            \  .#darwinConfigurations.mustafa-mac.config.system.build.toplevel \\\n\
-            \  .#darwinConfigurations.mustafa-work.config.system.build.toplevel\n\
+      steps: [{
+        uses: "actions/checkout@v5",
+      }, {
+        name: "Free disk space",
+        run: "\
+           df -h /\n\
+           xcrun simctl delete all || true\n\
+           sudo xcrun simctl runtime delete all || true\n\
+           keep=\"$(xcode-select -p | sed 's#/Contents/Developer##')\"\n\
+           find /Applications -maxdepth 1 -name 'Xcode*.app' ! -path \"$keep\" -exec sudo rm -rf {} +\n\
+           sudo rm -rf ~/Library/Android ~/hostedtoolcache /Users/runner/hostedtoolcache ~/.dotnet /usr/local/share/dotnet /Library/Developer/CoreSimulator/Profiles/Runtimes || true\n\
+           df -h /\n\
+          ",
+      }, {
+        uses: "cachix/install-nix-action@v31",
+        with: {
+          extra_nix_config: "\
+             extra-substituters = https://ghostty.cachix.org https://devenv.cachix.org https://claude-code.cachix.org https://cache.mus.sh/mus\n\
+             extra-trusted-public-keys = ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns= devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= claude-code.cachix.org-1:YeXf2aNu7UTX8Vwrze0za1WEDS+4DuI2kVeWEE4fsRk= mus:wnXW/yQqlss0+qAD3D1cjHcLs0y/UroAoM58lw9vTpw=\n\
+             connect-timeout = 5\n\
             ",
         },
-        # cache.mus.sh sits behind Cloudflare, which rejects uploads over 100 MB, so a few large paths may not push
-        {
-          name: "Push to cache",
-          continue-on-error: true,
-          env: {
-            ATTIC_TOKEN: "${{ secrets.ATTIC_TOKEN }}",
-          },
-          run: "\
-             nix shell .#darwinConfigurations.mustafa-mac.pkgs.attic-client -c sh -c '\n\
-            \  attic login remote https://cache.mus.sh \"$ATTIC_TOKEN\"\n\
-            \  attic push remote:mus result*\n\
-             '\n\
-            ",
+      }, {
+        name: "Build macOS hosts",
+        run: "\
+           nix build --print-build-logs --out-link result \\\n\
+          \  .#darwinConfigurations.mustafa-mac.config.system.build.toplevel \\\n\
+          \  .#darwinConfigurations.mustafa-work.config.system.build.toplevel\n\
+          ",
+      }, {
+        name: "Push to cache",
+        continue-on-error: true,
+        env: {
+          ATTIC_TOKEN: "${{ secrets.ATTIC_TOKEN }}",
         },
-      ],
+        run: "\
+           nix shell .#darwinConfigurations.mustafa-mac.pkgs.attic-client -c sh -c '\n\
+          \  attic login remote https://cache.mus.sh \"$ATTIC_TOKEN\"\n\
+          \  attic push remote:mus result*\n\
+           '\n\
+          ",
+      }],
     },
   },
 }

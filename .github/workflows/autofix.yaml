@@ -1,0 +1,82 @@
+---
+{
+  name: "autofix",
+  "on": {
+    workflow_run: {
+      workflows: [
+        "build",
+        "update-flake",
+      ],
+      types: [
+        "completed",
+      ],
+    },
+  },
+  permissions: {
+    contents: "write",
+    pull-requests: "write",
+    actions: "write",
+  },
+  env: {
+    NIX_CONFIG: "access-tokens = github.com=${{ github.token }}",
+  },
+  concurrency: {
+    group: "autofix",
+    cancel-in-progress: false,
+  },
+  jobs: {
+    fix: {
+      if: "github.event.workflow_run.conclusion == 'failure' && !startsWith(github.event.workflow_run.head_branch, 'autofix/')",
+      runs-on: [
+        "self-hosted",
+        "nix",
+      ],
+      timeout-minutes: 240,
+      env: {
+        GH_TOKEN: "${{ github.token }}",
+      },
+      steps: [{
+        uses: "actions/checkout@v5",
+        with: {
+          fetch-depth: 0,
+        },
+      }, {
+        name: "Put tools on PATH",
+        id: "tools",
+        run: "\
+           echo \"$(nix build --no-link --print-out-paths .#nixosConfigurations.mustafa-pc.pkgs.gh)/bin\" >> \"$GITHUB_PATH\"\n\
+           echo \"$(nix build --no-link --print-out-paths .#nixosConfigurations.mustafa-pc.pkgs.jq)/bin\" >> \"$GITHUB_PATH\"\n\
+           echo \"bun=$(nix build --no-link --print-out-paths .#nixosConfigurations.mustafa-pc.pkgs.bun)/bin/bun\" >> \"$GITHUB_OUTPUT\"\n\
+           git config user.name \"github-actions[bot]\"\n\
+           git config user.email \"41898282+github-actions[bot]@users.noreply.github.com\"\n\
+          ",
+      }, {
+        uses: "anthropics/claude-code-action@v1",
+        with: {
+          claude_code_oauth_token: "${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}",
+          github_token: "${{ github.token }}",
+          path_to_bun_executable: "${{ steps.tools.outputs.bun }}",
+          path_to_claude_code_executable: "/run/current-system/sw/bin/claude",
+          claude_args: "--allowedTools \"Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch\" --max-turns 300",
+          prompt: "\
+             The \"${{ github.event.workflow_run.name }}\" workflow failed in ${{ github.repository }}.\n\
+             Failed run: ${{ github.event.workflow_run.html_url }} (run id ${{ github.event.workflow_run.id }}, commit ${{ github.event.workflow_run.head_sha }}).\n\
+             \n\
+             Your job is to find the root cause and open a pull request that fixes it. Follow CLAUDE.md for code style and commit messages.\n\
+             \n\
+             1. Read the failed job logs with `gh run view ${{ github.event.workflow_run.id }} --log-failed` (or `gh api repos/${{ github.repository }}/actions/jobs/<job id>/logs`).\n\
+             2. If the failed workflow is update-flake, the broken state is the `flake-update` branch (master plus a new flake.lock), so base your work on `origin/flake-update`. Otherwise base it on `origin/master`.\n\
+             3. Create a branch named `autofix/${{ github.event.workflow_run.id }}`, make the smallest fix for the root cause, and commit it.\n\
+             4. Verify before opening the PR:\n\
+            \   - Linux hosts: build them on this machine, e.g. `nix build --no-link .#nixosConfigurations.<host>.config.system.build.toplevel` for mustafa-pc, minipc and greencloud.\n\
+            \   - macOS hosts cannot be built here. Push the branch, then run `gh workflow run build.yaml --ref autofix/${{ github.event.workflow_run.id }}` and wait for the darwin job with `gh run watch`. Keep iterating until it passes.\n\
+            \   - A failure that is purely transient (network, rate limit, runner crash) needs no code change: rerun the failed workflow with `gh run rerun ${{ github.event.workflow_run.id }} --failed` and stop without opening a PR.\n\
+             5. Push the branch and open a PR against master with `gh pr create`. Include the root cause, what you changed, and how you verified it (link the verification run). If the base was flake-update, the PR should include the lock update too.\n\
+             \n\
+             Do not push to master or flake-update directly, and do not disable a host or drop a package just to make a build pass unless no reasonable fix exists; say so in the PR if you do.\n\
+            ",
+        },
+      }],
+    },
+  },
+}

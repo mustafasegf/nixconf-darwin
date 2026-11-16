@@ -15,6 +15,9 @@
       },
     },
   },
+  env: {
+    NIX_CONFIG: "access-tokens = github.com=${{ github.token }}",
+  },
   concurrency: {
     group: "update-flake",
     cancel-in-progress: false,

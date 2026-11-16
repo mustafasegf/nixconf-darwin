@@ -17,6 +17,9 @@
       },
     },
   },
+  env: {
+    NIX_CONFIG: "access-tokens = github.com=${{ github.token }}",
+  },
   concurrency: {
     group: "build-${{ github.ref }}-${{ inputs.force_hosted }}",
     cancel-in-progress: true,

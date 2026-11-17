@@ -74,10 +74,9 @@
       }, {
         name: "Build Linux hosts",
         run: "\
-           nix build --print-build-logs --out-link result \\\n\
-          \  .#nixosConfigurations.mustafa-pc.config.system.build.toplevel \\\n\
-          \  .#nixosConfigurations.minipc.config.system.build.toplevel \\\n\
-          \  .#nixosConfigurations.greencloud.config.system.build.toplevel\n\
+           for host in mustafa-pc minipc greencloud; do\n\
+          \  nix build --print-build-logs --out-link \"result-$host\" \".#nixosConfigurations.$host.config.system.build.toplevel\"\n\
+           done\n\
           ",
       }, {
         name: "Push to cache",

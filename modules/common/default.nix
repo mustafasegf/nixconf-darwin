@@ -203,6 +203,13 @@
         doCheck = false;
       });
 
+      # Go rejects the LTO bitcode in the rust RDP client's static lib on darwin; tsh doesn't need desktop access
+      teleport =
+        if prev.stdenv.hostPlatform.isDarwin then
+          prev.teleport_18.override { withRdpClient = false; }
+        else
+          prev.teleport;
+
       # fate-seek-hls fails on darwin in ffmpeg 9.0.2; ffmpeg-full is already rebuilt there because of the overrides above.
       ffmpeg-full =
         if prev.stdenv.hostPlatform.isDarwin then

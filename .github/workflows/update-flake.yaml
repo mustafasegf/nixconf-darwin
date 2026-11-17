@@ -61,7 +61,11 @@
         run: "\
            git config user.name \"github-actions[bot]\"\n\
            git config user.email \"41898282+github-actions[bot]@users.noreply.github.com\"\n\
-           nix flake update --commit-lock-file\n\
+           for i in 1 2 3; do\n\
+          \  nix flake update --commit-lock-file && break\n\
+          \  [ \"$i\" = 3 ] && exit 1\n\
+          \  sleep 300\n\
+           done\n\
            git push --force origin HEAD:flake-update\n\
           ",
       }],

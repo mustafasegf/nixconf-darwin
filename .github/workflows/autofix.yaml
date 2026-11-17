@@ -70,7 +70,8 @@
              4. Verify before opening the PR:\n\
             \   - Linux hosts: build them on this machine, e.g. `nix build --no-link .#nixosConfigurations.<host>.config.system.build.toplevel` for mustafa-pc, minipc and greencloud.\n\
             \   - macOS hosts cannot be built here. Push the branch, then run `gh workflow run build.yaml --ref autofix/${{ github.event.workflow_run.id }}` and wait for the darwin job with `gh run watch`. Keep iterating until it passes.\n\
-            \   - A failure that is purely transient (network, rate limit, runner crash) needs no code change: rerun the failed workflow with `gh run rerun ${{ github.event.workflow_run.id }} --failed` and stop without opening a PR.\n\
+            \   - A failure that is purely transient (network, rate limit, runner crash) needs no code change. This was attempt ${{ github.event.workflow_run.run_attempt }} of the run: only if that is 1, rerun it with `gh run rerun ${{ github.event.workflow_run.id }} --failed`; otherwise a rerun already failed, so do not rerun again. Either way, stop without opening a PR.\n\
+            \   - A build killed for memory (earlyoom, `Killed`, \"Nix daemon disconnected\") on mustafa-pc is a resource problem, not a code problem: do not rerun and do not open a PR.\n\
              5. Push the branch and open a PR against master with `gh pr create`. Include the root cause, what you changed, and how you verified it (link the verification run). If the base was flake-update, the PR should include the lock update too.\n\
              \n\
              Do not push to master or flake-update directly, and do not disable a host or drop a package just to make a build pass unless no reasonable fix exists; say so in the PR if you do.\n\

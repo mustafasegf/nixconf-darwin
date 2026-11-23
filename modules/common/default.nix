@@ -203,10 +203,13 @@
         doCheck = false;
       });
 
-      # Go rejects the LTO bitcode in the rust RDP client's static lib on darwin; tsh doesn't need desktop access
+      # Go rejects the LTO bitcode in the rust RDP client's static lib on darwin; tsh doesn't need desktop access.
+      # The version-only installCheckPhase dies silently in the darwin sandbox, so skip it.
       teleport =
         if prev.stdenv.hostPlatform.isDarwin then
-          prev.teleport_18.override { withRdpClient = false; }
+          (prev.teleport_18.override { withRdpClient = false; }).overrideAttrs (_: {
+            doInstallCheck = false;
+          })
         else
           prev.teleport;
 

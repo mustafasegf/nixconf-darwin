@@ -138,6 +138,10 @@
     };
   };
 
+  # systemd-rfkill restores saved soft-block state after the unblock above runs, re-blocking Bluetooth
+  systemd.services.systemd-rfkill.enable = false;
+  systemd.sockets.systemd-rfkill.enable = false;
+
   networking = {
     useDHCP = lib.mkDefault true;
     hostName = "mustafa-pc";

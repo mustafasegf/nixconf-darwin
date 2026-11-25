@@ -31,6 +31,9 @@
 
   homebrew = {
     enable = true;
+    taps = [
+      "dimentium/autoraise"
+    ];
     casks = [
       "ghostty"
       "wacom-tablet"
@@ -46,6 +49,7 @@
       "orbstack"
       "obs"
       "openmtp"
+      "dimentium/autoraise/autoraiseapp"
     ];
   };
 }
